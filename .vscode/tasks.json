@@ -8,8 +8,8 @@
 			"command": "bundle",
 			"args": [
 				"exec",
-        "jekyll",
-        "serve"
+				"jekyll",
+				"serve"
 			],
 			"group": "none",
 			"isBackground": true,

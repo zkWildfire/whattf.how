@@ -149,12 +149,7 @@
 				"--avatar-border-color",
 				borderColor
 			);
-			avatarImage.src = avatarImage.src.replace(
-				imageSrc == lightThemeAvatarPath
-					? darkThemeAvatarPath
-					: lightThemeAvatarPath,
-				imageSrc
-			);
+			avatarImage.src = imageSrc;
 			isCurrentlyLightTheme = isLightTheme;
 		};
 	};

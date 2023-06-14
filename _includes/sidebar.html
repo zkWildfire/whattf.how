@@ -145,6 +145,7 @@
 		const avatarImage = getAvatarImage();
 
 		return () => {
+			console.log(`Setting avatar to ${imageSrc}`);
 			avatar.style.setProperty(
 				"--avatar-border-color",
 				borderColor

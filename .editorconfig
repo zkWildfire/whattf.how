@@ -2,18 +2,53 @@ root = true
 
 [*]
 charset = utf-8
-indent_style = space
-indent_size = 2
-trim_trailing_whitespace = true
-# Unix-style newlines with a newline ending every file
-end_of_line = lf
+indent_size = 4
+indent_style = tab
 insert_final_newline = true
+max_line_length = 80
+trim_trailing_whitespace = true
 
-[*.{js,css,scss}]
-quote_type = single
-
-[*.{yml,yaml}]
-quote_type = double
 
 [*.md]
+# Force the usage of spaces in markdown docs because GitHub uses 8 wide tabs
+#	by default
+indent_style = space
+max_line_length = off
+
+# This must be disabled for Markdown files as using two spaces at the end of a
+#   line is syntactically significant in Markdown
 trim_trailing_whitespace = false
+
+
+# Make sure shell scripts use the system specific line endings
+[*.sh]
+end_of_line = lf
+
+[*.bat]
+end_of_line = crlf
+
+
+[*.py]
+# If a python script is executed directly by bash (e.g. `foo.py` instead of
+#   `python foo.py`), the script must use LF as its line endings or else the
+#   CRLF line endings will cause bash to mis-parse the file.
+end_of_line = lf
+
+# PEP-8 recommends that indentation is handled with spaces.
+# https://media.tenor.com/JzYtXjlc8o0AAAAC
+indent_style = tab
+
+
+[*.{json,code-workspace,csproj,props,runsettings}]
+indent_size = 2
+
+
+[*.{yml,yaml}]
+# YAML requires spaces to be used
+indent_style = space
+indent_size = 2
+quote_type = double
+
+
+[*.html]
+indent_size = 2

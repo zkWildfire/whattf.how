@@ -112,12 +112,22 @@
 	Custom whattf.how code
 -->
 <script>
+	// Available avatars
+	const avatarImgFolder = "/assets/img";
+	const orangeAvatarPath = `${avatarImgFolder}/logo-orange.png`;
+	const orangeBorderColor = "#FF8827";
+	const purpleAvatarPath = `${avatarImgFolder}/logo-purple.png`;
+	const purpleBorderColor = "#33006F";
+	const goldAvatarPath = `${avatarImgFolder}/logo-gold.png`;
+	const goldBorderColor = "#917b4c";
+
 	// Bind to the mode switcher button and toggle the avatar image
 	const modeSwitcher = document.getElementsByClassName("mode-toggle")[0];
-	const lightThemeAvatarPath = "/assets/img/logo-orange.png"
-	const lightThemeBorderColor = "#FF8827";
-	const darkThemeAvatarPath = "/assets/img/logo-purple.png"
-	const darkThemeBorderColor = "#33006F";
+	const lightThemeAvatarPath = goldAvatarPath;
+	const lightThemeBorderColor = goldBorderColor;
+	const darkThemeAvatarPath = purpleAvatarPath;
+	const darkThemeBorderColor = purpleBorderColor;
+
 	// Chirpy will add `data-mode="light"` to the html element if in light
 	//   theme and will not have the attribute at all if in dark theme
 	var isCurrentlyLightTheme =

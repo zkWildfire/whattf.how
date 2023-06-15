@@ -61,6 +61,7 @@ export default class TransposeSimulator
 	/// @param cache Cache instance to use for the simulation.
 	/// @param cacheLineAllocator Cache line allocator instance to use for the
 	///   simulation.
+	/// @param memoryValidator Validator to use to verify the final memory state.
 	constructor(
 		memory: IMemory,
 		cache: ICache,

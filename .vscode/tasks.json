@@ -16,6 +16,16 @@
 			"isBackground": true,
 			"label": "Serve site",
 			"problemMatcher": []
+		},
+		{
+			"type": "process",
+			"command": "npx",
+			"args": [
+				"jest"
+			],
+			"group": "test",
+			"label": "Run tests",
+			"problemMatcher": []
 		}
 	]
 }

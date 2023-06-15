@@ -7,7 +7,7 @@ category: matrix-cache-simulator
 Interested in how the matrix cache simulator demo was implemented? This post
 gives a high level overview of the simulator's design and how it works. You
 can also view the source code for the demo on GitHub in the
-[`matrix-cache-sim`](https://github.com/zkWildfire/whattf.how/tree/master/assets/scripts/matrix-cache-sim)
+[`MatrixCacheSim`](https://github.com/zkWildfire/whattf.how/tree/master/assets/scripts/MatrixCacheSim)
 folder.
 
 The matrix cache simulator consists of three primary groups of components,

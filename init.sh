@@ -4,5 +4,6 @@
 #   (e.g. because it relies on repository files being available).
 set -e
 
-# Install required gems
+# Install required gems, packages, etc
 bundle
+npm install

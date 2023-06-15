@@ -3,6 +3,7 @@ import ICacheLine from "../CacheLines/CacheLine";
 import IEvictionPolicy from "../Policies/EvictionPolicy";
 import IPlacementPolicy from "../Policies/PlacementPolicy";
 import ICache from "./Cache";
+import CacheLoadResult from "./CacheLoadResult";
 
 /// Component-based cache implementation.
 export default class ModularCache implements ICache
@@ -73,9 +74,8 @@ export default class ModularCache implements ICache
 
 	/// Loads a new cache line into the cache.
 	/// @param cacheLine The cache line to load into the cache.
-	/// @returns The index of the cache line that was evicted, or null if no
-	///   cache line was evicted.
-	public loadCacheLine(cacheLine: ICacheLine): number | null
+	/// @returns The result of loading the cache line into the cache.
+	public loadCacheLine(cacheLine: ICacheLine): CacheLoadResult
 	{
 		// Keep track of where the new cache line is loaded and which cache
 		//   line was evicted, if any
@@ -119,7 +119,10 @@ export default class ModularCache implements ICache
 			this._evictionPolicy.onCacheLineAccessed(cacheLineIndex);
 		});
 
-		return evictedCacheLineIndex;
+		return {
+			index: cacheLineIndex,
+			cacheLineEvicted: evictedCacheLineIndex !== null
+		};
 	}
 
 	/// Gets the cache line containing the specified memory index.

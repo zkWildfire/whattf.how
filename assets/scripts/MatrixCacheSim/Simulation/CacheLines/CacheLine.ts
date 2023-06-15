@@ -1,6 +1,12 @@
+import OnMemoryAccessedEventArgs from "../Events/OnMemoryAccessedEventArgs";
+import { IEvent } from "ste-events";
+
 /// Interface used to represent a single processor cache line.
 export default interface ICacheLine
 {
+	/// Event raised when the cache line is read from or written to.
+	get OnCacheLineAccessed(): IEvent<ICacheLine, OnMemoryAccessedEventArgs>;
+
 	/// Gets the memory index of the first value in the cache line.
 	get startIndex(): number;
 
@@ -9,6 +15,9 @@ export default interface ICacheLine
 
 	/// Gets the size in number of values of the cache line.
 	get size(): number;
+
+	/// Whether the cache line contains the memory address.
+	contains(index: number): boolean;
 
 	/// Flushes the cache line's values to main memory.
 	flush(): void;

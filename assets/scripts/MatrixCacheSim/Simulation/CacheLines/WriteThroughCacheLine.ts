@@ -1,9 +1,15 @@
 import ICacheLine from "./CacheLine";
 import IMemory from "../Memory/Memory";
+import OnMemoryAccessedEventArgs from "../Events/OnMemoryAccessedEventArgs";
+import { EventDispatcher, IEvent } from "ste-events";
 
 /// Cache line that writes directly to main memory when written to.
 export default class WriteThroughCacheLine implements ICacheLine
 {
+	/// Property backing the `OnCacheLineAccessed` event.
+	private readonly _onCacheLineAccessed =
+		new EventDispatcher<ICacheLine, OnMemoryAccessedEventArgs>();
+
 	/// Memory instance backing the cache line.
 	private readonly _memory: IMemory;
 
@@ -12,6 +18,12 @@ export default class WriteThroughCacheLine implements ICacheLine
 
 	/// Size of the cache line in number of elements.
 	private readonly _size: number;
+
+	/// Event raised when the cache line is read from or written to.
+	get OnCacheLineAccessed(): IEvent<ICacheLine, OnMemoryAccessedEventArgs>
+	{
+		return this._onCacheLineAccessed.asEvent();
+	}
 
 	/// Gets the memory index of the first value in the cache line.
 	get startIndex(): number
@@ -42,6 +54,12 @@ export default class WriteThroughCacheLine implements ICacheLine
 		this._size = size;
 	}
 
+	/// Whether the cache line contains the memory address.
+	public contains(index: number): boolean
+	{
+		return index >= this._startingIndex && index < this.endIndex;
+	}
+
 	/// Flushes the cache line's values to main memory.
 	public flush(): void
 	{
@@ -55,6 +73,13 @@ export default class WriteThroughCacheLine implements ICacheLine
 	public read(index: number): number
 	{
 		this.checkIndex(index);
+		this._onCacheLineAccessed.dispatch(
+			this,
+			{
+				index: index,
+				isHit: true
+			}
+		);
 		return this._memory.read(index);
 	}
 
@@ -65,6 +90,13 @@ export default class WriteThroughCacheLine implements ICacheLine
 	public write(index: number, value: number): void
 	{
 		this.checkIndex(index);
+		this._onCacheLineAccessed.dispatch(
+			this,
+			{
+				index: index,
+				isHit: true
+			}
+		);
 		this._memory.write(index, value);
 	}
 
@@ -73,7 +105,7 @@ export default class WriteThroughCacheLine implements ICacheLine
 	/// @throws RangeError Thrown if the given index is not in the cache line.
 	private checkIndex(index: number): void
 	{
-		if (index < this._startingIndex || index >= this.endIndex)
+		if (!this.contains(index))
 		{
 			throw new RangeError(`Index ${index} is not in cache line ` +
 				`[${this._startingIndex}, ${this.endIndex}).`

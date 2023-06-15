@@ -1,0 +1,304 @@
+@startuml Dark Theme
+' General colors
+!$dirty_white = "#d6d0c6"
+!$github_grey = "#0d1117"
+!$light_blue = "LightSkyBlue"
+!$blue = "CornflowerBlue"
+!$purple = "SlateBlue"
+!$dark_purple = "DarkSlateBlue"
+!$dark_gray = "#222222"
+
+' Font colors
+!$light_font_color = $dirty_white
+!$dark_font_color = "Black"
+
+' Spot background colors
+!$class_icon_color = "ForestGreen"
+!$struct_icon_color = "MediumSeaGreen"
+!$concept_icon_color = "DeepPink"
+!$interface_icon_color = "LimeGreen"
+!$namespace_icon_color = "SpringGreen"
+!$singleton_icon_color = "Tomato"
+
+' Metadata
+hide empty attributes
+hide empty description
+hide empty fields
+hide empty members
+hide empty methods
+
+' Official doc for using `<style>` in PlantUML:
+'   https://plantuml.com/en/style-evolution
+' More useful reference:
+'   https://github.com/plantuml/plantuml/blob/master/skin/plantuml.skin
+' Examples of built-in PlantUML themes can be found here:
+'   https://the-lum.github.io/puml-themes-gallery/
+' Source code for the themes displayed at the above link can be found here:
+'   https://github.com/plantuml/plantuml/tree/master/themes
+<style>
+
+' Common styles for all diagrams
+root {
+	BackgroundColor $github_grey
+	FontColor $light_font_color
+	LineColor $light_font_color
+	LineThickness 2.0
+	RoundCorner 0
+	Shadowing 0.0
+}
+
+' Styles for arrows drawn between elements
+arrow {
+	LineColor MediumSlateBlue
+}
+
+legend {
+	BackgroundColor $dark_purple
+	FontColor $light_font_color
+	LineColor $purple
+}
+
+' Styles for notes
+note {
+	BackgroundColor $blue
+	LineColor $dark_purple
+	FontColor $dark_font_color
+}
+
+' Styles for the circle icons drawn in the top left corner of class boxes
+' If this is moved into the `classDiagram` section, then it won't apply to
+'   the class boxes in class diagrams.
+spot {
+	FontColor $dark_font_color
+	LineColor $dark_font_color
+
+	' Styles specific to types declared with the `class` keyword
+	spotClass {
+		BackgroundColor $class_icon_color
+	}
+
+	' Styles specific to types declared with the `interface` keyword
+	spotInterface {
+		BackgroundColor $interface_icon_color
+	}
+}
+
+' Styles for the diagram title and text in certain other elements
+' For example, this affects the text in component diagrams' components.
+title {
+	FontSize 24
+	FontStyle Bold
+	LineThickness 0.0
+}
+
+' These are custom styles used to mark Class Diagram elements as public
+'   or private. Public elements represent the API that a system exposes
+'   for use by game developers.
+.public {
+	LineColor Salmon
+}
+
+.private {
+	LineColor $dark_purple
+}
+
+' Diagram-specific overrides
+activityDiagram {
+	' Common styles for all elements drawn in the diagram
+	element {
+		BackgroundColor $dark_purple
+		FontColor $light_font_color
+		LineColor $blue
+	}
+
+	' Reset the common styles overridden by the `element` style above
+	legend {
+		BackgroundColor $dark_purple
+		FontColor $light_font_color
+		FontSize 20
+		LineColor $purple
+	}
+
+	note {
+		BackgroundColor $blue
+		LineColor $dark_purple
+		FontColor $dark_font_color
+	}
+
+	' Styles used for the vertical swimlanes
+	swimlane {
+		LineColor $dirty_white
+	}
+}
+
+classDiagram {
+	' Styles for the class boxes themselves
+	class {
+		BackgroundColor $blue
+		FontColor $dark_font_color
+		' Use the private line color as the default for classes
+		LineColor $dark_purple
+	}
+
+	' Styles used for arrows drawn between components
+	arrow {
+		FontColor Lime
+		FontSize 16
+		FontStyle Bold
+	}
+
+	' Styles for the title bar in class boxes
+	header {
+		BackgroundColor $dark_purple
+		FontColor $light_font_color
+	}
+}
+
+componentDiagram {
+	' Common styles for elements drawn on the diagram
+	element {
+		BackgroundColor $dark_purple
+		FontColor $light_font_color
+		FontStyle Plain
+		' Override the font size set by the `title` style so that the text in
+		'   component diagrams' components is smaller than the diagram title.
+		FontSize 16
+		LineColor $blue
+		' This has to be set or else lines in deployment diagrams' components
+		'   do not appear
+		LineThickness 1.0
+	}
+
+	' Reset the common styles overridden by the `element` style above
+	legend {
+		BackgroundColor $dark_purple
+		FontColor $light_font_color
+		FontSize 20
+		LineColor $purple
+	}
+
+	note {
+		BackgroundColor $blue
+		LineColor $dark_purple
+		FontColor $dark_font_color
+	}
+
+	' Styles used for arrows drawn between components
+	' These overrides are used because the component diagrams frequently have
+	'   arrows over the group background color, which makes the default arrow
+	'   styles hard to see.
+	arrow {
+		FontColor Lime
+		FontSize 12
+		LineColor $purple
+		LineThickness 2.0
+	}
+
+	' Styles used for all group types
+	group {
+		BackgroundColor transparent
+		LineColor $blue
+	}
+
+	' Styles for specific group types
+	' For some reason, some styles need to be put here instead of in `group`
+	'   or else they stop applying
+	card, package {
+		FontColor $dark_font_color
+
+		title {
+			FontColor $light_font_color
+		}
+	}
+}
+
+objectDiagram {
+	' Styles for the boxes themselves
+	element {
+		BackgroundColor $blue
+		FontColor $dark_font_color
+		LineColor $dark_purple
+	}
+
+	header {
+		BackgroundColor $dark_purple
+	}
+
+	object {
+		header {
+			' 2023-05-14: This works for objects, but does not work for maps.
+			'   When this style is applied to a map element, it causes the map's
+			'   keys and values to use the same font color as the header. This
+			'   is likely a bug in PlantUML and may be fixed in a newer version.
+			' A GitHub issue has been opened for this:
+			'   https://github.com/plantuml/plantuml/issues/1425
+			FontColor $light_font_color
+		}
+	}
+}
+
+sequenceDiagram {
+	' Styles for the vertical lines drawn between participant boxes
+	lifeLine {
+		BackgroundColor $blue
+		LineColor $blue
+	}
+
+	' Styles for the box drawn at the top and bottom for participants
+	participant {
+		BackgroundColor $dark_purple
+		LineColor $dark_purple
+		FontColor $light_font_color
+	}
+
+	' Styles for the horizontal divider used to separate parts of the diagram
+	separator {
+		BackgroundColor $blue
+		FontColor $dark_font_color
+		LineColor $dark_purple
+	}
+}
+
+stateDiagram {
+	' Common styles for elements drawn on the diagram
+	state {
+		BackgroundColor $dark_purple
+		FontColor $light_font_color
+		LineColor $blue
+
+		title {
+			FontSize 16
+			FontStyle Bold
+		}
+	}
+}
+
+</style>
+
+skinparam {
+	' Adding a `stereotype` block within the `<style>` section did not change
+	'   the font color of the stereotype text. This may be a bug in PlantUML,
+	'   in which case this should be moved into the `<style>` section once it's
+	'   fixed.
+	ClassStereotypeFontColor $light_font_color
+
+	' Cap the maximum line length for sequence diagrams
+	MaxMessageSize 160
+
+	' Cap the maximum line length for class diagrams and notes
+	WrapWidth 320
+
+	' Set the icon background color used for classes that are marked as structs
+	' If there's a way to set the stereotype (called "spot" in the CSS syntax)
+	'   for an element with a custom attribute, then this should be moved into
+	'   the `<style>` section.
+	' Note: This isn't currently working. It's only added here as a reference
+	'   for what works when using a pure skinparam approach in hopes that a
+	'   fix can be found in the future.
+	StereotypeCBackgroundColor<< struct >> $struct_icon_color
+
+	' Use 'S' as the icon character for structs
+	spotChar<< struct >> S
+}
+
+@enduml

@@ -26,3 +26,8 @@ gem "http_parser.rb", "~> 0.6.0", :platforms => [:jruby]
 if RUBY_PLATFORM =~ /linux-musl/
   gem "jekyll-sass-converter", "~> 2.0"
 end
+
+group :jekyll_plugins do
+  gem "jekyll-plantuml", "~>1.4"
+  gem "jekyll-tsc", "=0.0.4"
+end

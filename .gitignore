@@ -354,3 +354,6 @@ assets/js/dist
 # Don't ignore the .vscode since tasks and repository-wide settings should be
 #   tracked by source control
 !.vscode
+
+# Ignore the folder that generated plantuml diagrams are placed in
+uml

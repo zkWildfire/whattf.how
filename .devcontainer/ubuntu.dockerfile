@@ -14,6 +14,8 @@ RUN apt-get update -y && \
 		build-essential \
 		curl \
 		git \
+		graphviz \
+		openjdk-19-jdk-headless \
 		python${PYTHON_VERSION} \
 		python3-pip \
 		ruby-full \
@@ -26,6 +28,17 @@ RUN apt-get update -y && \
 		wget \
 		zip \
 		zlib1g-dev
+
+# Set up plantuml
+# Force calls to plantuml from the jekyll plugin to always use the config
+#   file in the workspace
+RUN wget https://github.com/plantuml/plantuml/releases/download/v1.2023.9/plantuml-1.2023.9.jar \
+		-O /usr/bin/plantuml-real && \
+	echo "#!/usr/bin/env bash" > /usr/bin/plantuml && \
+	echo -n "java -jar /usr/bin/plantuml-real " >> /usr/bin/plantuml && \
+	echo -n "-config '/workspaces/whattf.how/_plantuml/plantuml.conf' " >> /usr/bin/plantuml && \
+	echo "\$@" >> /usr/bin/plantuml && \
+	chmod +x /usr/bin/plantuml
 
 # Create the user
 RUN groupadd --gid $USER_GID $USERNAME && \
@@ -63,6 +76,8 @@ RUN echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc && \
 	echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc && \
 	GEM_HOME=$HOME/gems PATH=$HOME/gems/bin:$PATH gem install \
 		jekyll \
+		jekyll-plantuml \
+		jekyll-tsc \
 		bundler
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules

@@ -53,6 +53,9 @@ jobs:
       - name: Initialize repo
         run: ./init.sh
 
+      - name: Run tests
+        run: npx jest
+
       - name: Build site
         run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
         env:

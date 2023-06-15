@@ -1,0 +1,30 @@
+{
+	"name": "Ubuntu Dev Container",
+	"build": {
+		"dockerfile": "ubuntu.dockerfile",
+		"args": {
+			"USERNAME": "whattf",
+			"USER_UID": "1000",
+			"USER_GID": "1000"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"eamodio.gitlens",
+				"EditorConfig.EditorConfig",
+				"GitHub.copilot",
+				"GitHub.copilot-labs",
+				"jebbs.plantuml",
+				"ms-azuretools.vscode-docker",
+				"ryanluker.vscode-coverage-gutters",
+				"streetsidesoftware.code-spell-checker",
+				"timonwong.shellcheck",
+				"yzhang.markdown-all-in-one"
+			]
+		}
+	},
+	"forwardPorts": [
+		4000
+	]
+}

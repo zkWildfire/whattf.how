@@ -1,5 +1,5 @@
 import ICacheLine from "./CacheLine";
-import IMemory from "../Memory";
+import IMemory from "../Memory/Memory";
 
 /// Cache line that writes directly to main memory when written to.
 export default class WriteThroughCacheLine implements ICacheLine

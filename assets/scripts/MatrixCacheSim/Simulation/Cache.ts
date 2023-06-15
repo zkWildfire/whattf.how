@@ -1,4 +1,4 @@
-import ICacheLine from "./CacheLine";
+import ICacheLine from "./CacheLines/CacheLine";
 
 /// Interface for classes that represent a collection of cache lines.
 export default interface ICache

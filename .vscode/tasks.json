@@ -9,7 +9,8 @@
 			"args": [
 				"exec",
 				"jekyll",
-				"serve"
+				"serve",
+				"--drafts"
 			],
 			"group": "none",
 			"isBackground": true,

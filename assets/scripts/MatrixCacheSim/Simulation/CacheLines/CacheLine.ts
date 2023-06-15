@@ -1,6 +1,15 @@
 /// Interface used to represent a single processor cache line.
 export default interface ICacheLine
 {
+	/// Gets the memory index of the first value in the cache line.
+	get startIndex(): number;
+
+	/// Gets the memory index of the past-the-end value in the cache line.
+	get endIndex(): number;
+
+	/// Gets the size in number of values of the cache line.
+	get size(): number;
+
 	/// Flushes the cache line's values to main memory.
 	flush(): void;
 

@@ -13,6 +13,24 @@ export default class WriteThroughCacheLine implements ICacheLine
 	/// Size of the cache line in number of elements.
 	private readonly _size: number;
 
+	/// Gets the memory index of the first value in the cache line.
+	get startIndex(): number
+	{
+		return this._startingIndex;
+	}
+
+	/// Gets the memory index of the past-the-end value in the cache line.
+	get endIndex(): number
+	{
+		return this._startingIndex + this._size;
+	}
+
+	/// Gets the size in number of values of the cache line.
+	get size(): number
+	{
+		return this._size;
+	}
+
 	/// Constructs a new cache line.
 	/// @param memory Memory instance to use for backing the cache line.
 	/// @param index Index within the memory where the cache line begins.
@@ -55,11 +73,10 @@ export default class WriteThroughCacheLine implements ICacheLine
 	/// @throws RangeError Thrown if the given index is not in the cache line.
 	private checkIndex(index: number): void
 	{
-		const endIndex = this._startingIndex + this._size;
-		if (index < this._startingIndex || index >= endIndex)
+		if (index < this._startingIndex || index >= this.endIndex)
 		{
 			throw new RangeError(`Index ${index} is not in cache line ` +
-				`[${this._startingIndex}, ${endIndex}).`
+				`[${this._startingIndex}, ${this.endIndex}).`
 			);
 		}
 	}

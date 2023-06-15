@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@types/assert": "^1.5.6",
     "strongly-typed-events": "^3.0.9"
   }
 }

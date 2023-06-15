@@ -14,17 +14,35 @@
 			],
 			"group": "none",
 			"isBackground": true,
-			"label": "Serve site",
+			"label": "Serve site (http://localhost:4000)",
 			"problemMatcher": []
 		},
 		{
 			"type": "process",
 			"command": "npx",
 			"args": [
-				"jest"
+				"jest",
+				"--coverage",
+				"--coverageDirectory",
+				".coverage"
 			],
 			"group": "test",
 			"label": "Run tests",
+			"problemMatcher": []
+		},
+		{
+			"type": "process",
+			"command": "python3",
+			"args": [
+				"-m",
+				"http.server"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/.coverage/lcov-report"
+			},
+			"group": "none",
+			"isBackground": true,
+			"label": "Serve coverage report (http://localhost:8000)",
 			"problemMatcher": []
 		}
 	]

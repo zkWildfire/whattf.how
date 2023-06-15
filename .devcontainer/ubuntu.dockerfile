@@ -63,9 +63,8 @@ RUN mkdir /tmp/nvm && \
 	nvm install ${NODE_VERSION} && \
 	nvm alias default ${NODE_VERSION} && \
 	nvm use default && \
-	# Install npm packages
+	# Install tsc globally
 	npm install -g --save-dev \
-		jest \
 		typescript && \
 	# Handle cleanup
 	cd $HOME && \
@@ -75,9 +74,6 @@ RUN mkdir /tmp/nvm && \
 RUN echo 'export GEM_HOME="$HOME/gems"' >> ~/.bashrc && \
 	echo 'export PATH="$HOME/gems/bin:$PATH"' >> ~/.bashrc && \
 	GEM_HOME=$HOME/gems PATH=$HOME/gems/bin:$PATH gem install \
-		jekyll \
-		jekyll-plantuml \
-		jekyll-tsc \
 		bundler
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules

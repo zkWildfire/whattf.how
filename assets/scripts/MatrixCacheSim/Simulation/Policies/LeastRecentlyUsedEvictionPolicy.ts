@@ -7,16 +7,16 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 	/// The size of the cache, in number of cache lines.
 	private readonly _cacheSize: number;
 
+	/// The last time each cache line was accessed.
+	/// If a cache line is unloaded or hasn't been loaded yet, the last access
+	///   time will be -1.
+	private readonly _lastAccessTimes: number[];
+
 	/// Counter used to keep track of when cache lines are accessed.
 	/// The counter is incremented each time a cache line event occurs (e.g. a
 	///   cache line is accessed, loaded, or evicted). This counter does not
 	///   record actual timestamps but rather simulation event "timestamps".
 	private _time: number;
-
-	/// The last time each cache line was accessed.
-	/// If a cache line is unloaded or hasn't been loaded yet, the last access
-	///   time will be -1.
-	private readonly _lastAccessTimes: number[];
 
 	/// Initializes the policy.
 	/// @param cacheSize The size of the cache, in number of cache lines.

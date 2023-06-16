@@ -130,11 +130,11 @@ test("Read new address causes cache line loaded event", () =>
 
 	expect(test.cacheLineLoadedEventCount).toBe(1);
 	expect(test.lastCacheLineLoadedSender).toBe(simulator);
-	expect(test.lastCacheLineLoadedEventArgs).toStrictEqual({
+	expect(test.lastCacheLineLoadedEventArgs?.index).toBe(
 		// This should be the index of the cache line within the cache, not
 		//   the index of the memory address
-		index: 0
-	});
+		0
+	);
 	expect(test.cacheLineEvictedEventCount).toBe(0);
 });
 
@@ -150,11 +150,11 @@ test("Read loaded address does not cause cache line loaded event", () =>
 	//   a new cache line to be loaded
 	expect(test.cacheLineLoadedEventCount).toBe(1);
 	expect(test.lastCacheLineLoadedSender).toBe(simulator);
-	expect(test.lastCacheLineLoadedEventArgs).toStrictEqual({
+	expect(test.lastCacheLineLoadedEventArgs?.index).toBe(
 		// This should be the index of the cache line within the cache, not
 		//   the index of the memory address
-		index: 0
-	});
+		0
+	);
 	expect(test.cacheLineEvictedEventCount).toBe(0);
 });
 
@@ -167,11 +167,11 @@ test("Read different address in loaded cache line does not cause cache line load
 
 	expect(test.cacheLineLoadedEventCount).toBe(1);
 	expect(test.lastCacheLineLoadedSender).toBe(simulator);
-	expect(test.lastCacheLineLoadedEventArgs).toStrictEqual({
+	expect(test.lastCacheLineLoadedEventArgs?.index).toBe(
 		// This should be the index of the cache line within the cache, not
 		//   the index of the memory address
-		index: 0
-	});
+		0
+	);
 	expect(test.cacheLineEvictedEventCount).toBe(0);
 });
 
@@ -183,11 +183,11 @@ test("Write new address causes cache line loaded event", () =>
 
 	expect(test.cacheLineLoadedEventCount).toBe(1);
 	expect(test.lastCacheLineLoadedSender).toBe(simulator);
-	expect(test.lastCacheLineLoadedEventArgs).toStrictEqual({
+	expect(test.lastCacheLineLoadedEventArgs?.index).toBe(
 		// This should be the index of the cache line within the cache, not
 		//   the index of the memory address
-		index: 0
-	});
+		0
+	);
 	expect(test.cacheLineEvictedEventCount).toBe(0);
 });
 
@@ -203,11 +203,11 @@ test("Write loaded address does not cause cache line loaded event", () =>
 	//   cause a new cache line to be loaded
 	expect(test.cacheLineLoadedEventCount).toBe(1);
 	expect(test.lastCacheLineLoadedSender).toBe(simulator);
-	expect(test.lastCacheLineLoadedEventArgs).toStrictEqual({
+	expect(test.lastCacheLineLoadedEventArgs?.index).toBe(
 		// This should be the index of the cache line within the cache, not
 		//   the index of the memory address
-		index: 0
-	});
+		0
+	);
 	expect(test.cacheLineEvictedEventCount).toBe(0);
 });
 
@@ -220,11 +220,11 @@ test("Write different address in loaded cache line does not cause cache line loa
 
 	expect(test.cacheLineLoadedEventCount).toBe(1);
 	expect(test.lastCacheLineLoadedSender).toBe(simulator);
-	expect(test.lastCacheLineLoadedEventArgs).toStrictEqual({
+	expect(test.lastCacheLineLoadedEventArgs?.index).toBe(
 		// This should be the index of the cache line within the cache, not
 		//   the index of the memory address
-		index: 0
-	});
+		0
+	);
 	expect(test.cacheLineEvictedEventCount).toBe(0);
 });
 
@@ -237,10 +237,12 @@ test("Read new address causes memory accessed event", () =>
 
 	expect(test.memoryAccessedEventCount).toBe(1);
 	expect(test.lastMemoryAccessedSender).toBe(simulator);
-	expect(test.lastMemoryAccessedEventArgs).toStrictEqual({
-		index: INDEX,
-		isHit: false
-	});
+	expect(test.lastMemoryAccessedEventArgs?.index).toBe(
+		INDEX
+	);
+	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
+		false
+	);
 });
 
 test("Read loaded address causes memory accessed event", () =>
@@ -254,10 +256,12 @@ test("Read loaded address causes memory accessed event", () =>
 
 	expect(test.memoryAccessedEventCount).toBe(2);
 	expect(test.lastMemoryAccessedSender).toBe(simulator);
-	expect(test.lastMemoryAccessedEventArgs).toStrictEqual({
-		index: 2,
-		isHit: true
-	});
+	expect(test.lastMemoryAccessedEventArgs?.index).toBe(
+		2
+	);
+	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
+		true
+	);
 });
 
 test("Write new address causes memory accessed event", () =>
@@ -269,10 +273,12 @@ test("Write new address causes memory accessed event", () =>
 
 	expect(test.memoryAccessedEventCount).toBe(1);
 	expect(test.lastMemoryAccessedSender).toBe(simulator);
-	expect(test.lastMemoryAccessedEventArgs).toStrictEqual({
-		index: INDEX,
-		isHit: false
-	});
+	expect(test.lastMemoryAccessedEventArgs?.index).toBe(
+		INDEX
+	);
+	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
+		false
+	);
 });
 
 test("Write loaded address causes memory accessed event", () =>
@@ -286,10 +292,12 @@ test("Write loaded address causes memory accessed event", () =>
 
 	expect(test.memoryAccessedEventCount).toBe(2);
 	expect(test.lastMemoryAccessedSender).toBe(simulator);
-	expect(test.lastMemoryAccessedEventArgs).toStrictEqual({
-		index: 2,
-		isHit: true
-	});
+	expect(test.lastMemoryAccessedEventArgs?.index).toBe(
+		2
+	);
+	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
+		true
+	);
 });
 
 test("Reading new address when cache is full causes cache line evicted event", () =>
@@ -304,11 +312,11 @@ test("Reading new address when cache is full causes cache line evicted event", (
 	expect(test.cacheLineLoadedEventCount).toBe(2);
 	expect(test.cacheLineEvictedEventCount).toBe(1);
 	expect(test.lastCacheLineEvictedSender).toBe(simulator);
-	expect(test.lastCacheLineEvictedEventArgs).toStrictEqual({
+	expect(test.lastCacheLineEvictedEventArgs?.index).toBe(
 		// This should be the index of the cache line within the cache, not
 		//   the index of the memory address
-		index: 0
-	});
+		0
+	);
 });
 
 test("Writing new address when cache is full causes cache line evicted event", () =>
@@ -323,11 +331,11 @@ test("Writing new address when cache is full causes cache line evicted event", (
 	expect(test.cacheLineLoadedEventCount).toBe(2);
 	expect(test.cacheLineEvictedEventCount).toBe(1);
 	expect(test.lastCacheLineEvictedSender).toBe(simulator);
-	expect(test.lastCacheLineEvictedEventArgs).toStrictEqual({
+	expect(test.lastCacheLineEvictedEventArgs?.index).toBe(
 		// This should be the index of the cache line within the cache, not
 		//   the index of the memory address
-		index: 0
-	});
+		0
+	);
 });
 
 test("Validate unchanged memory fails", () =>

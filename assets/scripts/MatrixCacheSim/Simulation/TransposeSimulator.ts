@@ -117,10 +117,7 @@ export default class TransposeSimulator implements ISimulator
 			const cacheLine = this._cache.getCacheLine(index);
 			this._onMemoryAccessed.dispatch(
 				this,
-				{
-					index: index,
-					isHit: true
-				}
+				new OnMemoryAccessedEventArgs(index, true)
 			);
 			return cacheLine;
 		}
@@ -135,23 +132,16 @@ export default class TransposeSimulator implements ISimulator
 		{
 			this._onCacheLineEvicted.dispatch(
 				this,
-				{
-					index: result.index
-				}
+				new OnCacheLineEvictedEventArgs(result.index)
 			);
 		}
 		this._onCacheLineLoaded.dispatch(
 			this,
-			{
-				index: result.index
-			}
+			new OnCacheLineLoadedEventArgs(result.index)
 		);
 		this._onMemoryAccessed.dispatch(
 			this,
-			{
-				index: index,
-				isHit: false
-			}
+			new OnMemoryAccessedEventArgs(index, false)
 		);
 
 		return cacheLine;

@@ -184,6 +184,7 @@ exclude:
   - package*.json
   - "*.test.ts"
   - "*.test.js"
+  - .coverage
 
 jekyll-archives:
   enabled: [categories, tags]

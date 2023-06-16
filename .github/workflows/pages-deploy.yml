@@ -54,7 +54,7 @@ jobs:
         run: ./init.sh
 
       - name: Run tests
-        run: npx jest
+        run: npx jest --coverage --coverageDirectory .coverage
 
       - name: Build site
         run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"

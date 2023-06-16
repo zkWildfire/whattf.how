@@ -21,6 +21,11 @@ export default interface IPlaybackController
 	/// Event raised when a memory location accessed event is processed.
 	get OnMemoryAccessed(): ISimpleEvent<OnMemoryAccessedEventArgs>;
 
+	/// Returns a promise that resolves when all events have been emitted.
+	/// @throws Error Thrown if the simulation was not started.
+	/// @returns A promise that resolves when all events have been emitted.
+	waitForSimulation(): Promise<void>;
+
 	/// Begins emitting simulation events.
 	/// @throws Error Thrown if the simulation is already running.
 	startVisualization(): void;

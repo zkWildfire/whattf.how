@@ -126,6 +126,19 @@ export default class IntervalPlaybackController implements IPlaybackController
 			new SimpleEventDispatcher<OnMemoryAccessedEventArgs>();
 	}
 
+	/// Returns a promise that resolves when all events have been emitted.
+	/// @throws Error Thrown if the simulation was not started.
+	/// @returns A promise that resolves when all events have been emitted.
+	public waitForSimulation(): Promise<void>
+	{
+		if (this._simulationPromise === null)
+		{
+			throw new Error("Simulation was not started.");
+		}
+
+		return this._simulationPromise;
+	}
+
 	/// Begins emitting simulation events.
 	/// @throws Error Thrown if the simulation is already running.
 	public startVisualization(): void
@@ -190,7 +203,7 @@ export default class IntervalPlaybackController implements IPlaybackController
 			this.emitEvent(simulationEvent);
 
 			// Move to the next event
-			++this._nextEventIndex;
+			this._nextEventIndex++;
 		}
 
 		// Signal that the simulation has finished

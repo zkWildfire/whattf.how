@@ -53,7 +53,7 @@ test("Load cache line with empty space", () =>
 
 	expect(loadResult.index).toBeGreaterThanOrEqual(0);
 	expect(loadResult.index).toBeLessThan(CACHE_SIZE);
-	expect(loadResult.cacheLineEvicted).toBe(false);
+	expect(loadResult.evictedCacheLine).toBeNull();
 });
 
 test("Load cache line evicts existing line if full", () =>
@@ -85,7 +85,7 @@ test("Load cache line evicts existing line if full", () =>
 
 	expect(loadResult.index).toBeGreaterThanOrEqual(0);
 	expect(loadResult.index).toBeLessThan(CACHE_SIZE);
-	expect(loadResult.cacheLineEvicted).toBe(true);
+	expect(loadResult.evictedCacheLine).not.toBeNull();
 });
 
 test("Is present returns false if never loaded", () =>

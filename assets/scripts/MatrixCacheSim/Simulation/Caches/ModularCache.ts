@@ -77,7 +77,7 @@ export default class ModularCache implements ICache
 		// Keep track of where the new cache line is loaded and which cache
 		//   line was evicted, if any
 		var cacheLineIndex = -1;
-		var evictedCacheLineIndex: number | null = null;
+		var evictedCacheLine: ICacheLine | null = null;
 
 		// Figure out where the cache line may be placed
 		const indices = this._placementPolicy.getIndices(cacheLine);
@@ -99,13 +99,12 @@ export default class ModularCache implements ICache
 			cacheLineIndex = this._evictionPolicy.getCacheLineToEvict(indices);
 
 			// Evict the cache line
-			const evictedCacheLine = this._cacheLines[cacheLineIndex];
+			evictedCacheLine = this._cacheLines[cacheLineIndex];
 			assert(evictedCacheLine !== null);
 			this._cacheLines[cacheLineIndex] = cacheLine;
 
 			evictedCacheLine.flush();
 			this._evictionPolicy.onCacheLineEvicted(cacheLineIndex);
-			evictedCacheLineIndex = cacheLineIndex;
 		}
 
 		// Finish loading the cache line
@@ -118,7 +117,7 @@ export default class ModularCache implements ICache
 
 		return {
 			index: cacheLineIndex,
-			cacheLineEvicted: evictedCacheLineIndex !== null
+			evictedCacheLine: evictedCacheLine
 		};
 	}
 

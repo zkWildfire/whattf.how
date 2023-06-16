@@ -128,16 +128,24 @@ export default class TransposeSimulator implements ISimulator
 		const result = this._cache.loadCacheLine(cacheLine);
 
 		// Broadcast events as necessary
-		if (result.cacheLineEvicted)
+		if (result.evictedCacheLine !== null)
 		{
 			this._onCacheLineEvicted.dispatch(
 				this,
-				new OnCacheLineEvictedEventArgs(result.index)
+				new OnCacheLineEvictedEventArgs(
+					result.index,
+					result.evictedCacheLine.startIndex,
+					result.evictedCacheLine.size
+				)
 			);
 		}
 		this._onCacheLineLoaded.dispatch(
 			this,
-			new OnCacheLineLoadedEventArgs(result.index)
+			new OnCacheLineLoadedEventArgs(
+				result.index,
+				cacheLine.startIndex,
+				cacheLine.size
+			)
 		);
 		this._onMemoryAccessed.dispatch(
 			this,

@@ -70,7 +70,7 @@ test("Run visualization with single event", async () =>
 
 	// Generate events for the test
 	const INDEX = 1;
-	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(INDEX));
+	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(INDEX, 0, 0));
 
 	// Bind to controller events
 	let eventEmitted = false;
@@ -88,7 +88,7 @@ test("Run visualization with single event", async () =>
 	// Verify the results
 	expect(eventEmitted).toBe(true);
 	expect(simulationEvent).not.toBeNull();
-	expect(simulationEvent!.index).toBe(INDEX);
+	expect(simulationEvent!.cacheIndex).toBe(INDEX);
 });
 
 test("Run visualization with multiple events", async () =>
@@ -98,8 +98,8 @@ test("Run visualization with multiple events", async () =>
 	const controller = new IntervalPlaybackController(eventBuffer, INTERVAL);
 
 	// Generate events for the test
-	const cacheLineLoadedEvent = new OnCacheLineLoadedEventArgs(1);
-	const cacheLineEvictedEvent = new OnCacheLineEvictedEventArgs(2);
+	const cacheLineLoadedEvent = new OnCacheLineLoadedEventArgs(1, 0, 0);
+	const cacheLineEvictedEvent = new OnCacheLineEvictedEventArgs(2, 0, 0);
 	const memoryAccessedEvent = new OnMemoryAccessedEventArgs(3, false);
 	eventBuffer.onCacheLineLoaded(cacheLineLoadedEvent);
 	eventBuffer.onCacheLineEvicted(cacheLineEvictedEvent);
@@ -147,7 +147,7 @@ test("Visualization speed matches expected", async () =>
 	// Generate events for the test
 	for (let i = 0; i < COUNT; i++)
 	{
-		eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(i));
+		eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(i, 0, 0));
 	}
 
 	// Track how long the test takes to execute
@@ -171,8 +171,8 @@ test("Start already running visualization throws", () =>
 	const controller = new IntervalPlaybackController(eventBuffer, 100);
 
 	// Generate some events so the test doesn't finish immediately
-	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(1));
-	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(2));
+	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(1, 0, 0));
+	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(2, 0, 0));
 
 	controller.startVisualization();
 	expect(() => controller.startVisualization()).toThrow(Error);
@@ -185,8 +185,8 @@ test("Stop visualization early", async () =>
 	const controller = new IntervalPlaybackController(eventBuffer, INTERVAL);
 
 	// Generate some events so the test doesn't finish immediately
-	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(1));
-	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(2));
+	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(1, 0, 0));
+	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(2, 0, 0));
 
 	// Run the test
 	let startTime = Date.now();
@@ -208,8 +208,8 @@ test("Stop visualization after all events emitted", async () =>
 	const controller = new IntervalPlaybackController(eventBuffer, INTERVAL);
 
 	// Generate some events so the test doesn't finish immediately
-	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(1));
-	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(2));
+	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(1, 0, 0));
+	eventBuffer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(2, 0, 0));
 
 	// Run the test
 	controller.startVisualization();

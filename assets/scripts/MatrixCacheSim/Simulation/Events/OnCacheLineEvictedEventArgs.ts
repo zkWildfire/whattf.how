@@ -5,20 +5,34 @@ import ISimulationEventVisitor from "./SimulationEventVisitor";
 export default class OnCacheLineEvictedEventArgs implements ISimulationEvent
 {
 	/// Index within the cache where the cache line was previously loaded.
-	public readonly index: number;
+	public readonly cacheIndex: number;
+
+	/// Index of the memory location that the cache line starts at.
+	public readonly memoryIndex: number;
+
+	/// Size of the cache line in number of elements.
+	public readonly size: number;
 
 	/// Initializes a new instance of the OnCacheLineEvictedEventArgs class.
-	/// @param index Index within the cache where the cache line was previously
-	///   loaded.
-	public constructor(index: number)
+	/// @param cacheIndex Index within the cache where the cache line was loaded.
+	public constructor(
+		cacheIndex: number,
+		memoryIndex: number,
+		size: number)
 	{
-		this.index = index;
+		this.cacheIndex = cacheIndex;
+		this.memoryIndex = memoryIndex;
+		this.size = size;
 	}
 
 	/// Accepts the specified simulation event visitor.
 	/// @param visitor Simulation event visitor to accept.
 	public accept(visitor: ISimulationEventVisitor): void
 	{
-		visitor.visitCacheLineEvictedEvent(this.index);
+		visitor.visitCacheLineEvictedEvent(
+			this.cacheIndex,
+			this.memoryIndex,
+			this.size
+		);
 	}
 }

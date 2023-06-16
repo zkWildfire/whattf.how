@@ -1,7 +1,8 @@
 import ArrayMemory from "../Memory/ArrayMemory";
 import WriteThroughCacheLine from "./WriteThroughCacheLine";
 
-test("PropertiesMatchCtorArgs", () => {
+test("PropertiesMatchCtorArgs", () =>
+{
 	const INDEX = 1;
 	const SIZE = 3;
 
@@ -13,7 +14,8 @@ test("PropertiesMatchCtorArgs", () => {
 	expect(cacheLine.size).toBe(SIZE);
 })
 
-test("Contains", () => {
+test("Contains", () =>
+{
 	const memory = new ArrayMemory([1, 2, 3, 4, 5]);
 	const cacheLine = new WriteThroughCacheLine(memory, 1, 3);
 
@@ -24,7 +26,8 @@ test("Contains", () => {
 	expect(cacheLine.contains(4)).toBe(false);
 });
 
-test("Read value in cache line", () => {
+test("Read value in cache line", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 	const cacheLine = new WriteThroughCacheLine(memory, 1, 3);
@@ -33,7 +36,8 @@ test("Read value in cache line", () => {
 	expect(cacheLine.read(INDEX)).toBe(VALUES[INDEX]);
 });
 
-test("Read value not in cache line", () => {
+test("Read value not in cache line", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 	const cacheLine = new WriteThroughCacheLine(memory, 1, 3);
@@ -42,7 +46,8 @@ test("Read value not in cache line", () => {
 	expect(() => cacheLine.read(INDEX)).toThrow(RangeError);
 });
 
-test("Write value in cache line", () => {
+test("Write value in cache line", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 	const cacheLine = new WriteThroughCacheLine(memory, 1, 3);
@@ -55,7 +60,8 @@ test("Write value in cache line", () => {
 	expect(memory.read(INDEX)).toBe(VALUE);
 });
 
-test("Write value not in cache line", () => {
+test("Write value not in cache line", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 	const cacheLine = new WriteThroughCacheLine(memory, 1, 3);
@@ -65,7 +71,8 @@ test("Write value not in cache line", () => {
 	expect(() => cacheLine.write(INDEX, VALUE)).toThrow(RangeError);
 });
 
-test("OnCacheLineAccessed event raised when reading value in cache line", () => {
+test("OnCacheLineAccessed event raised when reading value in cache line", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 	const cacheLine = new WriteThroughCacheLine(memory, 1, 3);
@@ -83,7 +90,8 @@ test("OnCacheLineAccessed event raised when reading value in cache line", () => 
 	expect(eventRaised).toBe(true);
 });
 
-test("OnCacheLineAccessed event raised when writing value in cache line", () => {
+test("OnCacheLineAccessed event raised when writing value in cache line", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 	const cacheLine = new WriteThroughCacheLine(memory, 1, 3);

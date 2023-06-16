@@ -2,7 +2,8 @@ import WriteThroughCacheLine from "../CacheLines/WriteThroughCacheLine";
 import ArrayMemory from "../Memory/ArrayMemory";
 import DirectMappedPlacementPolicy from "./DirectMappedPlacementPolicy";
 
-test("Place cache line with low starting index", () => {
+test("Place cache line with low starting index", () =>
+{
 	const CACHE_LINE_SIZE = 2;
 	const CACHE_SIZE = 4;
 	const memory = new ArrayMemory(
@@ -26,7 +27,8 @@ test("Place cache line with low starting index", () => {
 	}
 });
 
-test("Place cache line with high starting index", () => {
+test("Place cache line with high starting index", () =>
+{
 	const CACHE_LINE_SIZE = 2;
 	const CACHE_SIZE = 4;
 	const memory = new ArrayMemory(

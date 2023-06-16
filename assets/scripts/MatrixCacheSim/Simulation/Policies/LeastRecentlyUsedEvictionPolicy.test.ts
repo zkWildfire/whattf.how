@@ -1,6 +1,7 @@
 import LeastRecentlyUsedEvictionPolicy from "./LeastRecentlyUsedEvictionPolicy";
 
-test("Evict oldest cache line", () => {
+test("Evict oldest cache line", () =>
+{
 	const policy = new LeastRecentlyUsedEvictionPolicy(2);
 
 	// The policy expects that cache lines must be loaded before they can be
@@ -14,7 +15,8 @@ test("Evict oldest cache line", () => {
 	expect(policy.getCacheLineToEvict([0, 1])).toBe(1);
 });
 
-test("Evict with oldest cache line not eligible", () => {
+test("Evict with oldest cache line not eligible", () =>
+{
 	const policy = new LeastRecentlyUsedEvictionPolicy(3);
 
 	// The policy expects that cache lines must be loaded before they can be
@@ -30,7 +32,8 @@ test("Evict with oldest cache line not eligible", () => {
 	expect(policy.getCacheLineToEvict([0, 2])).toBe(2);
 });
 
-test("Evicted cache line not eligible to be evicted again", () => {
+test("Evicted cache line not eligible to be evicted again", () =>
+{
 	const policy = new LeastRecentlyUsedEvictionPolicy(3);
 
 	// The policy expects that cache lines must be loaded before they can be

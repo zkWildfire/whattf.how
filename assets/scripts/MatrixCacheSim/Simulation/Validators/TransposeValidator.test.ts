@@ -1,7 +1,8 @@
 import ArrayMemory from "../Memory/ArrayMemory";
 import TransposeValidator from "./TransposeValidator";
 
-test("Initialize memory generates expected pattern", () => {
+test("Initialize memory generates expected pattern", () =>
+{
 	const X = 2;
 	const Y = 2;
 	const memory = new ArrayMemory(new Array<number>(X * Y).fill(0));
@@ -22,7 +23,8 @@ test("Initialize memory generates expected pattern", () => {
 	expect(memory.read(3)).toBe(3);
 });
 
-test("Validate returns errors for initial matrix", () => {
+test("Validate returns errors for initial matrix", () =>
+{
 	const X = 2;
 	const Y = 2;
 	const memory = new ArrayMemory(new Array<number>(X * Y).fill(0));
@@ -34,7 +36,8 @@ test("Validate returns errors for initial matrix", () => {
 	expect(validator.validateMemory(memory).length).toBeGreaterThan(0);
 });
 
-test("Validate returns no errors for transposed matrix", () => {
+test("Validate returns no errors for transposed matrix", () =>
+{
 	const X = 2;
 	const Y = 2;
 	const memory = new ArrayMemory(new Array<number>(X * Y).fill(0));

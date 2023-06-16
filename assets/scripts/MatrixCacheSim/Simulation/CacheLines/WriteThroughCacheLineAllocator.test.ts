@@ -1,7 +1,8 @@
 import ArrayMemory from '../Memory/ArrayMemory';
 import WriteThroughCacheLineAllocator from './WriteThroughCacheLineAllocator';
 
-test("Create aligned cache line", () => {
+test("Create aligned cache line", () =>
+{
 	const VALUES = [1, 2, 3, 4];
 	const INDEX = 2;
 	const CACHE_LINE_SIZE = 2;
@@ -17,7 +18,8 @@ test("Create aligned cache line", () => {
 	expect(cacheLine.size).toBe(CACHE_LINE_SIZE);
 });
 
-test("Create unaligned cache line", () => {
+test("Create unaligned cache line", () =>
+{
 	const VALUES = [1, 2, 3, 4];
 	const INDEX = 1;
 	const CACHE_LINE_SIZE = 2;

@@ -1,6 +1,7 @@
 import ArrayMemory from "./ArrayMemory";
 
-test("Read valid index", () => {
+test("Read valid index", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 	for (let i = 0; i < VALUES.length; ++i)
@@ -9,7 +10,8 @@ test("Read valid index", () => {
 	}
 });
 
-test("Write to memory", () => {
+test("Write to memory", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 
@@ -20,7 +22,8 @@ test("Write to memory", () => {
 	expect(memory.read(INDEX)).toBe(VALUE);
 });
 
-test("Read invalid index", () => {
+test("Read invalid index", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 
@@ -28,7 +31,8 @@ test("Read invalid index", () => {
 	expect(() => memory.read(INDEX)).toThrow(RangeError);
 });
 
-test("Write invalid index", () => {
+test("Write invalid index", () =>
+{
 	const VALUES = [1, 2, 3, 4, 5];
 	const memory = new ArrayMemory(VALUES);
 

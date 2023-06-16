@@ -29,7 +29,8 @@ export default class DirectMappedPlacementPolicy implements IPlacementPolicy
 
 		// Each cache line is mapped to exactly one index
 		return [
-			cacheLine.startIndex % this._cacheSize
+			Math.floor(cacheLine.startIndex / this._cacheLineSize) %
+				this._cacheSize
 		];
 	}
 }

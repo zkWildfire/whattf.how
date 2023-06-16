@@ -44,7 +44,8 @@ export default class ModularCache implements ICache
 		evictionPolicy: IEvictionPolicy)
 	{
 		this._lineSize = lineSize;
-		this._cacheLines = new Array<ICacheLine | null>(totalLineCount);
+		this._cacheLines = new Array<ICacheLine | null>(totalLineCount)
+			.fill(null);
 		this._placementPolicy = placementPolicy;
 		this._evictionPolicy = evictionPolicy;
 	}
@@ -56,11 +57,7 @@ export default class ModularCache implements ICache
 	public getCacheLine(index: number): ICacheLine
 	{
 		const cacheLine = this.tryGetCacheLine(index);
-		if (cacheLine === null)
-		{
-			throw new Error("Cache line not present.");
-		}
-
+		assert(cacheLine !== null);
 		return cacheLine;
 	}
 

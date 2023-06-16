@@ -77,13 +77,24 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 			assert(cacheLineIndex >= 0 && cacheLineIndex < this._cacheSize);
 		});
 
+		// This will always be higher than any actual last access time
+		let lowestLastAccessTime = this._time + 1;
+
 		// Find the index with the lowest last access time
-		let cacheLineToEvict = cacheLineIndices[0];
-		let lowestLastAccessTime = this._lastAccessTimes[cacheLineToEvict];
-		for (let i = 1; i < cacheLineIndices.length; i++)
+		let cacheLineToEvict = -1;
+		for (let i = 0; i < cacheLineIndices.length; i++)
 		{
 			const cacheLineIndex = cacheLineIndices[i];
 			const lastAccessTime = this._lastAccessTimes[cacheLineIndex];
+
+			// Ignore cache lines that aren't loaded
+			// This should never occur in practice, but better safe than sorry
+			if (lastAccessTime < 0)
+			{
+				continue;
+			}
+
+			// Keep track of the cache line with the lowest access time
 			if (lastAccessTime < lowestLastAccessTime)
 			{
 				cacheLineToEvict = cacheLineIndex;
@@ -91,6 +102,9 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 			}
 		}
 
+		// This should always be valid at this point since this method should
+		//   never be called if no cache lines are loaded
+		assert(cacheLineToEvict >= 0 && cacheLineToEvict < this._cacheSize);
 		return cacheLineToEvict;
 	}
 }

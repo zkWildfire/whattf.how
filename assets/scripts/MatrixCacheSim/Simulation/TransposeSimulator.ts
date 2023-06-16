@@ -10,7 +10,7 @@ import { EventDispatcher, IEvent } from "ste-events";
 import IMemoryValidator from "./Validators/MemoryValidator";
 
 /// Simulator used for the matrix transpose demo.
-export default class TransposeSimulator
+export default class TransposeSimulator implements ISimulator
 {
 	/// Field backing the `OnCacheLineLoaded` event.
 	private readonly _onCacheLineLoaded =

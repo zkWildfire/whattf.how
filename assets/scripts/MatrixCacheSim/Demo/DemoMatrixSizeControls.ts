@@ -7,28 +7,37 @@ import assert from "assert";
 export default class DemoMatrixCacheSizeControls implements IMatrixSizeControls
 {
 	/// ID of the button element that sets the matrix size to 32x32.
-	private readonly BUTTON_32X32_ID = "matrix-size-32x32";
+	public static readonly BUTTON_32X32_ID = "matrix-size-32x32";
 
 	/// ID of the button element that sets the matrix size to 64x64.
-	private readonly BUTTON_64X64_ID = "matrix-size-64x64";
+	public static readonly BUTTON_64X64_ID = "matrix-size-64x64";
 
 	/// ID of the button element that sets the matrix size to 63x63.
-	private readonly BUTTON_63X63_ID = "matrix-size-63x63";
+	public static readonly BUTTON_63X63_ID = "matrix-size-63x63";
+
+	/// List of all button IDs that this class manages.
+	public static readonly BUTTON_IDS = [
+		DemoMatrixCacheSizeControls.BUTTON_32X32_ID,
+		DemoMatrixCacheSizeControls.BUTTON_64X64_ID,
+		DemoMatrixCacheSizeControls.BUTTON_63X63_ID
+	]
 
 	/// CSS to use for all buttons.
-	private readonly BUTTON_CSS = "btn col-auto rounded-0";
+	public static readonly BUTTON_CSS = "btn col-2 rounded-0";
 
 	/// CSS to use only on the active button.
-	private readonly ACTIVE_BUTTON_CSS = "btn-primary";
+	public static readonly ACTIVE_BUTTON_CSS =
+		`${this.BUTTON_CSS} btn-primary`;
 
 	/// CSS to use only on inactive buttons.
-	private readonly INACTIVE_BUTTON_CSS = "btn-outline-primary";
+	public static readonly INACTIVE_BUTTON_CSS =
+		`${this.BUTTON_CSS} btn-outline-primary`;
 
 	/// Mappings of each button to the matrix size it sets.
 	private readonly _buttonToSize: Map<string, [number, number]> = new Map([
-		[this.BUTTON_32X32_ID, [32, 32]],
-		[this.BUTTON_64X64_ID, [64, 64]],
-		[this.BUTTON_63X63_ID, [63, 63]]
+		[DemoMatrixCacheSizeControls.BUTTON_32X32_ID, [32, 32]],
+		[DemoMatrixCacheSizeControls.BUTTON_64X64_ID, [64, 64]],
+		[DemoMatrixCacheSizeControls.BUTTON_63X63_ID, [63, 63]]
 	]);
 
 	/// Field backing the `OnMatrixSizeChanged` event.
@@ -36,13 +45,14 @@ export default class DemoMatrixCacheSizeControls implements IMatrixSizeControls
 		new SimpleEventDispatcher<OnMatrixSizeChangedEventArgs>();
 
 	/// ID of the currently active button.
-	private _activeButtonId: string = this.BUTTON_32X32_ID;
+	private _activeButtonId: string =
+		DemoMatrixCacheSizeControls.BUTTON_32X32_ID;
 
 	/// Currently selected matrix size.
 	private _matrixSize: [number, number] = [32, 32];
 
 	/// Map of button IDs to their corresponding elements.
-	private readonly _buttons: Map<string, HTMLButtonElement> = new Map();
+	private readonly _buttonCallbacks: Map<string, (css: string) => void>;
 
 	/// Event raised when the matrix size should change.
 	get OnMatrixSizeChanged(): ISimpleEvent<OnMatrixSizeChangedEventArgs>
@@ -58,29 +68,29 @@ export default class DemoMatrixCacheSizeControls implements IMatrixSizeControls
 	}
 
 	/// Initializes the matrix size controls.
-	constructor()
+	/// @param updateButtonCssCallbacks Callbacks to invoke when a button's CSS
+	///   should be updated. This map must be indexed by each button ID. Each
+	///   callback will be passed the CSS to use for the corresponding button.
+	///   An entry must exist in this map for each button ID defined in this
+	///   class.
+	constructor(updateButtonCssCallbacks: Map<string, (css: string) => void>)
 	{
-		// Find each button element and add it to the map.
-		for (const [buttonId, size] of this._buttonToSize)
+		// Make sure each of the buttons has a corresponding callback
+		for (const buttonId of DemoMatrixCacheSizeControls.BUTTON_IDS)
 		{
-			const button = document.getElementById(buttonId) as HTMLButtonElement;
-			assert(button != null, `Could not find button with ID '${buttonId}'.`);
-			this._buttons.set(buttonId, button);
-
-			// Add a click event listener to each button.
-			button.addEventListener("click", () =>
-			{
-				this.onButtonClick(buttonId);
-			});
+			assert(
+				updateButtonCssCallbacks.has(buttonId),
+				`No callback found for button ID '${buttonId}'.`
+			);
 		}
 
-		// Update the button CSS using the initial state of this class
+		this._buttonCallbacks = updateButtonCssCallbacks;
 		this.updateButtonCss();
 	}
 
 	/// Callback invoked when a button is clicked.
 	/// @param buttonId ID of the button that was clicked.
-	private onButtonClick(buttonId: string): void
+	public onButtonClick(buttonId: string): void
 	{
 		// Update the active button ID
 		this._activeButtonId = buttonId;
@@ -98,19 +108,17 @@ export default class DemoMatrixCacheSizeControls implements IMatrixSizeControls
 	}
 
 	/// Updates all matrix size control elements' CSS.
-	private updateButtonCss(): void
+	public updateButtonCss(): void
 	{
-		for (const [buttonId, button] of this._buttons)
+		for (const [buttonId, setClasses] of this._buttonCallbacks)
 		{
 			if (buttonId === this._activeButtonId)
 			{
-				button.className =
-					`${this.BUTTON_CSS} ${this.ACTIVE_BUTTON_CSS}`;
+				setClasses(DemoMatrixCacheSizeControls.ACTIVE_BUTTON_CSS);
 			}
 			else
 			{
-				button.className =
-					`${this.BUTTON_CSS} ${this.INACTIVE_BUTTON_CSS}`;
+				setClasses(DemoMatrixCacheSizeControls.INACTIVE_BUTTON_CSS);
 			}
 		}
 	}

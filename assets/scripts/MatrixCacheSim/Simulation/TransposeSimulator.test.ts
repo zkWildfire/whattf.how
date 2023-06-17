@@ -233,6 +233,7 @@ test("Read new address causes memory accessed event", () =>
 	const INDEX = 1;
 	let test = new TransposeSimulatorTests();
 	const simulator = test.simulator;
+	const EXPECTED_VALUE = test.memory.read(INDEX);
 	simulator.read(INDEX);
 
 	expect(test.memoryAccessedEventCount).toBe(1);
@@ -243,6 +244,9 @@ test("Read new address causes memory accessed event", () =>
 	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
 		false
 	);
+	expect(test.lastMemoryAccessedEventArgs?.value).toBe(
+		EXPECTED_VALUE
+	);
 });
 
 test("Read loaded address causes memory accessed event", () =>
@@ -252,7 +256,9 @@ test("Read loaded address causes memory accessed event", () =>
 	simulator.read(1);
 	// This should result in a cache hit since it's in the same cache line as
 	//   the previous read
-	simulator.read(2);
+	const INDEX = 2;
+	const EXPECTED_VALUE = test.memory.read(INDEX);
+	simulator.read(INDEX);
 
 	expect(test.memoryAccessedEventCount).toBe(2);
 	expect(test.lastMemoryAccessedSender).toBe(simulator);
@@ -262,6 +268,9 @@ test("Read loaded address causes memory accessed event", () =>
 	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
 		true
 	);
+	expect(test.lastMemoryAccessedEventArgs?.value).toBe(
+		EXPECTED_VALUE
+	);
 });
 
 test("Write new address causes memory accessed event", () =>
@@ -269,7 +278,8 @@ test("Write new address causes memory accessed event", () =>
 	const INDEX = 1;
 	let test = new TransposeSimulatorTests();
 	const simulator = test.simulator;
-	simulator.write(INDEX, 1);
+	const EXPECTED_VALUE = INDEX + 1;
+	simulator.write(INDEX, EXPECTED_VALUE);
 
 	expect(test.memoryAccessedEventCount).toBe(1);
 	expect(test.lastMemoryAccessedSender).toBe(simulator);
@@ -278,6 +288,9 @@ test("Write new address causes memory accessed event", () =>
 	);
 	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
 		false
+	);
+	expect(test.lastMemoryAccessedEventArgs?.value).toBe(
+		EXPECTED_VALUE
 	);
 });
 
@@ -288,7 +301,9 @@ test("Write loaded address causes memory accessed event", () =>
 	simulator.read(1);
 	// This should result in a cache hit since it's in the same cache line as
 	//   the previous cache access
-	simulator.write(2, 2);
+	const INDEX = 2;
+	const EXPECTED_VALUE = INDEX + 1;
+	simulator.write(INDEX, EXPECTED_VALUE);
 
 	expect(test.memoryAccessedEventCount).toBe(2);
 	expect(test.lastMemoryAccessedSender).toBe(simulator);
@@ -297,6 +312,9 @@ test("Write loaded address causes memory accessed event", () =>
 	);
 	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
 		true
+	);
+	expect(test.lastMemoryAccessedEventArgs?.value).toBe(
+		EXPECTED_VALUE
 	);
 });
 

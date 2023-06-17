@@ -80,7 +80,19 @@ export default class TransposeSimulator implements ISimulator
 	/// @returns The value at the given index.
 	public read(index: number): number
 	{
-		return this.getCacheLine(index).read(index);
+		// Keep track of whether the memory access was a hit or a miss.
+		const isHit = this._cache.isPresent(index);
+		const value = this.getCacheLine(index).read(index);
+
+		this._onMemoryAccessed.dispatch(
+			this,
+			new OnMemoryAccessedEventArgs(
+				index,
+				isHit,
+				value
+			)
+		);
+		return value;
 	}
 
 	/// Writes a value to memory.
@@ -89,7 +101,18 @@ export default class TransposeSimulator implements ISimulator
 	/// @throws RangeError Thrown if the given index is out of range.
 	public write(index: number, value: number): void
 	{
+		// Keep track of whether the memory access was a hit or a miss.
+		let isHit = this._cache.isPresent(index);
 		this.getCacheLine(index).write(index, value);
+
+		this._onMemoryAccessed.dispatch(
+			this,
+			new OnMemoryAccessedEventArgs(
+				index,
+				isHit,
+				value
+			)
+		);
 	}
 
 	/// Checks if the simulator memory is in the expected final state.
@@ -110,19 +133,11 @@ export default class TransposeSimulator implements ISimulator
 	/// @returns The cache line at the given index.
 	private getCacheLine(index: number): ICacheLine
 	{
-		// Check if the index is present with the cache
+		// If the cache line is already present in the cache, nothing needs to
+		//   be done other than returning it
 		if (this._cache.isPresent(index))
 		{
-			const cacheLine = this._cache.getCacheLine(index);
-			this._onMemoryAccessed.dispatch(
-				this,
-				new OnMemoryAccessedEventArgs(
-					index,
-					true,
-					this._memory.read(index)
-				)
-			);
-			return cacheLine;
+			return this._cache.getCacheLine(index);
 		}
 
 		// The index is not present in the cache
@@ -150,15 +165,6 @@ export default class TransposeSimulator implements ISimulator
 				cacheLine.size
 			)
 		);
-		this._onMemoryAccessed.dispatch(
-			this,
-			new OnMemoryAccessedEventArgs(
-				index,
-				false,
-				this._memory.read(index)
-			)
-		);
-
 		return cacheLine;
 	}
 }

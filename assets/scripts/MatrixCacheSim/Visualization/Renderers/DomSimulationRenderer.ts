@@ -121,7 +121,8 @@ export default class DomSimulationRenderer implements ISimulationRenderer
 	/// Invoked when the simulation visualization completes.
 	public onSimulationFinished(): void
 	{
-		// Do nothing
+		// Clear the active element so that it doesn't remain highlighted
+		this.clearActiveElement();
 	}
 
 	/// Invoked whenever a cache line is loaded into the cache.
@@ -196,6 +197,9 @@ export default class DomSimulationRenderer implements ISimulationRenderer
 			this._accessedColor,
 			this._accessedTextColor
 		);
+
+		// Keep track of which element is active
+		this._activeElement = matrixCoord;
 	}
 
 	/// Resets the active element to its previous state.

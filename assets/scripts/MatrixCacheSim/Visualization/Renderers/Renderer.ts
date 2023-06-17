@@ -2,8 +2,8 @@ import OnCacheLineEvictedEventArgs from "../../Simulation/Events/OnCacheLineEvic
 import OnCacheLineLoadedEventArgs from "../../Simulation/Events/OnCacheLineLoadedEventArgs";
 import OnMemoryAccessedEventArgs from "../../Simulation/Events/OnMemoryAccessedEventArgs";
 
-/// Interface for classes that display the simulation's visualization.
-export default interface ISimulationRenderer
+/// Interface for classes that render parts of the simulation's visualization.
+export default interface IRenderer
 {
 	/// Invoked when the simulation visualization begins.
 	onSimulationStart(): void;

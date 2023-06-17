@@ -1,13 +1,13 @@
 import OnCacheLineEvictedEventArgs from "../../Simulation/Events/OnCacheLineEvictedEventArgs";
 import OnCacheLineLoadedEventArgs from "../../Simulation/Events/OnCacheLineLoadedEventArgs";
 import OnMemoryAccessedEventArgs from "../../Simulation/Events/OnMemoryAccessedEventArgs";
-import DomSimulationRenderer from "./DomSimulationRenderer";
+import DomMatrixRenderer from "./DomMatrixRenderer";
 
 class DomSimulationRendererTests
 {
 	public readonly changeMatrixElement = jest.fn();
 	public readonly getMatrixElementValue = jest.fn();
-	public readonly renderer: DomSimulationRenderer;
+	public readonly renderer: DomMatrixRenderer;
 
 	// Indices of method arguments
 	public readonly CHANGE_MATRIX_ELEMENT_X = 0;
@@ -31,7 +31,7 @@ class DomSimulationRendererTests
 
 	constructor()
 	{
-		this.renderer = new DomSimulationRenderer(
+		this.renderer = new DomMatrixRenderer(
 			this.changeMatrixElement,
 			this.getMatrixElementValue,
 			this.LOADED_COLOR,

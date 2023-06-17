@@ -1,10 +1,10 @@
 import OnCacheLineEvictedEventArgs from "../../Simulation/Events/OnCacheLineEvictedEventArgs";
 import OnCacheLineLoadedEventArgs from "../../Simulation/Events/OnCacheLineLoadedEventArgs";
 import OnMemoryAccessedEventArgs from "../../Simulation/Events/OnMemoryAccessedEventArgs";
-import ISimulationRenderer from "./SimulationRenderer";
+import IMatrixRenderer from "./MatrixRenderer";
 
-/// Simulation renderer that modifies the DOM to display the visualization.
-export default class DomSimulationRenderer implements ISimulationRenderer
+/// Matrix renderer that modifies the DOM to display the matrix visualization.
+export default class DomMatrixRenderer implements IMatrixRenderer
 {
 	/// Function that changes the color of a matrix element in the DOM.
 	private readonly _changeMatrixElement:

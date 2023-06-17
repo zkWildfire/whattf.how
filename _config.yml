@@ -185,6 +185,10 @@ exclude:
   - "*.test.ts"
   - "*.test.js"
   - .coverage
+  - init.sh
+  - CNAME
+  - jest.config.js
+  - tsconfig.json
 
 jekyll-archives:
   enabled: [categories, tags]
@@ -196,5 +200,38 @@ jekyll-archives:
     category: /categories/:name/
 
 plugins:
+  - jekyll-node-module
   - jekyll-plantuml
-  - jekyll-tsc
+  # This plugin recommends that it always be listed last
+  - jekyll/webpack
+
+node_modules:
+  modules_dir: node_modules
+  assets:
+    js: assets/scripts
+    css: assets/styles
+  copy:
+  - source: "@types/assert"
+    target: node_modules/@types/assert
+  - source: strongly-typed-events
+    target: node_modules/strongly-typed-events
+  - source: ste-core
+    target: node_modules/ste-core
+  - source: ste-events
+    target: node_modules/ste-events
+  - source: ste-promise-events
+    target: node_modules/ste-promise-events
+  - source: ste-promise-signals
+    target: node_modules/ste-promise-signals
+  - source: ste-promise-simple-events
+    target: node_modules/ste-promise-simple-events
+  - source: ste-signals
+    target: node_modules/ste-signals
+  - source: ste-simple-events
+    target: node_modules/ste-simple-events
+
+webpack:
+  only_in: _site
+  cleanup_files:
+    - src
+    - node_modules

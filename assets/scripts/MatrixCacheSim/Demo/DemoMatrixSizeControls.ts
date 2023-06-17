@@ -4,7 +4,7 @@ import IMatrixSizeControls from "./MatrixSizeControls";
 import assert from "assert";
 
 /// Class used to manage the UI controls that change the matrix size.
-class DemoMatrixCacheSizeControls implements IMatrixSizeControls
+export default class DemoMatrixCacheSizeControls implements IMatrixSizeControls
 {
 	/// ID of the button element that sets the matrix size to 32x32.
 	private readonly BUTTON_32X32_ID = "matrix-size-32x32";
@@ -16,7 +16,7 @@ class DemoMatrixCacheSizeControls implements IMatrixSizeControls
 	private readonly BUTTON_63X63_ID = "matrix-size-63x63";
 
 	/// CSS to use for all buttons.
-	private readonly BUTTON_CSS = "btn btn-rounded col-auto";
+	private readonly BUTTON_CSS = "btn col-auto rounded-0";
 
 	/// CSS to use only on the active button.
 	private readonly ACTIVE_BUTTON_CSS = "btn-primary";
@@ -115,5 +115,3 @@ class DemoMatrixCacheSizeControls implements IMatrixSizeControls
 		}
 	}
 }
-
-const controls = new DemoMatrixCacheSizeControls();

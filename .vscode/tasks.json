@@ -10,7 +10,8 @@
 				"exec",
 				"jekyll",
 				"serve",
-				"--drafts"
+				"--drafts",
+				"--livereload"
 			],
 			"group": "none",
 			"isBackground": true,

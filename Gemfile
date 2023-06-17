@@ -28,6 +28,7 @@ if RUBY_PLATFORM =~ /linux-musl/
 end
 
 group :jekyll_plugins do
+  gem "jekyll-node-module", "=0.1.1"
   gem "jekyll-plantuml", "~>1.4"
-  gem "jekyll-tsc", "=0.0.4"
+  gem "jekyll-webpack", "=0.2.6"
 end

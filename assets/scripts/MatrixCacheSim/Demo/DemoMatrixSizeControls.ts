@@ -105,6 +105,14 @@ export default class DemoMatrixCacheSizeControls implements IMatrixSizeControls
 
 		// Update each button's CSS
 		this.updateButtonCss();
+
+		// Broadcast the matrix size change event
+		this._onMatrixSizeChanged.dispatch(
+			{
+				x: matrixSize[0],
+				y: matrixSize[1]
+			}
+		);
 	}
 
 	/// Updates all matrix size control elements' CSS.

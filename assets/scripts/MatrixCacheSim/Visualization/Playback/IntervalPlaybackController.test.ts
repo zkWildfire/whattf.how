@@ -100,7 +100,7 @@ test("Run visualization with multiple events", async () =>
 	// Generate events for the test
 	const cacheLineLoadedEvent = new OnCacheLineLoadedEventArgs(1, 0, 0);
 	const cacheLineEvictedEvent = new OnCacheLineEvictedEventArgs(2, 0, 0);
-	const memoryAccessedEvent = new OnMemoryAccessedEventArgs(3, false);
+	const memoryAccessedEvent = new OnMemoryAccessedEventArgs(3, false, 0);
 	eventBuffer.onCacheLineLoaded(cacheLineLoadedEvent);
 	eventBuffer.onCacheLineEvicted(cacheLineEvictedEvent);
 	eventBuffer.onMemoryAccessed(memoryAccessedEvent);

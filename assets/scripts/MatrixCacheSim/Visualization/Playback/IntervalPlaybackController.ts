@@ -230,7 +230,7 @@ export default class IntervalPlaybackController implements IPlaybackController
 					simulationEvent as OnCacheLineEvictedEventArgs
 				);
 			},
-			visitMemoryAccessedEvent: (index, isHit) =>
+			visitMemoryAccessedEvent: (index, isHit, value) =>
 			{
 				this._onMemoryAccessed.dispatch(
 					simulationEvent as OnMemoryAccessedEventArgs

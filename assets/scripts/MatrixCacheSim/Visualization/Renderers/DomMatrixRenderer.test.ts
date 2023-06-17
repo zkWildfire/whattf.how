@@ -6,7 +6,6 @@ import DomMatrixRenderer from "./DomMatrixRenderer";
 class DomSimulationRendererTests
 {
 	public readonly changeMatrixElement = jest.fn();
-	public readonly getMatrixElementValue = jest.fn();
 	public readonly renderer: DomMatrixRenderer;
 
 	// Indices of method arguments
@@ -33,7 +32,6 @@ class DomSimulationRendererTests
 	{
 		this.renderer = new DomMatrixRenderer(
 			this.changeMatrixElement,
-			this.getMatrixElementValue,
 			this.LOADED_COLOR,
 			this.LOADED_TEXT_COLOR,
 			this.UNLOADED_COLOR,
@@ -101,11 +99,6 @@ test("Matrix updated when cache line loaded", () =>
 	const callsBeforeCacheLineLoaded =
 		test.changeMatrixElement.mock.calls.length;
 
-	// Sanity check
-	expect(test.getMatrixElementValue.mock.calls.length).toBe(
-		callsBeforeCacheLineLoaded
-	);
-
 	const CACHE_INDEX = 0;
 	const MEMORY_INDEX = 0;
 	const LINE_SIZE = 4;
@@ -119,12 +112,6 @@ test("Matrix updated when cache line loaded", () =>
 	// The number of calls to the change matrix element function should have
 	//   increased by the size of the cache line
 	expect(test.changeMatrixElement.mock.calls.length).toBe(
-		callsBeforeCacheLineLoaded + LINE_SIZE
-	);
-
-	// The number of calls to the get matrix element value function should have
-	//   also increased by the size of the cache line
-	expect(test.getMatrixElementValue.mock.calls.length).toBe(
 		callsBeforeCacheLineLoaded + LINE_SIZE
 	);
 
@@ -166,11 +153,6 @@ test("Matrix updated when cache line evicted", () =>
 	const callsBeforeCacheLineEvicted =
 		test.changeMatrixElement.mock.calls.length;
 
-	// Sanity check
-	expect(test.getMatrixElementValue.mock.calls.length).toBe(
-		callsBeforeCacheLineEvicted
-	);
-
 	// Remove the cache line
 	renderer.onCacheLineEvicted(new OnCacheLineEvictedEventArgs(
 		CACHE_INDEX,
@@ -181,12 +163,6 @@ test("Matrix updated when cache line evicted", () =>
 	// The number of calls to the change matrix element function should have
 	//   increased by the size of the cache line
 	expect(test.changeMatrixElement.mock.calls.length).toBe(
-		callsBeforeCacheLineEvicted + LINE_SIZE
-	);
-
-	// The number of calls to the get matrix element value function should have
-	//   also increased by the size of the cache line
-	expect(test.getMatrixElementValue.mock.calls.length).toBe(
 		callsBeforeCacheLineEvicted + LINE_SIZE
 	);
 
@@ -229,18 +205,14 @@ test("Matrix updated when memory accessed", () =>
 	const callsBeforeMemoryAccessed =
 		test.changeMatrixElement.mock.calls.length;
 
-	// Sanity check
-	expect(test.getMatrixElementValue.mock.calls.length).toBe(
-		callsBeforeMemoryAccessed
-	);
-
 	// Access the memory location
 	const X = 1;
 	const Y = 1;
 	const INDEX = X + Y * test.MATRIX_X;
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
-		true
+		true,
+		1
 	));
 
 	// Verify that the change matrix element function was called to change
@@ -254,16 +226,9 @@ test("Matrix updated when memory accessed", () =>
 	expect(test.getChangeMatrixElementTextColor(callsBeforeMemoryAccessed)).toBe(
 		test.ACCESSED_TEXT_COLOR
 	);
-
-	// The number of calls to the get matrix element value function should have
-	//   also increased since the matrix element's value could have changed,
-	//   so the renderer needs to re-query the matrix element's value
-	expect(test.getMatrixElementValue.mock.calls.length).toBe(
-		callsBeforeMemoryAccessed + 1
-	);
 });
 
-test("Memory access cleared when new cache line loaded", () =>
+test("Memory access not cleared when new cache line loaded", () =>
 {
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
@@ -286,7 +251,8 @@ test("Memory access cleared when new cache line loaded", () =>
 	const INDEX = X + Y * test.MATRIX_X;
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
-		true
+		true,
+		1
 	));
 
 	// Record the number of calls to the mocked methods before the second cache
@@ -305,24 +271,18 @@ test("Memory access cleared when new cache line loaded", () =>
 		LINE_SIZE
 	));
 
-	// Make sure that one of the calls to the change matrix element function
-	//   was to change the color of the element that was accessed back to the
-	//   loaded color
+	// Make sure that there were calls to the change matrix element function
 	expect(test.changeMatrixElement.mock.calls.length).toBeGreaterThan(
 		callsBeforeSecondCacheLineLoaded
 	);
 
-	// Find the call corresponding to the accessed element
+	// Make sure that no calls were made that changed the color of the accessed
+	//   element back to the loaded color
 	let accessedElementCallIndex = -1;
 	for (let i = callsBeforeSecondCacheLineLoaded;
 		i < test.changeMatrixElement.mock.calls.length;
 		i++)
 	{
-		// The change matrix element method will be called multiple times with
-		//   the loaded color since each matrix element in the new cache line
-		//   will also be changed to the loaded color. This means that finding
-		//   the call for the accessed element requires checking the matrix
-		//   coordinate passed to the method rather than the color.
 		const call = test.changeMatrixElement.mock.calls[i];
 		const x = call[test.CHANGE_MATRIX_ELEMENT_X];
 		const y = call[test.CHANGE_MATRIX_ELEMENT_Y];
@@ -334,29 +294,17 @@ test("Memory access cleared when new cache line loaded", () =>
 		}
 	}
 
-	// Make sure a call was made for the accessed element
-	expect(accessedElementCallIndex).not.toBe(-1);
-
-	// Make sure that the accessed element was changed back to the loaded color
-	const accessedElementCall = test.changeMatrixElement.mock.calls[
-		accessedElementCallIndex
-	];
-	expect(accessedElementCall[test.CHANGE_MATRIX_ELEMENT_COLOR]).toBe(
-		test.LOADED_COLOR
-	);
-	expect(accessedElementCall[test.CHANGE_MATRIX_ELEMENT_TEXT_COLOR]).toBe(
-		test.LOADED_TEXT_COLOR
-	);
+	// Make sure a call was not made for the accessed element
+	expect(accessedElementCallIndex).toBe(-1);
 });
 
-test("Memory access cleared when cache line evicted", () =>
+test("Memory access not cleared when cache line evicted if not in evicted cache line", () =>
 {
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
 	renderer.onSimulationStarted();
 
-	// Load a cache line first to ensure that the element that gets "accessed"
-	//   is a loaded element
+	// Load multiple cache lines
 	const CACHE_INDEX = 0;
 	const MEMORY_INDEX = 0;
 	const LINE_SIZE = 4;
@@ -365,38 +313,44 @@ test("Memory access cleared when cache line evicted", () =>
 		MEMORY_INDEX,
 		LINE_SIZE
 	));
+	renderer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(
+		CACHE_INDEX + 1,
+		MEMORY_INDEX + LINE_SIZE,
+		LINE_SIZE
+	));
 
-	// Access an element in the cache line
+	// Access an element in the first cache line
 	const X = 1;
 	const Y = 1;
 	const INDEX = X + Y * test.MATRIX_X;
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
-		true
+		true,
+		1
 	));
 
 	// Record the number of calls to the mocked methods before the second cache
 	//   line loaded event is fired. This is done so that when evaluating the
 	//   calls to the mocked methods later, the test only checks the calls made
-	//   as a result of the second cache line loaded event
+	//   as a result of the cache line evicted event
 	const callsBeforeCacheLineEvicted =
 		test.changeMatrixElement.mock.calls.length;
 
-	// Remove the cache line
-	renderer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(
-		CACHE_INDEX,
-		MEMORY_INDEX,
+	// Remove the second cache line
+	renderer.onCacheLineEvicted(new OnCacheLineEvictedEventArgs(
+		CACHE_INDEX + 1,
+		MEMORY_INDEX + LINE_SIZE,
 		LINE_SIZE
 	));
 
-	// Make sure that one of the calls to the change matrix element function
-	//   was to change the color of the element that was accessed back to the
-	//   loaded color
+	// Make sure that calls were made to the change matrix element function
 	expect(test.changeMatrixElement.mock.calls.length).toBeGreaterThan(
 		callsBeforeCacheLineEvicted
 	);
 
-	// Find the call corresponding to the accessed element
+	// Make sure none of the calls correspond to the accessed element
+	// This is because the accessed element is outside the cache line that was
+	//   evicted, so it should remain unchanged
 	let accessedElementCallIndex = -1;
 	for (let i = callsBeforeCacheLineEvicted;
 		i < test.changeMatrixElement.mock.calls.length;
@@ -418,7 +372,78 @@ test("Memory access cleared when cache line evicted", () =>
 		}
 	}
 
-	// Make sure a call was made for the accessed element
+	// Make sure a call was not made for the accessed element
+	expect(accessedElementCallIndex).toBe(-1);
+});
+
+test("Memory access cleared when cache line evicted if in evicted cache line", () =>
+{
+	const test = new DomSimulationRendererTests();
+	const renderer = test.renderer;
+	renderer.onSimulationStarted();
+
+	// Load a cache line
+	const CACHE_INDEX = 0;
+	const MEMORY_INDEX = 0;
+	const LINE_SIZE = 4;
+	renderer.onCacheLineLoaded(new OnCacheLineLoadedEventArgs(
+		CACHE_INDEX,
+		MEMORY_INDEX,
+		LINE_SIZE
+	));
+
+	// Access an element in the cache line
+	const X = 1;
+	const Y = 1;
+	const INDEX = X + Y * test.MATRIX_X;
+	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
+		INDEX,
+		true,
+		1
+	));
+
+	// Record the number of calls to the mocked methods before the cache line
+	//   evicted event is fired. This is done so that when evaluating the calls
+	//   to the mocked methods later, the test only checks the calls made as a
+	//   result of the cache line evicted event
+	const callsBeforeCacheLineEvicted =
+		test.changeMatrixElement.mock.calls.length;
+
+	// Remove the cache line
+	renderer.onCacheLineEvicted(new OnCacheLineEvictedEventArgs(
+		CACHE_INDEX,
+		MEMORY_INDEX,
+		LINE_SIZE
+	));
+
+	// Make sure that calls were made to the change matrix element function
+	expect(test.changeMatrixElement.mock.calls.length).toBeGreaterThan(
+		callsBeforeCacheLineEvicted
+	);
+
+	// Make sure one of the calls was made for the accessed element
+	let accessedElementCallIndex = -1;
+	for (let i = callsBeforeCacheLineEvicted;
+		i < test.changeMatrixElement.mock.calls.length;
+		i++)
+	{
+		const call = test.changeMatrixElement.mock.calls[i];
+		const x = call[test.CHANGE_MATRIX_ELEMENT_X];
+		const y = call[test.CHANGE_MATRIX_ELEMENT_Y];
+
+		// Note that two calls should have this x and y coordinate since the
+		//   element should have been first changed to the loaded color, then
+		//   to the unloaded color. The call that this test is interested in
+		//   is the first call, which should be the call that changes the
+		//   element back to the loaded color
+		if (x === X && y === Y)
+		{
+			accessedElementCallIndex = i;
+			break;
+		}
+	}
+
+	// Make sure a call was not made for the accessed element
 	expect(accessedElementCallIndex).not.toBe(-1);
 
 	// The call that changes the accessed element should not be the last call
@@ -462,7 +487,8 @@ test("Active element cleared when simulation finishes", () =>
 	const INDEX = X + Y * test.MATRIX_X;
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
-		true
+		true,
+		1
 	));
 
 	// Record the number of calls to the mocked methods before the simulation

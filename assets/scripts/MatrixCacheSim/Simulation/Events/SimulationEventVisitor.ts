@@ -26,5 +26,9 @@ export default interface ISimulationEventVisitor
 	/// Invoked when visiting a memory accessed event.
 	/// @param index Index of the memory location that was accessed.
 	/// @param isHit Whether the memory access was a cache hit or miss.
-	visitMemoryAccessedEvent(index: number, isHit: boolean): void;
+	/// @param value Value at the memory location.
+	visitMemoryAccessedEvent(
+		index: number,
+		isHit: boolean,
+		value: number): void;
 }

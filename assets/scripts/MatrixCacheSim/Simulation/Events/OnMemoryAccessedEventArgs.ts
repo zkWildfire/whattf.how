@@ -10,19 +10,24 @@ export default class OnMemoryAccessedEventArgs implements ISimulationEvent
 	/// Whether the memory access was a cache hit or miss.
 	public readonly isHit: boolean;
 
+	/// Value at the memory location.
+	public readonly value: number;
+
 	/// Initializes a new instance of the OnMemoryAccessedEventArgs class.
 	/// @param index Index of the memory location that was accessed.
 	/// @param isHit Whether the memory access was a cache hit or miss.
-	public constructor(index: number, isHit: boolean)
+	/// @param value Value at the memory location.
+	public constructor(index: number, isHit: boolean, value: number)
 	{
 		this.index = index;
 		this.isHit = isHit;
+		this.value = value;
 	}
 
 	/// Accepts the specified simulation event visitor.
 	/// @param visitor Simulation event visitor to accept.
 	public accept(visitor: ISimulationEventVisitor): void
 	{
-		visitor.visitMemoryAccessedEvent(this.index, this.isHit);
+		visitor.visitMemoryAccessedEvent(this.index, this.isHit, this.value);
 	}
 }

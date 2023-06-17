@@ -38,6 +38,7 @@ for (const [buttonId, button] of matrixSizeButtons)
 }
 
 // Set up the generator for the matrix
+const matrixCellTextElementClass = "matrix-cell-text";
 const generateMatrixCellId = (x: number, y: number) => `matrix-cell-${x}-${y}`;
 const matrixGenerator = new DemoMatrixGenerator(
 	() => document.getElementById("matrix")!.innerHTML = "",
@@ -51,12 +52,47 @@ const matrixGenerator = new DemoMatrixGenerator(
 	{
 		const cell = document.createElement("div");
 		cell.id = generateMatrixCellId(x, y);
+
+		// Create an inner element that will display the cell's value
+		// This is necessary to ensure that the cell's size is not affected by
+		//   the length of the value stored in the cell
+		const cellInner = document.createElement("div");
+		cellInner.className = `${matrixCellTextElementClass} position-absolute` +
+			" w-100 h-100 d-flex align-items-center justify-content-center" +
+			" text-center overflow-hidden";
+		cell.appendChild(cellInner);
+
 		row.appendChild(cell);
 		return cell;
 	},
 	"w-100 d-flex",
-	"flex-fill border matrix-cell"
+	"flex-fill matrix-cell position-relative"
 );
+
+// Helper method used to set the text of a matrix cell
+const setMatrixCellText = (x: number, y: number, text: string) =>
+{
+	// Get the cell element
+	const cell = document.getElementById(generateMatrixCellId(x, y));
+	assert(
+		cell != null,
+		`Could not find matrix cell with ID '${generateMatrixCellId(x, y)}'.`
+	);
+
+	// Get the inner element that displays the cell's value
+	const innerElements = cell.getElementsByClassName(
+		matrixCellTextElementClass
+	);
+	assert(
+		innerElements.length == 1,
+		"Expected to find exactly one text element in matrix cell " +
+		`with ID '${generateMatrixCellId(x, y)}'.`
+	);
+
+	// Update the text of the inner element
+	const textElement = innerElements[0] as HTMLSpanElement;
+	textElement.innerText = text;
+}
 
 // Generate the initial matrix
 matrixGenerator.generateMatrix(
@@ -171,7 +207,7 @@ runButton.onclick = async () =>
 	const evictionPolicy = new LeastRecentlyUsedEvictionPolicy(
 		cacheLineCount
 	);
-	const playbackIntervalMs = 100;
+	const playbackIntervalMs = 50;
 	const transposeAlgorithm = naiveTranspose;
 
 	// Create the components backing the simulator
@@ -194,6 +230,17 @@ runButton.onclick = async () =>
 		matrixSize[1],
 	);
 	validator.initializeMemory(memory);
+
+	// Iterate over the matrix's values and set the initial values displayed
+	//   in each matrix cell
+	for (let y = 0; y < matrixSize[1]; ++y)
+	{
+		for (let x = 0; x < matrixSize[0]; ++x)
+		{
+			const value = memory.read(y * matrixSize[0] + x);
+			setMatrixCellText(x, y, value.toString());
+		}
+	}
 
 	// Create the simulator
 	const simulator = new TransposeSimulator(
@@ -226,7 +273,13 @@ runButton.onclick = async () =>
 
 	// Create the renderer components
 	const matrixRenderer = new DomMatrixRenderer(
-		(x: number, y: number, value: number, color: string, textColor: string) =>
+		(
+			x: number,
+			y: number,
+			value: number | null,
+			color: string,
+			textColor: string
+		) =>
 		{
 			const cell = document.getElementById(generateMatrixCellId(x, y));
 			assert(
@@ -237,17 +290,24 @@ runButton.onclick = async () =>
 			);
 			cell.style.backgroundColor = color;
 			cell.style.color = textColor;
-			cell.textContent = value.toString();
+
+			// Update the cell's text if necessary
+			if (value != null)
+			{
+				setMatrixCellText(x, y, value.toString());
+			}
 		},
-		(x: number, y: number) =>
-		{
-			return memory.read(y * matrixSize[0] + x);
-		},
-		"#00FF00",
+		// Loaded cache line background color
+		"#339900",
+		// Loaded cache line text color
 		"#000000",
-		"#444444",
-		"#FFFFFF",
+		// Unloaded cache line background color
+		"#222222",
+		// Unloaded cache line text color
+		"#AAAAAA",
+		// Accessed element background color
 		"#CCCCCC",
+		// Accessed element text color
 		"#000000",
 		matrixSize[0],
 		matrixSize[1]

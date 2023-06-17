@@ -106,8 +106,7 @@ export default class TransposeSimulator implements ISimulator
 	}
 
 	/// Gets the cache line at the given index, loading it if necessary.
-	/// @param index Memory index to get the cache line for. A memory access
-	///   will be logged for this location.
+	/// @param index Memory index to get the cache line for.
 	/// @returns The cache line at the given index.
 	private getCacheLine(index: number): ICacheLine
 	{
@@ -117,7 +116,11 @@ export default class TransposeSimulator implements ISimulator
 			const cacheLine = this._cache.getCacheLine(index);
 			this._onMemoryAccessed.dispatch(
 				this,
-				new OnMemoryAccessedEventArgs(index, true)
+				new OnMemoryAccessedEventArgs(
+					index,
+					true,
+					this._memory.read(index)
+				)
 			);
 			return cacheLine;
 		}
@@ -149,7 +152,11 @@ export default class TransposeSimulator implements ISimulator
 		);
 		this._onMemoryAccessed.dispatch(
 			this,
-			new OnMemoryAccessedEventArgs(index, false)
+			new OnMemoryAccessedEventArgs(
+				index,
+				false,
+				this._memory.read(index)
+			)
 		);
 
 		return cacheLine;

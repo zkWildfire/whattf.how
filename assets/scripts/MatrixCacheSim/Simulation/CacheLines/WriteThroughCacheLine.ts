@@ -75,7 +75,11 @@ export default class WriteThroughCacheLine implements ICacheLine
 		this.checkIndex(index);
 		this._onCacheLineAccessed.dispatch(
 			this,
-			new OnMemoryAccessedEventArgs(index, true)
+			new OnMemoryAccessedEventArgs(
+				index,
+				true,
+				this._memory.read(index)
+			)
 		);
 		return this._memory.read(index);
 	}
@@ -89,7 +93,11 @@ export default class WriteThroughCacheLine implements ICacheLine
 		this.checkIndex(index);
 		this._onCacheLineAccessed.dispatch(
 			this,
-			new OnMemoryAccessedEventArgs(index, true)
+			new OnMemoryAccessedEventArgs(
+				index,
+				true,
+				value
+			)
 		);
 		this._memory.write(index, value);
 	}

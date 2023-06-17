@@ -69,7 +69,7 @@ test("Matrix cleared when simulation starts", () =>
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
 
-	renderer.onSimulationStart();
+	renderer.onSimulationStarted();
 	expect(test.changeMatrixElement.mock.calls.length).toBe(
 		test.MATRIX_X * test.MATRIX_Y
 	);
@@ -91,7 +91,7 @@ test("Matrix updated when cache line loaded", () =>
 {
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
-	renderer.onSimulationStart();
+	renderer.onSimulationStarted();
 
 	// Record the number of calls to the change matrix element function before
 	//   the cache line loaded event is fired
@@ -147,7 +147,7 @@ test("Matrix updated when cache line evicted", () =>
 {
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
-	renderer.onSimulationStart();
+	renderer.onSimulationStarted();
 
 	// Load a cache line, then unload it
 	const CACHE_INDEX = 0;
@@ -209,7 +209,7 @@ test("Matrix updated when memory accessed", () =>
 {
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
-	renderer.onSimulationStart();
+	renderer.onSimulationStarted();
 
 	// Load a cache line first to ensure that the element that gets "accessed"
 	//   is a loaded element
@@ -267,7 +267,7 @@ test("Memory access cleared when new cache line loaded", () =>
 {
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
-	renderer.onSimulationStart();
+	renderer.onSimulationStarted();
 
 	// Load a cache line first to ensure that the element that gets "accessed"
 	//   is a loaded element
@@ -353,7 +353,7 @@ test("Memory access cleared when cache line evicted", () =>
 {
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
-	renderer.onSimulationStart();
+	renderer.onSimulationStarted();
 
 	// Load a cache line first to ensure that the element that gets "accessed"
 	//   is a loaded element
@@ -445,7 +445,7 @@ test("Active element cleared when simulation finishes", () =>
 {
 	const test = new DomSimulationRendererTests();
 	const renderer = test.renderer;
-	renderer.onSimulationStart();
+	renderer.onSimulationStarted();
 
 	// Load a cache line and access an element
 	const CACHE_INDEX = 0;

@@ -117,10 +117,46 @@ tail_includes:
 
 	<div class="container-fluid my-4">
 		<div class="row">
+
+			<!-- Container element for all matrix elements -->
 			<div id="matrix" class="col p-0" style="font-size: 0.5rem;">
 			</div>
-			<div id="cache" class="d-flex flex-column align-items-stretch col-2">
-				<h4 class="m-0 mb-2">Cache Usage</h4>
+
+			<!-- Simulation sidebar -->
+			<div class="d-flex flex-column align-items-stretch col-3">
+
+				<!-- Cache Usage segment -->
+				<div class="d-flex flex-column align-items-stretch mb-4">
+					<h4 class="m-0 mb-2">Cache Usage</h4>
+					<div id="cache" class="d-flex flex-column align-items-stretch">
+					</div>
+				</div>
+
+				<!-- Statistics segment -->
+				<div id="stats">
+					<h4 class="m-0 mb-2">Statistics</h4>
+					<div class="d-flex justify-content-between">
+						<span class="pe-2">Memory Accesses:</span>
+						<span id="stats-memory-accesses">0</span>
+					</div>
+					<div class="d-flex justify-content-between">
+						<span class="pe-2">Cache Hits:</span>
+						<span id="stats-cache-hits">0</span>
+					</div>
+					<div class="d-flex justify-content-between">
+						<span class="pe-2">Cache Misses:</span>
+						<span id="stats-cache-misses">0</span>
+					</div>
+					<div class="d-flex justify-content-between">
+						<span class="pe-2">Cache Hit Rate:</span>
+						<span id="stats-cache-hit-rate">0%</span>
+					</div>
+					<div class="d-flex justify-content-between">
+						<span class="pe-2">Cache Usage:</span>
+						<span id="stats-cache-usage">0%</span>
+					</div>
+				</div>
+
 			</div>
 		</div>
 	</div>

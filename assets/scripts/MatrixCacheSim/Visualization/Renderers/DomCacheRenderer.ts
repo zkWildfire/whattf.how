@@ -40,7 +40,7 @@ export default class DomCacheRenderer implements ICacheRenderer
 	}
 
 	/// Invoked when the simulation visualization begins.
-	public onSimulationStart(): void
+	public onSimulationStarted(): void
 	{
 		// Set all cache lines to unloaded
 		for (let i = 0; i < this._cacheLineCount; i++)

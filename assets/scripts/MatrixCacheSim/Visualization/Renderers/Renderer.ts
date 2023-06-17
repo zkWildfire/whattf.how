@@ -6,7 +6,7 @@ import OnMemoryAccessedEventArgs from "../../Simulation/Events/OnMemoryAccessedE
 export default interface IRenderer
 {
 	/// Invoked when the simulation visualization begins.
-	onSimulationStart(): void;
+	onSimulationStarted(): void;
 
 	/// Invoked when the simulation visualization completes.
 	onSimulationFinished(): void;

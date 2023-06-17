@@ -100,7 +100,7 @@ export default class DomMatrixRenderer implements IMatrixRenderer
 	}
 
 	/// Invoked when the simulation visualization begins.
-	public onSimulationStart(): void
+	public onSimulationStarted(): void
 	{
 		// Set all matrix elements to unloaded
 		for (let x = 0; x < this._matrixX; x++)

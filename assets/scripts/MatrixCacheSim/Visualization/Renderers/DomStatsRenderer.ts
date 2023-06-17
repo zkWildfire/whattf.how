@@ -66,7 +66,7 @@ export default class DomStatsRenderer implements IStatsRenderer
 	}
 
 	/// Invoked when the simulation visualization begins.
-	public onSimulationStart(): void
+	public onSimulationStarted(): void
 	{
 		// Zero out all stats
 		this._memoryAccessCount = 0;

@@ -51,9 +51,9 @@ const cacheAwareTranspose = (matrix: IMatrix) =>
 		for (let blockX = 0; blockX < matrix.X; blockX += blockSize)
 		{
 			// Process the block
-			for (let y = blockY; y < blockY + blockSize; ++y)
+			for (let y = blockY; y < Math.min(blockY + blockSize, matrix.Y); ++y)
 			{
-				for (let x = blockX; x < blockX + blockSize; ++x)
+				for (let x = blockX; x < Math.min(blockX + blockSize, matrix.X); ++x)
 				{
 					matrix.swap(x, y, y, x);
 				}

@@ -85,10 +85,11 @@ export default class ModularCache implements ICache
 		// Check if any of the indices are free
 		for (const index of indices)
 		{
-			if (this._cacheLines[index] === null)
+			if (this._cacheLines[index] == null)
 			{
 				this._cacheLines[index] = cacheLine;
 				cacheLineIndex = index;
+				break;
 			}
 		}
 

@@ -11,7 +11,7 @@ import { EDisplayElements } from "./Demo/Config/DisplayElements";
 //
 // Miscellaneous constants
 //
-const BUTTON_COMMON_CSS = "btn col-2 rounded-0";
+const BUTTON_COMMON_CSS = "btn col col-md-2 rounded-0";
 const BUTTON_ACTIVE_CSS = "btn-primary";
 const BUTTON_INACTIVE_CSS = "btn-outline-primary";
 

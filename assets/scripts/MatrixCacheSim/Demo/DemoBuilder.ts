@@ -28,6 +28,7 @@ import { EAssociativity } from "./Config/Associativity";
 import { EEvictionPolicy } from "./Config/EvictionPolicy";
 import { EMatrixSize } from "./Config/MatrixSize";
 import { ESimulationSpeed } from "./Config/SimulationSpeed";
+import { EDisplayElements } from "./Config/DisplayElements";
 
 /// Helper class used to construct demo instances.
 /// This is a reusable class that may be used to construct multiple demo
@@ -80,8 +81,8 @@ export default class DemoBuilder
 	/// The simulation speed to use for the demo.
 	private _simulationSpeedMs: number;
 
-	/// Whether to display matrix elements' values.
-	private _displayValues: boolean;
+	/// How to display matrix elements' values.
+	private _displayValues: EDisplayElements;
 
 	/// Algorithm to run for the demo.
 	/// This method will be passed the matrix that was constructed for the demo.
@@ -94,7 +95,7 @@ export default class DemoBuilder
 	/// @param evictionPolicy The eviction policy of the cache.
 	/// @param matrixSize The matrix size to use for the demo.
 	/// @param simulationSpeedMs The simulation speed to use for the demo.
-	/// @param displayValues Whether to display matrix elements' values.
+	/// @param displayValues How to display matrix elements' values.
 	/// @param algorithm The algorithm to run for the demo.
 	constructor(
 		cacheSize: number,
@@ -103,7 +104,7 @@ export default class DemoBuilder
 		evictionPolicy: EEvictionPolicy,
 		matrixSize: EMatrixSize,
 		simulationSpeedMs: ESimulationSpeed,
-		displayValues: boolean,
+		displayValues: EDisplayElements,
 		algorithm: (matrix: IMatrix) => void)
 	{
 		this._cacheSize = cacheSize;
@@ -194,7 +195,8 @@ export default class DemoBuilder
 		// Create the renderer components
 		const matrixRenderer = DemoBuilder.constructMatrixRenderer(
 			matrixX,
-			matrixY
+			matrixY,
+			this._displayValues != EDisplayElements.Off
 		);
 		const cacheRenderer = DemoBuilder.constructCacheRenderer(
 			this._cacheSize
@@ -243,6 +245,18 @@ export default class DemoBuilder
 			});
 		});
 
+		// Figure out which matrix cell text function to use
+		// This method controls whether matrix cell values are displayed at
+		//   the start of the demo. The matrix renderer handles whether values
+		//   are displayed after being modified.
+		const matrixCellTextFunction =
+			this._displayValues == EDisplayElements.All
+			? DemoBuilder.setMatrixCellText
+			// If the display values setting is not set to all, then this method
+			//   shouldn't display anything since the matrix renderer will
+			//   display the values after they are modified.
+			: (row: number, col: number, text: string) => {};
+
 		// Construct the demo instance
 		return new DemoInstance(
 			matrixGenerator,
@@ -252,7 +266,7 @@ export default class DemoBuilder
 			simulator,
 			this._algorithm,
 			playbackController,
-			DemoBuilder.setMatrixCellText,
+			matrixCellTextFunction,
 			[matrixX, matrixY]
 		);
 	}
@@ -391,9 +405,9 @@ export default class DemoBuilder
 		return this;
 	}
 
-	/// Sets whether to display matrix elements' values.
-	/// @param display Whether to display matrix elements' values.
-	public setDisplayValues(display: boolean): DemoBuilder
+	/// Sets how matrix elements' values should be displayed.
+	/// @param display How matrix elements' values should be displayed.
+	public setDisplayValues(display: EDisplayElements): DemoBuilder
 	{
 		this._displayValues = display;
 		return this;
@@ -536,10 +550,12 @@ export default class DemoBuilder
 	/// Constructs the matrix renderer for the demo.
 	/// @param matrixX The number of columns in the matrix.
 	/// @param matrixY The number of rows in the matrix.
+	/// @param displayValues Whether to display matrix elements' values.
 	/// @returns The constructed matrix renderer.
 	private static constructMatrixRenderer(
 		matrixX: number,
-		matrixY: number): IMatrixRenderer
+		matrixY: number,
+		displayValues: boolean): IMatrixRenderer
 	{
 		return new DomMatrixRenderer(
 			(
@@ -560,7 +576,7 @@ export default class DemoBuilder
 				cell.style.color = textColor;
 
 				// Update the cell's text if necessary
-				if (value != null)
+				if (displayValues && value != null)
 				{
 					DemoBuilder.setMatrixCellText(x, y, value.toString());
 				}

@@ -6,6 +6,7 @@ import { EAssociativity } from "./Demo/Config/Associativity";
 import { EEvictionPolicy } from "./Demo/Config/EvictionPolicy";
 import { EMatrixSize } from "./Demo/Config/MatrixSize";
 import { ESimulationSpeed } from "./Demo/Config/SimulationSpeed";
+import { EDisplayElements } from "./Demo/Config/DisplayElements";
 
 //
 // Miscellaneous constants
@@ -70,7 +71,7 @@ const DEFAULT_ASSOCIATIVITY = EAssociativity.FourWay;
 const DEFAULT_EVICTION_POLICY = EEvictionPolicy.LeastRecentlyUsed;
 const DEFAULT_MATRIX_SIZE = EMatrixSize.SIZE_32x32;
 const DEFAULT_SIMULATION_SPEED = ESimulationSpeed.Fast;
-const DEFAULT_DISPLAY_VALUES = false;
+const DEFAULT_DISPLAY_VALUES = EDisplayElements.Off;
 const DEFAULT_ALGORITHM = naiveTranspose;
 
 const demoBuilder = new DemoBuilder(
@@ -293,26 +294,34 @@ simSpeedButtonGroup.OnButtonClicked.subscribe((_, speed: ESimulationSpeed) =>
 //
 // Set up the display values button group
 //
-const displayValuesButtonGroupBuilder = new UniformButtonGroupBuilder<boolean>(
+const displayValuesButtonGroupBuilder = new UniformButtonGroupBuilder<
+	EDisplayElements
+>(
 	BUTTON_COMMON_CSS,
 	BUTTON_ACTIVE_CSS,
 	BUTTON_INACTIVE_CSS
 );
 displayValuesButtonGroupBuilder.addButton(
 	"display-values-off",
-	false,
+	EDisplayElements.Off,
 	true
 );
 displayValuesButtonGroupBuilder.addButton(
-	"display-values-on",
-	true
+	"display-values-modified",
+	EDisplayElements.ModifiedOnly
+);
+displayValuesButtonGroupBuilder.addButton(
+	"display-values-all",
+	EDisplayElements.All
 );
 
 const displayValuesButtonGroup = displayValuesButtonGroupBuilder.construct();
-displayValuesButtonGroup.OnButtonClicked.subscribe((_, displayValues: boolean) =>
-{
-	demoBuilder.setDisplayValues(displayValues);
-});
+displayValuesButtonGroup.OnButtonClicked.subscribe(
+	(_, displayValues: EDisplayElements) =>
+	{
+		demoBuilder.setDisplayValues(displayValues);
+	}
+);
 
 //
 // Set up the algorithm button group

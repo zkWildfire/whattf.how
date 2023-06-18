@@ -330,5 +330,6 @@ assert(runButton != null, "Could not find run button.");
 runButton.onclick = async () =>
 {
 	const instance = demoBuilder.construct();
+	instance.initialize();
 	await instance.run();
 };

@@ -162,17 +162,6 @@ export default class DemoBuilder
 		);
 		validator.initializeMemory(memory);
 
-		// Iterate over the matrix's values and set the initial values displayed
-		//   in each matrix cell
-		for (let y = 0; y < matrixY; ++y)
-		{
-			for (let x = 0; x < matrixX; ++x)
-			{
-				const value = memory.read(y * matrixX + x);
-				DemoBuilder.setMatrixCellText(x, y, value.toString());
-			}
-		}
-
 		// Create the simulator
 		const simulator = new TransposeSimulator(
 			memory,
@@ -258,10 +247,12 @@ export default class DemoBuilder
 		return new DemoInstance(
 			matrixGenerator,
 			cacheGenerator,
+			memory,
 			cache,
 			simulator,
 			this._algorithm,
 			playbackController,
+			DemoBuilder.setMatrixCellText,
 			[matrixX, matrixY]
 		);
 	}
@@ -460,7 +451,7 @@ export default class DemoBuilder
 		const matrixContainerElement = this._matrixContainerElement;
 
 		// Create the matrix generator for the demo
-		const matrixGenerator = new DemoMatrixGenerator(
+		return new DemoMatrixGenerator(
 			// Callback for clearing all matrix elements
 			() => matrixContainerElement.innerHTML = "",
 			// Callback for creating a new matrix row
@@ -481,7 +472,7 @@ export default class DemoBuilder
 				//   affected by the length of the value stored in the cell
 				const cellInner = document.createElement("div");
 				cellInner.className =
-					DemoBuilder.MATRIX_CELL_TEXT_ELEMENT_CLASS +
+					`${DemoBuilder.MATRIX_CELL_TEXT_ELEMENT_CLASS} ` +
 					"position-absolute w-100 h-100 d-flex align-items-center " +
 					"justify-content-center text-center overflow-hidden";
 				cell.appendChild(cellInner);
@@ -494,8 +485,6 @@ export default class DemoBuilder
 			// Cell CSS
 			"flex-fill matrix-cell position-relative"
 		);
-
-		return matrixGenerator;
 	}
 
 	/// Constructs the cache renderer for the demo.
@@ -762,6 +751,11 @@ export default class DemoBuilder
 		// Get the inner element that displays the cell's value
 		const innerElements = cell.getElementsByClassName(
 			DemoBuilder.MATRIX_CELL_TEXT_ELEMENT_CLASS
+		);
+		assert(
+			innerElements.length != 0,
+			"Failed to find any text elements in matrix cell " +
+			`with ID '${DemoBuilder.generateMatrixCellId(x, y)}'.`
 		);
 		assert(
 			innerElements.length == 1,

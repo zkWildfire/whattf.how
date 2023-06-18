@@ -41,6 +41,26 @@ const naiveTranspose = (matrix: IMatrix) =>
 	}
 };
 
+const cacheAwareTranspose = (matrix: IMatrix) =>
+{
+	// Process the matrix in blocks to avoid cache misses
+	const blockSize = 8;
+	for (let blockY = 0; blockY < matrix.Y; blockY += blockSize)
+	{
+		for (let blockX = 0; blockX < matrix.X; blockX += blockSize)
+		{
+			// Process the block
+			for (let y = blockY; y < blockY + blockSize; ++y)
+			{
+				for (let x = blockX; x < blockX + blockSize; ++x)
+				{
+					matrix.swap(x, y, y, x);
+				}
+			}
+		}
+	}
+};
+
 //
 // Create the demo builder
 //
@@ -311,8 +331,7 @@ algorithmButtonGroupBuilder.addButton(
 );
 algorithmButtonGroupBuilder.addButton(
 	"algorithm-cache-friendly",
-	/// @todo Implement cache-friendly transpose algorithm
-	naiveTranspose
+	cacheAwareTranspose
 );
 algorithmButtonGroupBuilder.addButton(
 	"algorithm-custom",

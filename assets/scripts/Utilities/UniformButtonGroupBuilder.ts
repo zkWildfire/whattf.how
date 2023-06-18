@@ -15,8 +15,8 @@ export default class UniformButtonGroupBuilder<T>
 	/// Buttons that should be managed by the group.
 	private _buttons: Map<HTMLButtonElement, T> = new Map();
 
-	/// Data for the active button.
-	private _active: [HTMLButtonElement, T] | null = null;
+	/// Button to set as active initially.
+	private _active: HTMLButtonElement | null = null;
 
 	/// Initializes the builder.
 	/// @param commonCss The CSS to use for all buttons.
@@ -61,7 +61,7 @@ export default class UniformButtonGroupBuilder<T>
 		this._buttons.set(button, data);
 		if (setAsActive)
 		{
-			this._active = [button, data];
+			this._active = button;
 		}
 		return this;
 	}
@@ -74,7 +74,8 @@ export default class UniformButtonGroupBuilder<T>
 			this._buttons,
 			this._commonCss,
 			this._activeCss,
-			this._inactiveCss
+			this._inactiveCss,
+			this._active
 		);
 	}
 }

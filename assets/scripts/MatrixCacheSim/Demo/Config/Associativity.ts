@@ -1,5 +1,5 @@
 /// Specifies the associativity of a cache.
-enum EAssociativity
+export enum EAssociativity
 {
 	/// Direct mapped cache associativity.
 	DirectMapped,

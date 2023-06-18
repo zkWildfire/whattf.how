@@ -1,22 +1,11 @@
 import assert from "assert";
-import DemoMatrixGenerator from "./Demo/DemoMatrixGenerator";
-import DemoCacheGenerator from "./Demo/DemoCacheGenerator";
-import TransposeSimulator from "./Simulation/TransposeSimulator";
-import ArrayMemory from "./Simulation/Memory/ArrayMemory";
-import ModularCache from "./Simulation/Caches/ModularCache";
-import DirectMappedPlacementPolicy from "./Simulation/Policies/DirectMappedPlacementPolicy";
-import LeastRecentlyUsedEvictionPolicy from "./Simulation/Policies/LeastRecentlyUsedEvictionPolicy";
-import WriteThroughCacheLineAllocator from "./Simulation/CacheLines/WriteThroughCacheLineAllocator";
-import TransposeValidator from "./Simulation/Validators/TransposeValidator";
-import ArrayEventBuffer from "./Visualization/Buffers/ArrayEventBuffer";
-import IntervalPlaybackController from "./Visualization/Playback/IntervalPlaybackController";
-import DomMatrixRenderer from "./Visualization/Renderers/DomMatrixRenderer";
-import DomCacheRenderer from "./Visualization/Renderers/DomCacheRenderer";
-import DomStatsRenderer from "./Visualization/Renderers/DomStatsRenderer";
-import RowMajorMatrix from "./Demo/RowMajorMatrix";
 import UniformButtonGroupBuilder from "../Utilities/UniformButtonGroupBuilder";
 import DemoBuilder from "./Demo/DemoBuilder";
 import IMatrix from "./Demo/Matrix";
+import { EAssociativity } from "./Demo/Config/Associativity";
+import { EEvictionPolicy } from "./Demo/Config/EvictionPolicy";
+import { EMatrixSize } from "./Demo/Config/MatrixSize";
+import { ESimulationSpeed } from "./Demo/Config/SimulationSpeed";
 
 //
 // Miscellaneous constants
@@ -134,6 +123,10 @@ cacheSizeButtonGroupBuilder.addButton(
 	"cache-size-large",
 	16
 );
+cacheSizeButtonGroupBuilder.addButton(
+	"cache-size-xl",
+	32
+);
 
 const cacheSizeButtonGroup = cacheSizeButtonGroupBuilder.construct();
 cacheSizeButtonGroup.OnButtonClicked.subscribe((_, size: number) =>
@@ -184,16 +177,16 @@ associativityButtonGroupBuilder.addButton(
 	EAssociativity.DirectMapped
 );
 associativityButtonGroupBuilder.addButton(
-	"cache-associativity-two-way",
+	"cache-associativity-2-way",
 	EAssociativity.TwoWay
 );
 associativityButtonGroupBuilder.addButton(
-	"cache-associativity-four-way",
+	"cache-associativity-4-way",
 	EAssociativity.FourWay,
 	true
 );
 associativityButtonGroupBuilder.addButton(
-	"cache-associativity-eight-way",
+	"cache-associativity-8-way",
 	EAssociativity.EightWay
 );
 associativityButtonGroupBuilder.addButton(
@@ -258,7 +251,7 @@ simSpeedButtonGroupBuilder.addButton(
 	ESimulationSpeed.Slow
 );
 simSpeedButtonGroupBuilder.addButton(
-	"simulation-speed-medium",
+	"simulation-speed-normal",
 	ESimulationSpeed.Normal,
 );
 simSpeedButtonGroupBuilder.addButton(
@@ -315,14 +308,20 @@ algorithmButtonGroupBuilder.addButton(
 algorithmButtonGroupBuilder.addButton(
 	"algorithm-cache-friendly",
 	/// @todo Implement cache-friendly transpose algorithm
-	naiveTranspose,
-	true
+	naiveTranspose
 );
 algorithmButtonGroupBuilder.addButton(
 	"algorithm-custom",
 	/// @todo Implement support for user-provided custom algorithms
-	naiveTranspose,
-	true
+	naiveTranspose
+);
+
+const algorithmButtonGroup = algorithmButtonGroupBuilder.construct();
+algorithmButtonGroup.OnButtonClicked.subscribe(
+	(_, algorithm: (matrix: IMatrix) => void) =>
+	{
+		demoBuilder.setAlgorithm(algorithm);
+	}
 );
 
 // Bind to the run button click event to run the simulation

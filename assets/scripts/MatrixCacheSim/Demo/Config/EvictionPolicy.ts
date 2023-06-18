@@ -1,5 +1,5 @@
 /// Eviction policy to use for the cache.
-enum EEvictionPolicy
+export enum EEvictionPolicy
 {
 	/// Evicts the least recently used cache line first.
 	LeastRecentlyUsed,

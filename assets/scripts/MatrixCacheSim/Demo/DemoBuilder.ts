@@ -24,6 +24,10 @@ import ICacheRenderer from "../Visualization/Renderers/CacheRenderer";
 import DomCacheRenderer from "../Visualization/Renderers/DomCacheRenderer";
 import IStatsRenderer from "../Visualization/Renderers/StatsRenderer";
 import DomStatsRenderer from "../Visualization/Renderers/DomStatsRenderer";
+import { EAssociativity } from "./Config/Associativity";
+import { EEvictionPolicy } from "./Config/EvictionPolicy";
+import { EMatrixSize } from "./Config/MatrixSize";
+import { ESimulationSpeed } from "./Config/SimulationSpeed";
 
 /// Helper class used to construct demo instances.
 /// This is a reusable class that may be used to construct multiple demo

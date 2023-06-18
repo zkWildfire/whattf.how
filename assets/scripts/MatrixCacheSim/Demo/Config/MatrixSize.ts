@@ -1,5 +1,5 @@
 /// Enum used to identify the various matrix sizes supported by the demo.
-enum EMatrixSize
+export enum EMatrixSize
 {
 	/// 16x16 matrix
 	SIZE_16x16,

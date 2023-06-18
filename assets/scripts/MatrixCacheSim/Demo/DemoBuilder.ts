@@ -39,7 +39,7 @@ export default class DemoBuilder
 
 	/// CSS applied to all cache line elements.
 	private static readonly CACHE_LINE_CSS =
-		"border rounded-0 cache-line flex-fill";
+		"border rounded-0 cache-line w-50";
 
 	/// Reference to the container element for the matrix.
 	private _matrixContainerElement: HTMLElement | null = null;
@@ -427,7 +427,7 @@ export default class DemoBuilder
 
 				// Label for the cache line
 				const rowLabel = document.createElement("span");
-				rowLabel.className = "pe-2 cache-line-label";
+				rowLabel.className = "pe-2 cache-line-label flex-fill";
 				rowLabel.textContent = `Cache Line ${i}: `;
 				row.appendChild(rowLabel);
 

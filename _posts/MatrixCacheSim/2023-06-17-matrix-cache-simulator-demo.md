@@ -15,7 +15,8 @@ still not optimal) matrix transpose algorithm that improves significantly on
 cache usage. Try out the simulator on the two algorithms, then see if you can
 figure out how to improve the cache usage even more!
 
-> This demo is still **heavily** a work in progress! Not all selectable options
-> have been implemented yet; for example, the only eviction algorithm supported
-> is the LRU algorithm. The other options available to be selected will be
-> implemented soon along with additional playback controls for the animation!
+> This demo is still **heavily** a work in progress! Support for custom
+> transpose algorithms is coming soon, along with more options for playback.
+> Additionally, in its current state, simulations cannot be stopped in the
+> middle of playback, so a page refresh is required to restart an in-progress
+> simulation.

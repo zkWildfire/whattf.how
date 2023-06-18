@@ -29,6 +29,10 @@ import { EEvictionPolicy } from "./Config/EvictionPolicy";
 import { EMatrixSize } from "./Config/MatrixSize";
 import { ESimulationSpeed } from "./Config/SimulationSpeed";
 import { EDisplayElements } from "./Config/DisplayElements";
+import MostRecentlyUsedEvictionPolicy from "../Simulation/Policies/MostRecentlyUsedEvictionPolicy";
+import RandomEvictionPolicy from "../Simulation/Policies/RandomEvictionPolicy";
+import OldestEvictionPolicy from "../Simulation/Policies/OldestEvictionPolicy";
+import RoundRobinEvictionPolicy from "../Simulation/Policies/RoundRobinEvictionPolicy";
 
 /// Helper class used to construct demo instances.
 /// This is a reusable class that may be used to construct multiple demo
@@ -541,6 +545,18 @@ export default class DemoBuilder
 			return new LeastRecentlyUsedEvictionPolicy(
 				cacheSize
 			);
+		case EEvictionPolicy.MostRecentlyUsed:
+			return new MostRecentlyUsedEvictionPolicy(
+				cacheSize
+			);
+		case EEvictionPolicy.Oldest:
+			return new OldestEvictionPolicy(
+				cacheSize
+			);
+		case EEvictionPolicy.RoundRobin:
+			return new RoundRobinEvictionPolicy();
+		case EEvictionPolicy.Random:
+			return new RandomEvictionPolicy();
 		}
 
 		/// @todo Implement the other eviction policies

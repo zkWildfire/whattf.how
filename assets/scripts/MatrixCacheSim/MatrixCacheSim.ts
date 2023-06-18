@@ -70,7 +70,7 @@ const DEFAULT_LINE_SIZE = 8;
 const DEFAULT_ASSOCIATIVITY = EAssociativity.FourWay;
 const DEFAULT_EVICTION_POLICY = EEvictionPolicy.LeastRecentlyUsed;
 const DEFAULT_MATRIX_SIZE = EMatrixSize.SIZE_32x32;
-const DEFAULT_SIMULATION_SPEED = ESimulationSpeed.Fast;
+const DEFAULT_SIMULATION_SPEED = ESimulationSpeed.Maximum;
 const DEFAULT_DISPLAY_VALUES = EDisplayElements.Off;
 const DEFAULT_ALGORITHM = naiveTranspose;
 
@@ -277,12 +277,12 @@ simSpeedButtonGroupBuilder.addButton(
 );
 simSpeedButtonGroupBuilder.addButton(
 	"simulation-speed-fast",
-	ESimulationSpeed.Fast,
-	true
+	ESimulationSpeed.Fast
 );
 simSpeedButtonGroupBuilder.addButton(
 	"simulation-speed-maximum",
-	ESimulationSpeed.Maximum
+	ESimulationSpeed.Maximum,
+	true
 );
 
 const simSpeedButtonGroup = simSpeedButtonGroupBuilder.construct();

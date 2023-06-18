@@ -84,29 +84,227 @@ tail_includes:
 <div class="post-content">
 	{{ content }}
 
-	<label class="form-label">
-		Matrix Size
-	</label>
-	<div class="input-group">
-		<button
-			id="matrix-size-32x32"
-			type="button"
-			class="btn btn-outline-primary rounded-0">
-			32x32
-		</button>
-		<button
-			id="matrix-size-64x64"
-			type="button"
-			class="btn btn-outline-primary rounded-0">
-			64x64
-		</button>
-		<button
-			id="matrix-size-63x63"
-			type="button"
-			class="btn btn-outline-primary rounded-0">
-			63x63
-		</button>
-		<div class="m-auto"></div>
+	<h2>Simulator Configuration</h2>
+
+	<!-- Matrix Size button group -->
+	<div class="mb-3">
+		<label class="form-label">
+			Matrix Size
+		</label>
+		<div class="input-group">
+			<button
+				id="matrix-size-16x16"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				16x16
+			</button>
+			<button
+				id="matrix-size-32x32"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				32x32
+			</button>
+			<button
+				id="matrix-size-64x64"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				64x64
+			</button>
+			<button
+				id="matrix-size-63x63"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				63x63
+			</button>
+		</div>
+	</div>
+
+	<!-- Cache Size button group -->
+	<div class="mb-3">
+		<label class="form-label">
+			Cache Size (in number of cache lines)
+		</label>
+		<div class="input-group">
+			<button
+				id="cache-size-small"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				4
+			</button>
+			<button
+				id="cache-size-medium"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				8
+			</button>
+			<button
+				id="cache-size-large"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				16
+			</button>
+			<button
+				id="cache-size-xl"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				32
+			</button>
+		</div>
+	</div>
+
+	<!-- Cache Line Size button group -->
+	<div class="mb-3">
+		<label class="form-label">
+			Cache Line Size (in number of elements)
+		</label>
+		<div class="input-group">
+			<button
+				id="cache-line-size-small"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				4
+			</button>
+			<button
+				id="cache-line-size-medium"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				8
+			</button>
+			<button
+				id="cache-line-size-large"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				16
+			</button>
+		</div>
+	</div>
+
+	<!-- Cache Associativity button group -->
+	<div class="mb-3">
+		<label class="form-label">
+			Cache Associativity
+		</label>
+		<div class="input-group">
+			<button
+				id="cache-associativity-direct-mapped"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Direct Mapped
+			</button>
+			<button
+				id="cache-associativity-2-way"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				2-Way
+			</button>
+			<button
+				id="cache-associativity-4-way"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				4-Way
+			</button>
+			<button
+				id="cache-associativity-8-way"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				8-Way
+			</button>
+			<button
+				id="cache-associativity-fully-associative"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Fully Associative
+			</button>
+		</div>
+	</div>
+
+	<!-- Simulation Speed button group -->
+	<div class="mb-3">
+		<label class="form-label">
+			Simulation Speed
+		</label>
+		<div class="input-group">
+			<button
+				id="simulation-speed-slow"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Slow
+			</button>
+			<button
+				id="simulation-speed-normal"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Normal
+			</button>
+			<button
+				id="simulation-speed-fast"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Fast
+			</button>
+		</div>
+	</div>
+
+	<!-- Display Matrix Values button group -->
+	<div class="mb-3">
+		<div class="d-flex flex-column mb-3">
+			<label class="form-label mb-0">
+				Display Matrix Values
+			</label>
+			<sub class="text-muted">
+				Not recommended to be enabled on large matrix sizes.
+			</sub>
+		</div>
+		<div class="input-group">
+			<button
+				id="elements-off"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Off
+			</button>
+			<button
+				id="elements-on"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				On
+			</button>
+		</div>
+	</div>
+
+	<!-- Transpose Algorithm button group -->
+	<div class="mb-3">
+		<label class="form-label">
+			Matrix Transpose Algorithm
+		</label>
+		<div class="input-group">
+			<button
+				id="algorithm-naive"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Naive
+			</button>
+			<button
+				id="algorithm-cache-friendly"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Cache Friendly
+			</button>
+			<button
+				id="algorithm-custom"
+				type="button"
+				class="btn btn-outline-primary rounded-0">
+				Custom
+			</button>
+		</div>
+	</div>
+
+	<!-- Simulator title bar -->
+	<div class="d-flex align-items-stretch my-2">
+		<div class="d-flex flex-fill flex-column justify-content-center pe-4">
+			<h2 class="m-0 p-0">Simulator</h2>
+		</div>
+
+		<!-- Start Simulation button -->
 		<button
 			id="start-simulation"
 			type="button"
@@ -115,6 +313,7 @@ tail_includes:
 		</button>
 	</div>
 
+	<!-- Simulator -->
 	<div class="container-fluid my-4">
 		<div class="row">
 

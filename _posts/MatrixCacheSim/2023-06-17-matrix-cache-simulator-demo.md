@@ -17,5 +17,3 @@ figure out how to improve the cache usage even more!
 
 > This demo is still **heavily** a work in progress! Additional options,
 > algorithms, and customizations will be added in future updates.
-
-## Demo

@@ -1,5 +1,4 @@
 import assert from "assert";
-import DemoMatrixCacheSizeControls from "./Demo/DemoMatrixSizeControls";
 import DemoMatrixGenerator from "./Demo/DemoMatrixGenerator";
 import DemoCacheGenerator from "./Demo/DemoCacheGenerator";
 import TransposeSimulator from "./Simulation/TransposeSimulator";
@@ -15,27 +14,256 @@ import DomMatrixRenderer from "./Visualization/Renderers/DomMatrixRenderer";
 import DomCacheRenderer from "./Visualization/Renderers/DomCacheRenderer";
 import DomStatsRenderer from "./Visualization/Renderers/DomStatsRenderer";
 import RowMajorMatrix from "./Demo/RowMajorMatrix";
+import UniformButtonGroupBuilder from "../Utilities/UniformButtonGroupBuilder";
+import DemoBuilder from "./Demo/DemoBuilder";
+import IMatrix from "./Demo/Matrix";
 
-// Find each matrix size button
-const matrixSizeButtons = new Map<string, HTMLButtonElement>();
-for (const buttonId of DemoMatrixCacheSizeControls.BUTTON_IDS)
+//
+// Miscellaneous constants
+//
+const BUTTON_COMMON_CSS = "btn col-2 rounded-0";
+const BUTTON_ACTIVE_CSS = "btn-primary";
+const BUTTON_INACTIVE_CSS = "btn-outline-primary";
+
+//
+// Built in transpose algorithms
+//
+const naiveTranspose = (matrix: IMatrix) =>
 {
-	const button = document.getElementById(buttonId) as HTMLButtonElement;
-	assert(button != null, `Could not find button with ID '${buttonId}'.`);
-	matrixSizeButtons.set(buttonId, button);
-}
-
-// Set up the control element for the matrix size buttons
-const matrixSizeControls = new DemoMatrixCacheSizeControls(
-	new Map(Array.from(matrixSizeButtons).map(([buttonId, button]) =>
+	for (let y = 0; y < matrix.Y; ++y)
 	{
-		return [buttonId, (css: string) => button.className = css];
-	}))
+		for (let x = 0; x < matrix.X; ++x)
+		{
+			matrix.swap(x, y, y, x);
+		}
+	}
+};
+
+//
+// Create the demo builder
+//
+const DEFAULT_CACHE_SIZE = 8;
+const DEFAULT_LINE_SIZE = 8;
+const DEFAULT_ASSOCIATIVITY = EAssociativity.FourWay;
+const DEFAULT_MATRIX_SIZE = EMatrixSize.SIZE_32x32;
+const DEFAULT_SIMULATION_SPEED = ESimulationSpeed.Fast;
+const DEFAULT_DISPLAY_VALUES = false;
+const DEFAULT_ALGORITHM = naiveTranspose;
+
+const demoBuilder = new DemoBuilder(
+	DEFAULT_CACHE_SIZE,
+	DEFAULT_LINE_SIZE,
+	DEFAULT_ASSOCIATIVITY,
+	DEFAULT_MATRIX_SIZE,
+	DEFAULT_SIMULATION_SPEED,
+	DEFAULT_DISPLAY_VALUES,
+	DEFAULT_ALGORITHM
 );
-for (const [buttonId, button] of matrixSizeButtons)
+
+//
+// Set up the matrix size button group
+//
+const matrixSizeButtonGroupBuilder = new UniformButtonGroupBuilder<EMatrixSize>(
+	BUTTON_COMMON_CSS,
+	BUTTON_ACTIVE_CSS,
+	BUTTON_INACTIVE_CSS
+);
+matrixSizeButtonGroupBuilder.addButton(
+	"matrix-size-16x16",
+	EMatrixSize.SIZE_16x16
+);
+matrixSizeButtonGroupBuilder.addButton(
+	"matrix-size-32x32",
+	EMatrixSize.SIZE_32x32,
+	true
+);
+matrixSizeButtonGroupBuilder.addButton(
+	"matrix-size-64x64",
+	EMatrixSize.SIZE_64x64
+);
+matrixSizeButtonGroupBuilder.addButton(
+	"matrix-size-63x63",
+	EMatrixSize.SIZE_63x63
+);
+const matrixSizeButtonGroup = matrixSizeButtonGroupBuilder.construct();
+matrixSizeButtonGroup.OnButtonClicked.subscribe((_, size: EMatrixSize) =>
 {
-	button.onclick = () => matrixSizeControls.onButtonClick(buttonId);
-}
+	demoBuilder.setMatrixSize(size);
+});
+
+//
+// Set up the cache size button group
+//
+const cacheSizeButtonGroupBuilder = new UniformButtonGroupBuilder<number>(
+	BUTTON_COMMON_CSS,
+	BUTTON_ACTIVE_CSS,
+	BUTTON_INACTIVE_CSS
+);
+cacheSizeButtonGroupBuilder.addButton(
+	"cache-size-small",
+	4
+);
+cacheSizeButtonGroupBuilder.addButton(
+	"cache-size-medium",
+	8,
+	true
+);
+cacheSizeButtonGroupBuilder.addButton(
+	"cache-size-large",
+	16
+);
+
+const cacheSizeButtonGroup = cacheSizeButtonGroupBuilder.construct();
+cacheSizeButtonGroup.OnButtonClicked.subscribe((_, size: number) =>
+{
+	demoBuilder.setCacheSize(size);
+});
+
+//
+// Set up the cache line size button group
+//
+const cacheLineSizeButtonGroupBuilder = new UniformButtonGroupBuilder<number>(
+	BUTTON_COMMON_CSS,
+	BUTTON_ACTIVE_CSS,
+	BUTTON_INACTIVE_CSS
+);
+cacheLineSizeButtonGroupBuilder.addButton(
+	"cache-line-size-small",
+	4
+);
+cacheLineSizeButtonGroupBuilder.addButton(
+	"cache-line-size-medium",
+	8,
+	true
+);
+cacheLineSizeButtonGroupBuilder.addButton(
+	"cache-line-size-large",
+	16
+);
+
+const cacheLineSizeButtonGroup = cacheLineSizeButtonGroupBuilder.construct();
+cacheLineSizeButtonGroup.OnButtonClicked.subscribe((_, size: number) =>
+{
+	demoBuilder.setCacheLineSize(size);
+});
+
+//
+// Set up the cache associativity button group
+//
+const associativityButtonGroupBuilder = new UniformButtonGroupBuilder<
+	EAssociativity
+>(
+	BUTTON_COMMON_CSS,
+	BUTTON_ACTIVE_CSS,
+	BUTTON_INACTIVE_CSS
+);
+associativityButtonGroupBuilder.addButton(
+	"cache-associativity-direct-mapped",
+	EAssociativity.DirectMapped
+);
+associativityButtonGroupBuilder.addButton(
+	"cache-associativity-two-way",
+	EAssociativity.TwoWay
+);
+associativityButtonGroupBuilder.addButton(
+	"cache-associativity-four-way",
+	EAssociativity.FourWay,
+	true
+);
+associativityButtonGroupBuilder.addButton(
+	"cache-associativity-eight-way",
+	EAssociativity.EightWay
+);
+associativityButtonGroupBuilder.addButton(
+	"cache-associativity-fully-associative",
+	EAssociativity.FullyAssociative
+);
+
+const associativityButtonGroup = associativityButtonGroupBuilder.construct();
+associativityButtonGroup.OnButtonClicked.subscribe((_, associativity: EAssociativity) =>
+{
+	demoBuilder.setAssociativity(associativity);
+});
+
+//
+// Set up the simulation speed button group
+//
+const simSpeedButtonGroupBuilder = new UniformButtonGroupBuilder<ESimulationSpeed>(
+	BUTTON_COMMON_CSS,
+	BUTTON_ACTIVE_CSS,
+	BUTTON_INACTIVE_CSS
+);
+simSpeedButtonGroupBuilder.addButton(
+	"simulation-speed-slow",
+	ESimulationSpeed.Slow
+);
+simSpeedButtonGroupBuilder.addButton(
+	"simulation-speed-medium",
+	ESimulationSpeed.Normal,
+);
+simSpeedButtonGroupBuilder.addButton(
+	"simulation-speed-fast",
+	ESimulationSpeed.Fast,
+	true
+);
+
+const simSpeedButtonGroup = simSpeedButtonGroupBuilder.construct();
+simSpeedButtonGroup.OnButtonClicked.subscribe((_, speed: ESimulationSpeed) =>
+{
+	demoBuilder.setSimulationSpeed(speed);
+});
+
+//
+// Set up the display values button group
+//
+const displayValuesButtonGroupBuilder = new UniformButtonGroupBuilder<boolean>(
+	BUTTON_COMMON_CSS,
+	BUTTON_ACTIVE_CSS,
+	BUTTON_INACTIVE_CSS
+);
+displayValuesButtonGroupBuilder.addButton(
+	"display-values-off",
+	false,
+	true
+);
+displayValuesButtonGroupBuilder.addButton(
+	"display-values-on",
+	true
+);
+
+const displayValuesButtonGroup = displayValuesButtonGroupBuilder.construct();
+displayValuesButtonGroup.OnButtonClicked.subscribe((_, displayValues: boolean) =>
+{
+	demoBuilder.setDisplayValues(displayValues);
+});
+
+//
+// Set up the algorithm button group
+//
+const algorithmButtonGroupBuilder = new UniformButtonGroupBuilder<
+	(matrix: IMatrix) => void
+>(
+	BUTTON_COMMON_CSS,
+	BUTTON_ACTIVE_CSS,
+	BUTTON_INACTIVE_CSS
+);
+algorithmButtonGroupBuilder.addButton(
+	"algorithm-naive",
+	naiveTranspose,
+	true
+);
+algorithmButtonGroupBuilder.addButton(
+	"algorithm-cache-friendly",
+	/// @todo Implement cache-friendly transpose algorithm
+	naiveTranspose,
+	true
+);
+algorithmButtonGroupBuilder.addButton(
+	"algorithm-custom",
+	/// @todo Implement support for user-provided custom algorithms
+	naiveTranspose,
+	true
+);
 
 // Set up the generator for the matrix
 const matrixCellTextElementClass = "matrix-cell-text";
@@ -177,18 +405,6 @@ assert(
 	cacheUsageElement != null,
 	"Could not find stats element with ID '" + cacheUsageElementId + "'."
 );
-
-// Matrix transpose algorithms
-const naiveTranspose = (matrix: RowMajorMatrix) =>
-{
-	for (let y = 0; y < matrix.Y; ++y)
-	{
-		for (let x = 0; x < matrix.X; ++x)
-		{
-			matrix.swap(x, y, y, x);
-		}
-	}
-};
 
 // Bind to the run button click event to run the simulation
 const runButton = document.getElementById("start-simulation") as HTMLButtonElement;

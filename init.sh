@@ -9,7 +9,8 @@ bundle
 npm install
 
 # jekyll-webpack is broken with Ruby >=3.2 (as of 2023-06-17) because it uses
-#   `File.exists` which was deprecated in Ruby 2.1.0 and removed in Ruby 3.2.0.
+#   `File.exists` and `Dir.exists`. These methods were deprecated in Ruby 2.1.0
+#   and removed in Ruby 3.2.0.
 # This can be fixed by patching the gem's sources to use `File.exist?` instead.
 JEKYLL_WEBPACK_INSTALL_DIR=$(bundle info jekyll-webpack | grep -oP "(?<=Path: ).*")
 readonly JEKYLL_WEBPACK_INSTALL_DIR
@@ -20,9 +21,13 @@ else
 	echo "Found jekyll-webpack install directory: $JEKYLL_WEBPACK_INSTALL_DIR"
 fi
 
-# Patch all ruby scripts in the jekyll-webpack gem to use `File.exist?` instead
-#   of `File.exists`.
+# Patch all ruby scripts in the jekyll-webpack gem to use the non-deprecated
+#   methods
 echo "Patching jekyll-webpack to use File.exist? instead of File.exists..."
 find "$JEKYLL_WEBPACK_INSTALL_DIR" -type f -name "*.rb" \
 	-exec sed -i 's/File.exists?/File.exist?/g' {} \;
+
+echo "Patching jekyll-webpack to use Dir.exist? instead of Dir.exists..."
+find "$JEKYLL_WEBPACK_INSTALL_DIR" -type f -name "*.rb" \
+	-exec sed -i 's/Dir.exists?/Dir.exist?/g' {} \;
 echo "Successfully patched jekyll-webpack."

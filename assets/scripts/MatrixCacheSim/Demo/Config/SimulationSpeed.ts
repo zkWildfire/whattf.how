@@ -3,7 +3,15 @@
 ///   step when set to that speed.
 export enum ESimulationSpeed
 {
+	/// Slow simulation speed.
 	Slow = 200,
+
+	/// Normal simulation speed.
 	Normal = 100,
+
+	/// Fast simulation speed.
 	Fast = 50,
+
+	/// Fastest possible simulation speed.
+	Maximum = 0
 }

@@ -259,6 +259,10 @@ simSpeedButtonGroupBuilder.addButton(
 	ESimulationSpeed.Fast,
 	true
 );
+simSpeedButtonGroupBuilder.addButton(
+	"simulation-speed-maximum",
+	ESimulationSpeed.Maximum
+);
 
 const simSpeedButtonGroup = simSpeedButtonGroupBuilder.construct();
 simSpeedButtonGroup.OnButtonClicked.subscribe((_, speed: ESimulationSpeed) =>

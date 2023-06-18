@@ -63,8 +63,6 @@ GEM
       jekyll-redirect-from (~> 0.16)
       jekyll-seo-tag (~> 2.7)
       jekyll-sitemap (~> 1.4)
-    jekyll-tsc (0.0.4)
-      jekyll (>= 3.8, < 5.0)
     jekyll-watch (2.2.1)
       listen (~> 3.0)
     jekyll-webpack (0.2.6)
@@ -114,7 +112,6 @@ DEPENDENCIES
   jekyll-node-module (= 0.1.1)
   jekyll-plantuml (~> 1.4)
   jekyll-theme-chirpy (~> 6.0, >= 6.0.1)
-  jekyll-tsc (= 0.0.4)
   jekyll-webpack (= 0.2.6)
   tzinfo (>= 1, < 3)
   tzinfo-data

@@ -33,14 +33,60 @@ const CACHE_USAGE_ELEMENT_ID = "stats-cache-usage";
 //
 const naiveTranspose = (matrix: IMatrix) =>
 {
-	for (let y = 0; y < matrix.Y; ++y)
+	for (let y = 0; y < matrix.Y; y++)
 	{
-		for (let x = 0; x < matrix.X; ++x)
+		for (let x = 0; x < matrix.X; x++)
+		{
+			if (x > y)
+			{
+				matrix.swap(x, y, y, x);
+			}
+		}
+	}
+};
+
+/// Helper method for the cache aware transpose algorithm.
+/// This method is used when the entire block needs to be transposed. Blocks
+///   are expected to be square.
+/// @param matrix The matrix being transposed.
+/// @param minX The minimum X coordinate of the block.
+/// @param minY The minimum Y coordinate of the block.
+/// @param size The size of the block.
+const transposeFullBlock = (
+	matrix: IMatrix,
+	minX: number,
+	minY: number,
+	size: number) =>
+{
+	for (let y = minY; y < Math.min(minY + size, matrix.Y); y++)
+	{
+		for (let x = minX; x < Math.min(minX + size, matrix.X); x++)
 		{
 			matrix.swap(x, y, y, x);
 		}
 	}
-};
+}
+
+/// Helper method for the cache aware transpose algorithm.
+/// This method is used when the block sits on the diagonal of the matrix. In
+///   this case, only the upper triangle of the block needs to be transposed.
+const transposeDiagonalBlock = (
+	matrix: IMatrix,
+	minX: number,
+	minY: number,
+	size: number) =>
+{
+	for (let y = minY; y < Math.min(minY + size, matrix.Y); y++)
+	{
+		for (let x = minX; x < Math.min(minX + size, matrix.X); x++)
+		{
+			if (x > y)
+			{
+				matrix.swap(x, y, y, x);
+			}
+		}
+	}
+}
 
 const cacheAwareTranspose = (matrix: IMatrix) =>
 {
@@ -50,13 +96,22 @@ const cacheAwareTranspose = (matrix: IMatrix) =>
 	{
 		for (let blockX = 0; blockX < matrix.X; blockX += blockSize)
 		{
-			// Process the block
-			for (let y = blockY; y < Math.min(blockY + blockSize, matrix.Y); ++y)
+			// Only transpose blocks in the top right triangle of the matrix or
+			//   on the diagonal
+			if (blockX < blockY)
 			{
-				for (let x = blockX; x < Math.min(blockX + blockSize, matrix.X); ++x)
-				{
-					matrix.swap(x, y, y, x);
-				}
+				continue;
+			}
+
+			// Process the block
+			if (blockX === blockY)
+			{
+				// The block sits on the diagonal of the matrix
+				transposeDiagonalBlock(matrix, blockX, blockY, blockSize);
+			}
+			else
+			{
+				transposeFullBlock(matrix, blockX, blockY, blockSize);
 			}
 		}
 	}
@@ -118,7 +173,7 @@ matrixSizeButtonGroupBuilder.addButton(
 	EMatrixSize.SIZE_63x63
 );
 const matrixSizeButtonGroup = matrixSizeButtonGroupBuilder.construct();
-matrixSizeButtonGroup.OnButtonClicked.subscribe((_, size: EMatrixSize) =>
+matrixSizeButtonGroup.OnButtonClicked.subscribe((_: any, size: EMatrixSize) =>
 {
 	demoBuilder.setMatrixSize(size);
 });
@@ -150,7 +205,7 @@ cacheSizeButtonGroupBuilder.addButton(
 );
 
 const cacheSizeButtonGroup = cacheSizeButtonGroupBuilder.construct();
-cacheSizeButtonGroup.OnButtonClicked.subscribe((_, size: number) =>
+cacheSizeButtonGroup.OnButtonClicked.subscribe((_: any, size: number) =>
 {
 	demoBuilder.setCacheSize(size);
 });
@@ -178,7 +233,7 @@ cacheLineSizeButtonGroupBuilder.addButton(
 );
 
 const cacheLineSizeButtonGroup = cacheLineSizeButtonGroupBuilder.construct();
-cacheLineSizeButtonGroup.OnButtonClicked.subscribe((_, size: number) =>
+cacheLineSizeButtonGroup.OnButtonClicked.subscribe((_: any, size: number) =>
 {
 	demoBuilder.setCacheLineSize(size);
 });
@@ -216,10 +271,12 @@ associativityButtonGroupBuilder.addButton(
 );
 
 const associativityButtonGroup = associativityButtonGroupBuilder.construct();
-associativityButtonGroup.OnButtonClicked.subscribe((_, associativity: EAssociativity) =>
-{
-	demoBuilder.setAssociativity(associativity);
-});
+associativityButtonGroup.OnButtonClicked.subscribe(
+	(_: any, associativity: EAssociativity) =>
+	{
+		demoBuilder.setAssociativity(associativity);
+	}
+);
 
 //
 // Set up the eviction policy button group
@@ -254,10 +311,12 @@ evictionPolicyButtonGroupBuilder.addButton(
 );
 
 const evictionPolicyButtonGroup = evictionPolicyButtonGroupBuilder.construct();
-evictionPolicyButtonGroup.OnButtonClicked.subscribe((_, policy: EEvictionPolicy) =>
-{
-	demoBuilder.setEvictionPolicy(policy);
-});
+evictionPolicyButtonGroup.OnButtonClicked.subscribe(
+	(_: any, policy: EEvictionPolicy) =>
+	{
+		demoBuilder.setEvictionPolicy(policy);
+	}
+);
 
 //
 // Set up the simulation speed button group
@@ -286,10 +345,12 @@ simSpeedButtonGroupBuilder.addButton(
 );
 
 const simSpeedButtonGroup = simSpeedButtonGroupBuilder.construct();
-simSpeedButtonGroup.OnButtonClicked.subscribe((_, speed: ESimulationSpeed) =>
-{
-	demoBuilder.setSimulationSpeed(speed);
-});
+simSpeedButtonGroup.OnButtonClicked.subscribe(
+	(_: any, speed: ESimulationSpeed) =>
+	{
+		demoBuilder.setSimulationSpeed(speed);
+	}
+);
 
 //
 // Set up the display values button group
@@ -317,7 +378,7 @@ displayValuesButtonGroupBuilder.addButton(
 
 const displayValuesButtonGroup = displayValuesButtonGroupBuilder.construct();
 displayValuesButtonGroup.OnButtonClicked.subscribe(
-	(_, displayValues: EDisplayElements) =>
+	(_: any, displayValues: EDisplayElements) =>
 	{
 		demoBuilder.setDisplayValues(displayValues);
 	}
@@ -350,7 +411,7 @@ algorithmButtonGroupBuilder.addButton(
 
 const algorithmButtonGroup = algorithmButtonGroupBuilder.construct();
 algorithmButtonGroup.OnButtonClicked.subscribe(
-	(_, algorithm: (matrix: IMatrix) => void) =>
+	(_: any, algorithm: (matrix: IMatrix) => void) =>
 	{
 		demoBuilder.setAlgorithm(algorithm);
 	}

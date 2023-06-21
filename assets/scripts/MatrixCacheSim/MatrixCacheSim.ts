@@ -122,7 +122,7 @@ const cacheAwareTranspose = (matrix: IMatrix) =>
 //
 const DEFAULT_CACHE_SIZE = 16;
 const DEFAULT_LINE_SIZE = 8;
-const DEFAULT_ASSOCIATIVITY = EAssociativity.TwoWay;
+const DEFAULT_ASSOCIATIVITY = EAssociativity.EightWay;
 const DEFAULT_EVICTION_POLICY = EEvictionPolicy.LeastRecentlyUsed;
 const DEFAULT_MATRIX_SIZE = EMatrixSize.SIZE_32x32;
 const DEFAULT_SIMULATION_SPEED = ESimulationSpeed.Maximum;
@@ -254,8 +254,7 @@ associativityButtonGroupBuilder.addButton(
 );
 associativityButtonGroupBuilder.addButton(
 	"cache-associativity-2-way",
-	EAssociativity.TwoWay,
-	true
+	EAssociativity.TwoWay
 );
 associativityButtonGroupBuilder.addButton(
 	"cache-associativity-4-way",
@@ -263,7 +262,8 @@ associativityButtonGroupBuilder.addButton(
 );
 associativityButtonGroupBuilder.addButton(
 	"cache-associativity-8-way",
-	EAssociativity.EightWay
+	EAssociativity.EightWay,
+	true
 );
 associativityButtonGroupBuilder.addButton(
 	"cache-associativity-fully-associative",

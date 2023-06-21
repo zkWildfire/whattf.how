@@ -8,7 +8,7 @@ import NWayAssociativePlacementPolicy from "./NWayAssociativePlacementPolicy";
 test("1-way associative placement", () =>
 {
 	// With the cache configured to be 1-way associative, the N-way associative
-	//   placement policy should behave identically to the fully associative
+	//   placement policy should behave identically to the direct mapped
 	//   placement policy
 	const CACHE_SIZE = 4;
 	const LINE_SIZE = 4;
@@ -18,7 +18,8 @@ test("1-way associative placement", () =>
 		CACHE_SIZE,
 		ASSOCIATIVITY
 	);
-	const fullyAssociativePolicy = new FullyAssociativePlacementPolicy(
+	const directMappedPolicy = new DirectMappedPlacementPolicy(
+		LINE_SIZE,
 		CACHE_SIZE
 	);
 	const memory = new ArrayMemory(new Array(CACHE_SIZE).fill(0));
@@ -31,16 +32,16 @@ test("1-way associative placement", () =>
 			LINE_SIZE
 		);
 		expect(nWayPolicy.getIndices(cacheLine)).toEqual(
-			fullyAssociativePolicy.getIndices(cacheLine)
+			directMappedPolicy.getIndices(cacheLine)
 		);
 	}
 });
 
-test("Direct mapped placement", () =>
+test("Fully associative placement", () =>
 {
 	// With the N-way associative placement policy configured with the same
 	//   associativity as the cache size, it should behave identically to the
-	//   direct mapped placement policy
+	//   fully associative placement policy
 	const CACHE_SIZE = 4;
 	const LINE_SIZE = 4;
 	const ASSOCIATIVITY = CACHE_SIZE;
@@ -49,8 +50,7 @@ test("Direct mapped placement", () =>
 		CACHE_SIZE,
 		ASSOCIATIVITY
 	);
-	const directMappedPolicy = new DirectMappedPlacementPolicy(
-		LINE_SIZE,
+	const fullyAssociativePolicy = new FullyAssociativePlacementPolicy(
 		CACHE_SIZE
 	);
 	const memory = new ArrayMemory(new Array(CACHE_SIZE).fill(0));
@@ -66,7 +66,7 @@ test("Direct mapped placement", () =>
 			LINE_SIZE
 		);
 		expect(nWayPolicy.getIndices(cacheLine)).toEqual(
-			directMappedPolicy.getIndices(cacheLine)
+			fullyAssociativePolicy.getIndices(cacheLine)
 		);
 	}
 });
@@ -100,6 +100,106 @@ test("2-way associative placement", () =>
 	expect(nWayPolicy.getIndices(cacheLine1)).toEqual(
 		nWayPolicy.getIndices(cacheLine2)
 	);
+});
+
+test("1-way associative set size", () =>
+{
+	const CACHE_SIZE = 4;
+	const LINE_SIZE = 4;
+	const ASSOCIATIVITY = 1;
+	const nWayPolicy = new NWayAssociativePlacementPolicy(
+		LINE_SIZE,
+		CACHE_SIZE,
+		ASSOCIATIVITY
+	);
+
+	const memory = new ArrayMemory(new Array(CACHE_SIZE).fill(0));
+	for (let i = 0; i < CACHE_SIZE; i += LINE_SIZE)
+	{
+		// All cache lines should map to exactly one cache line in a 1-way
+		//   associative cache
+		const cacheLine = new WriteThroughCacheLine(
+			memory,
+			i,
+			LINE_SIZE
+		);
+		expect(nWayPolicy.getIndices(cacheLine).length).toEqual(ASSOCIATIVITY);
+	}
+});
+
+test("2-way associative set size", () =>
+{
+	const CACHE_SIZE = 4;
+	const LINE_SIZE = 4;
+	const ASSOCIATIVITY = 2;
+	const nWayPolicy = new NWayAssociativePlacementPolicy(
+		LINE_SIZE,
+		CACHE_SIZE,
+		ASSOCIATIVITY
+	);
+
+	const memory = new ArrayMemory(new Array(CACHE_SIZE).fill(0));
+	for (let i = 0; i < CACHE_SIZE; i += LINE_SIZE)
+	{
+		// All cache lines should map to exactly two cache lines in a 2-way
+		//   associative cache
+		const cacheLine = new WriteThroughCacheLine(
+			memory,
+			i,
+			LINE_SIZE
+		);
+		expect(nWayPolicy.getIndices(cacheLine).length).toEqual(ASSOCIATIVITY);
+	}
+});
+
+test("4-way associative set size", () =>
+{
+	const CACHE_SIZE = 4;
+	const LINE_SIZE = 4;
+	const ASSOCIATIVITY = 4;
+	const nWayPolicy = new NWayAssociativePlacementPolicy(
+		LINE_SIZE,
+		CACHE_SIZE,
+		ASSOCIATIVITY
+	);
+
+	const memory = new ArrayMemory(new Array(CACHE_SIZE).fill(0));
+	for (let i = 0; i < CACHE_SIZE; i += LINE_SIZE)
+	{
+		// All cache lines should map to exactly four cache lines in a 4-way
+		//   associative cache
+		const cacheLine = new WriteThroughCacheLine(
+			memory,
+			i,
+			LINE_SIZE
+		);
+		expect(nWayPolicy.getIndices(cacheLine).length).toEqual(ASSOCIATIVITY);
+	}
+});
+
+test("8-way associative set size", () =>
+{
+	const CACHE_SIZE = 16;
+	const LINE_SIZE = 4;
+	const ASSOCIATIVITY = 8;
+	const nWayPolicy = new NWayAssociativePlacementPolicy(
+		LINE_SIZE,
+		CACHE_SIZE,
+		ASSOCIATIVITY
+	);
+
+	const memory = new ArrayMemory(new Array(CACHE_SIZE).fill(0));
+	for (let i = 0; i < CACHE_SIZE; i += LINE_SIZE)
+	{
+		// All cache lines should map to exactly eight cache lines in a 8-way
+		//   associative cache
+		const cacheLine = new WriteThroughCacheLine(
+			memory,
+			i,
+			LINE_SIZE
+		);
+		expect(nWayPolicy.getIndices(cacheLine).length).toEqual(ASSOCIATIVITY);
+	}
 });
 
 test("Ctor throws if cache size is not a multiple of associativity", () =>

@@ -40,13 +40,17 @@ export default class NWayAssociativePlacementPolicy implements IPlacementPolicy
 	/// @returns The indices where the cache line may be placed.
 	public getIndices(cacheLine: ICacheLine): number[]
 	{
+		// Calculate the number of sets
+		const numSets = this._cacheSize / this._associativity;
+
+		// Determine which set the cache line is part of
 		const setIndex = Math.floor(
 			cacheLine.startIndex / this._lineSize
-		) % this._associativity;
+		) % numSets;
 
 		return Array.from(
-			{ length: this._cacheSize / this._associativity },
-			(_, i) => i * this._associativity + setIndex
+			{ length: this._cacheSize / numSets },
+			(_, i) => i * numSets + setIndex
 		);
 	}
 }

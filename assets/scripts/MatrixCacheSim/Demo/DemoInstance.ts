@@ -1,6 +1,3 @@
-/// Represents an instance of the matrix cache simulator demo.
-/// Instances of this class should not be built directly. Use the `DemoBuilder`
-
 import ICache from "../Simulation/Caches/Cache";
 import IMemory from "../Simulation/Memory/Memory";
 import TransposeSimulator from "../Simulation/TransposeSimulator";
@@ -10,6 +7,8 @@ import IMatrix from "./Matrix";
 import IMatrixGenerator from "./MatrixGenerator";
 import RowMajorMatrix from "./RowMajorMatrix";
 
+/// Represents an instance of the matrix cache simulator demo.
+/// Instances of this class should not be built directly. Use the `DemoBuilder`
 ///   class instead to build instances of this class.
 export default class DemoInstance
 {

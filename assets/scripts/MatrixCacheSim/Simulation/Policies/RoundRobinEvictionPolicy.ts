@@ -55,7 +55,6 @@ export default class RoundRobinEvictionPolicy implements IEvictionPolicy
 		if (evictIndex === undefined)
 		{
 			// This is a new set of cache lines, so start at the lowest index
-			console.log("New set of cache lines");
 			evictIndex = 0;
 		}
 

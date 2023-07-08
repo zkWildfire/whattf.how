@@ -3,4 +3,5 @@ endplantuml
 overfit
 plantuml
 roadmap
+tparam
 visualizable

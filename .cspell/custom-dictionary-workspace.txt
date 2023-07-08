@@ -1,3 +1,6 @@
 # Custom Dictionary Words
 endplantuml
+overfit
 plantuml
+roadmap
+visualizable

@@ -73,12 +73,14 @@ export default class WriteThroughCacheLine implements ICacheLine
 	public read(index: number): number
 	{
 		this.checkIndex(index);
+		const currValue = this._memory.read(index);
 		this._onCacheLineAccessed.dispatch(
 			this,
 			new OnMemoryAccessedEventArgs(
 				index,
 				true,
-				this._memory.read(index)
+				currValue,
+				currValue
 			)
 		);
 		return this._memory.read(index);
@@ -91,12 +93,14 @@ export default class WriteThroughCacheLine implements ICacheLine
 	public write(index: number, value: number): void
 	{
 		this.checkIndex(index);
+		const oldValue = this._memory.read(index);
 		this._onCacheLineAccessed.dispatch(
 			this,
 			new OnMemoryAccessedEventArgs(
 				index,
 				true,
-				value
+				value,
+				oldValue
 			)
 		);
 		this._memory.write(index, value);

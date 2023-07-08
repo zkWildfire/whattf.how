@@ -37,7 +37,7 @@ test("Length is non-zero after adding memory accessed events", () =>
 	const buffer = new ArrayEventBuffer();
 	for (let i = 0; i < COUNT; ++i)
 	{
-		buffer.onMemoryAccessed(new OnMemoryAccessedEventArgs(i, true, 1));
+		buffer.onMemoryAccessed(new OnMemoryAccessedEventArgs(i, true, 1, 1));
 		expect(buffer.length).toBe(i + 1);
 	}
 });
@@ -47,7 +47,7 @@ test("Get events", () =>
 	const buffer = new ArrayEventBuffer();
 	const cacheLineLoadedEvent = new OnCacheLineLoadedEventArgs(0, 0, 0);
 	const cacheLineEvictedEvent = new OnCacheLineEvictedEventArgs(1, 0, 0);
-	const memoryAccessedEvent = new OnMemoryAccessedEventArgs(2, false, 1);
+	const memoryAccessedEvent = new OnMemoryAccessedEventArgs(2, false, 1, 1);
 
 	buffer.onCacheLineLoaded(cacheLineLoadedEvent);
 	buffer.onCacheLineEvicted(cacheLineEvictedEvent);

@@ -89,6 +89,7 @@ export default class TransposeSimulator implements ISimulator
 			new OnMemoryAccessedEventArgs(
 				index,
 				isHit,
+				value,
 				value
 			)
 		);
@@ -103,6 +104,7 @@ export default class TransposeSimulator implements ISimulator
 	{
 		// Keep track of whether the memory access was a hit or a miss.
 		let isHit = this._cache.isPresent(index);
+		let oldValue = this._memory.read(index);
 		this.getCacheLine(index).write(index, value);
 
 		this._onMemoryAccessed.dispatch(
@@ -110,7 +112,8 @@ export default class TransposeSimulator implements ISimulator
 			new OnMemoryAccessedEventArgs(
 				index,
 				isHit,
-				value
+				value,
+				oldValue
 			)
 		);
 	}

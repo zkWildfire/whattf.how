@@ -244,7 +244,7 @@ test("Read new address causes memory accessed event", () =>
 	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
 		false
 	);
-	expect(test.lastMemoryAccessedEventArgs?.value).toBe(
+	expect(test.lastMemoryAccessedEventArgs?.newValue).toBe(
 		EXPECTED_VALUE
 	);
 });
@@ -268,7 +268,7 @@ test("Read loaded address causes memory accessed event", () =>
 	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
 		true
 	);
-	expect(test.lastMemoryAccessedEventArgs?.value).toBe(
+	expect(test.lastMemoryAccessedEventArgs?.newValue).toBe(
 		EXPECTED_VALUE
 	);
 });
@@ -289,7 +289,7 @@ test("Write new address causes memory accessed event", () =>
 	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
 		false
 	);
-	expect(test.lastMemoryAccessedEventArgs?.value).toBe(
+	expect(test.lastMemoryAccessedEventArgs?.newValue).toBe(
 		EXPECTED_VALUE
 	);
 });
@@ -313,7 +313,7 @@ test("Write loaded address causes memory accessed event", () =>
 	expect(test.lastMemoryAccessedEventArgs?.isHit).toBe(
 		true
 	);
-	expect(test.lastMemoryAccessedEventArgs?.value).toBe(
+	expect(test.lastMemoryAccessedEventArgs?.newValue).toBe(
 		EXPECTED_VALUE
 	);
 });

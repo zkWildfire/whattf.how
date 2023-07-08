@@ -186,7 +186,7 @@ export default class DomMatrixRenderer implements IMatrixRenderer
 		this._changeMatrixElement(
 			matrixCoord[0],
 			matrixCoord[1],
-			eventArgs.value,
+			eventArgs.newValue,
 			this._accessedColor,
 			this._accessedTextColor
 		);

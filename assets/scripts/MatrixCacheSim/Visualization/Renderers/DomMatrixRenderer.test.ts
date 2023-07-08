@@ -212,6 +212,7 @@ test("Matrix updated when memory accessed", () =>
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
 		true,
+		1,
 		1
 	));
 
@@ -252,6 +253,7 @@ test("Memory access not cleared when new cache line loaded", () =>
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
 		true,
+		1,
 		1
 	));
 
@@ -326,6 +328,7 @@ test("Memory access not cleared when cache line evicted if not in evicted cache 
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
 		true,
+		1,
 		1
 	));
 
@@ -399,6 +402,7 @@ test("Memory access cleared when cache line evicted if in evicted cache line", (
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
 		true,
+		1,
 		1
 	));
 
@@ -488,6 +492,7 @@ test("Active element cleared when simulation finishes", () =>
 	renderer.onMemoryAccessed(new OnMemoryAccessedEventArgs(
 		INDEX,
 		true,
+		1,
 		1
 	));
 

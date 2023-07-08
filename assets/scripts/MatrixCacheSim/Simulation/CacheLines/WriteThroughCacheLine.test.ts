@@ -83,6 +83,8 @@ test("OnCacheLineAccessed event raised when reading value in cache line", () =>
 	cacheLine.OnCacheLineAccessed.subscribe((sender, args) => {
 		expect(sender).toBe(cacheLine);
 		expect(args.index).toBe(INDEX);
+		expect(args.newValue).toBe(VALUES[INDEX]);
+		expect(args.oldValue).toBe(VALUES[INDEX]);
 		eventRaised = true;
 	});
 
@@ -97,15 +99,18 @@ test("OnCacheLineAccessed event raised when writing value in cache line", () =>
 	const cacheLine = new WriteThroughCacheLine(memory, 1, 3);
 
 	const INDEX = 2;
-	const VALUE = 42;
+	const NEW_VALUE = 42;
+	const OLD_VALUE = VALUES[INDEX];
 
 	let eventRaised = false;
 	cacheLine.OnCacheLineAccessed.subscribe((sender, args) => {
 		expect(sender).toBe(cacheLine);
 		expect(args.index).toBe(INDEX);
+		expect(args.newValue).toBe(NEW_VALUE);
+		expect(args.oldValue).toBe(OLD_VALUE);
 		eventRaised = true;
 	});
 
-	cacheLine.write(INDEX, VALUE);
+	cacheLine.write(INDEX, NEW_VALUE);
 	expect(eventRaised).toBe(true);
 });

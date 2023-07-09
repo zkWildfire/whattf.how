@@ -13,6 +13,9 @@ export default class NWayAssociativePlacementPolicy implements IPlacementPolicy
 	/// The number of cache lines per set.
 	private readonly _associativity: number;
 
+	/// The number of sets in the cache.
+	private readonly _numSets: number;
+
 	/// Initializes the policy.
 	/// @param lineSize The size of each cache line, in number of elements.
 	/// @param cacheSize The size of the cache, in number of cache lines.
@@ -33,6 +36,7 @@ export default class NWayAssociativePlacementPolicy implements IPlacementPolicy
 		this._lineSize = lineSize;
 		this._cacheSize = cacheSize;
 		this._associativity = associativity;
+		this._numSets = cacheSize / associativity;
 	}
 
 	/// Gets the indices where the cache line may be placed.
@@ -40,17 +44,14 @@ export default class NWayAssociativePlacementPolicy implements IPlacementPolicy
 	/// @returns The indices where the cache line may be placed.
 	public getIndices(cacheLine: ICacheLine): number[]
 	{
-		// Calculate the number of sets
-		const numSets = this._cacheSize / this._associativity;
-
 		// Determine which set the cache line is part of
 		const setIndex = Math.floor(
 			cacheLine.startIndex / this._lineSize
-		) % numSets;
+		) % this._numSets;
 
 		return Array.from(
-			{ length: this._cacheSize / numSets },
-			(_, i) => i * numSets + setIndex
+			{ length: this._associativity },
+			(_, i) => i * this._numSets + setIndex
 		);
 	}
 }

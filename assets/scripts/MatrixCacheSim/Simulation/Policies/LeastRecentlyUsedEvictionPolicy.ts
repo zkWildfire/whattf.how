@@ -5,7 +5,10 @@ import IEvictionPolicy from "./EvictionPolicy";
 export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 {
 	/// The size of the cache, in number of cache lines.
-	private readonly _cacheSize: number;
+	private get cacheSize(): number
+	{
+		return this._lastAccessTimes.length;
+	}
 
 	/// The last time each cache line was accessed.
 	/// If a cache line is unloaded or hasn't been loaded yet, the last access
@@ -22,7 +25,6 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 	/// @param cacheSize The size of the cache, in number of cache lines.
 	constructor(cacheSize: number)
 	{
-		this._cacheSize = cacheSize;
 		this._time = 0;
 		this._lastAccessTimes = new Array<number>(cacheSize).fill(-1);
 	}
@@ -31,7 +33,7 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 	/// @param cacheLineIndex The index of the cache line that was accessed.
 	public onCacheLineAccessed(cacheLineIndex: number): void
 	{
-		assert(cacheLineIndex >= 0 && cacheLineIndex < this._cacheSize);
+		assert(cacheLineIndex >= 0 && cacheLineIndex < this.cacheSize);
 		// A cache line can't be accessed before it's loaded
 		assert(this._lastAccessTimes[cacheLineIndex] >= 0);
 
@@ -43,7 +45,7 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 	/// @param cacheLineIndex The index of the cache line that was evicted.
 	public onCacheLineEvicted(cacheLineIndex: number): void
 	{
-		assert(cacheLineIndex >= 0 && cacheLineIndex < this._cacheSize);
+		assert(cacheLineIndex >= 0 && cacheLineIndex < this.cacheSize);
 		// A cache line can't be evicted before it's loaded
 		assert(this._lastAccessTimes[cacheLineIndex] >= 0);
 
@@ -55,7 +57,7 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 	/// @param cacheLineIndex The index of the cache line that was loaded.
 	public onCacheLineLoaded(cacheLineIndex: number): void
 	{
-		assert(cacheLineIndex >= 0 && cacheLineIndex < this._cacheSize);
+		assert(cacheLineIndex >= 0 && cacheLineIndex < this.cacheSize);
 		// A cache line can't be loaded into an index that's already occupied
 		assert(this._lastAccessTimes[cacheLineIndex] < 0);
 
@@ -74,7 +76,7 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 		assert(cacheLineIndices.length > 0);
 		cacheLineIndices.forEach((cacheLineIndex) =>
 		{
-			assert(cacheLineIndex >= 0 && cacheLineIndex < this._cacheSize);
+			assert(cacheLineIndex >= 0 && cacheLineIndex < this.cacheSize);
 		});
 
 		// This will always be higher than any actual last access time
@@ -104,7 +106,7 @@ export default class LeastRecentlyUsedEvictionPolicy implements IEvictionPolicy
 
 		// This should always be valid at this point since this method should
 		//   never be called if no cache lines are loaded
-		assert(cacheLineToEvict >= 0 && cacheLineToEvict < this._cacheSize);
+		assert(cacheLineToEvict >= 0 && cacheLineToEvict < this.cacheSize);
 		return cacheLineToEvict;
 	}
 }

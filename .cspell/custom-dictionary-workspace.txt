@@ -1,7 +1,9 @@
 # Custom Dictionary Words
 endplantuml
 overfit
+overfitting
 plantuml
 roadmap
 tparam
+underfitting
 visualizable

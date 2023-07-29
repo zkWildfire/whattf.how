@@ -1,5 +1,6 @@
 # Custom Dictionary Words
 endplantuml
+MSVC
 overfit
 overfitting
 plantuml
@@ -7,3 +8,4 @@ roadmap
 tparam
 underfitting
 visualizable
+wakeups

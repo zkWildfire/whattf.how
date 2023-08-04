@@ -1,10 +1,12 @@
 # Custom Dictionary Words
 endplantuml
+microarchitecture
 MSVC
 overfit
 overfitting
 plantuml
 roadmap
+Skylake
 tparam
 underfitting
 visualizable

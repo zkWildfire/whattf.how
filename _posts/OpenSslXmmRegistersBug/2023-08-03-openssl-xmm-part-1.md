@@ -56,7 +56,15 @@ While debugging this prior to reaching out to me, my coworker had found that
 the `>TEN_DAYS` branch was being taken because the XMM register being compared
 to was all zeroes. It was also discovered that the instruction that was
 resulting in the relevant XMM register getting zeroed out was in OpenSSL's
-handcrafted assembly code.
+handcrafted assembly code. As a result of that instruction, the `wait_for()`
+code was effectively running this instead of the intended code:
+
+```py
+def wait_for(max_time):
+    if max_time > 0:
+        max_time = TEN_DAYS
+    wait_until(now() + max_time)
+```
 
 ## Identifying the Culprit
 At the point where I joined the debugging effort, it was not known at the time

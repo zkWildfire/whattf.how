@@ -1,6 +1,6 @@
 ---
 layout: post
-title: The 10 Day Wait (Part 1)
+title: "The 10 Day Wait: Part 1"
 tags: bugs openssl
 category: debugging
 ---

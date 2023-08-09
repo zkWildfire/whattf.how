@@ -36,17 +36,17 @@ of the `if` statement:
 ```cpp
 if (menuchoice = 1)
 {
-	store();
+    store();
 }
 else if (menuchoice == 2)
 {
-	fight();
+    fight();
 }
 
 else
 {
-	cout << "Please enter a number that correspods to a menu item. \n";
-	system("PAUSE");
+    cout << "Please enter a number that correspods to a menu item. \n";
+    system("PAUSE");
 }
 ```
 
@@ -167,16 +167,16 @@ consider a class that saves several constructor parameters as member variables:
 ```cs
 public class Foobar
 {
-	private readonly int _foo;
-	private readonly string _bar;
-	private readonly bool _baz;
+    private readonly int _foo;
+    private readonly string _bar;
+    private readonly bool _baz;
 
-	public Foobar(int foo, string bar, bool baz)
-	{
-		_foo = foo;
-		_bar = bar;
-		_baz = baz;
-	}
+    public Foobar(int foo, string bar, bool baz)
+    {
+        _foo = foo;
+        _bar = bar;
+        _baz = baz;
+    }
 }
 ```
 

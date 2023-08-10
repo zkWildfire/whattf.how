@@ -1,5 +1,6 @@
 # Custom Dictionary Words
 endplantuml
+MCVE
 microarchitecture
 MSVC
 overfit

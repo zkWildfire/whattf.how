@@ -149,13 +149,13 @@ checked to determine whether to take the AVX-512 code path would be what I
 needed to find the source of.
 
 Fortunately, there was only a single hit for `$L$blocks_avx512`:
-```asm
+```nasm
 $L$do_avx2:
-	cmp	rdx,512
-	jb	NEAR $L$skip_avx512
-	and	r10d,r11d
-	test	r10d,65536
-	jnz	NEAR $L$blocks_avx512
+    cmp	rdx,512
+    jb	NEAR $L$skip_avx512
+    and	r10d,r11d
+    test	r10d,65536
+    jnz	NEAR $L$blocks_avx512
 ```
 
 That assembly code translates to this C code:
@@ -191,11 +191,11 @@ to determining if the AVX-512 code path was taken?
 
 My best guess as to where the value of `r11d` was coming from was this code
 block:
-```asm
+```nasm
 $L$proceed_avx2:
-	mov	rdx,r15
-	mov	r10d,DWORD[((OPENSSL_ia32cap_P+8))]
-	mov	r11d,3221291008
+    mov	rdx,r15
+    mov	r10d,DWORD[((OPENSSL_ia32cap_P+8))]
+    mov	r11d,3221291008
 ```
 
 Finding this code block answered two very important questions for me. First,
@@ -208,13 +208,13 @@ whether the AVX-512 code path is taken.
 The other significant discovery from this block of code is where the value of
 `r10d` is coming from. It's loaded from a memory address that was given the name
 `OPENSSL_ia32cap_P`. That address is declared at the top of the .asm file:
-```asm
+```nasm
 EXTERN	OPENSSL_ia32cap_P
 ```
 
 Since it's declared `extern`, my next stop was to figure out where this variable
 is defined. I found its source in `x86_64cpuid.asm`:
-```asm
+```nasm
 common	OPENSSL_ia32cap_P 16
 ```
 
@@ -267,12 +267,12 @@ Why isn't the bug appearing on the Cascade Lake system then?
 ## Introducing Intel Lake Lake CPUs
 After making the call to `cpuid` to check for supported instruction sets, the
 `x86_64cpuid.asm` code also contains this little code block:
-```asm
+```nasm
 $L$notknights:
-	and	eax,0x0fff0ff0
-	cmp	eax,0x00050650
-	jne	NEAR $L$notskylakex
-	and	ebx,0xfffeffff
+    and	eax,0x0fff0ff0
+    cmp	eax,0x00050650
+    jne	NEAR $L$notskylakex
+    and	ebx,0xfffeffff
 ```
 
 See that final line there? What this code block does is check whether the CPU

@@ -54,7 +54,7 @@ USER $USERNAME
 RUN mkdir /tmp/nvm && \
 	cd /tmp/nvm && \
 	# Install nvm
-	curl -sL https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.0/install.sh -o install_nvm.sh && \
+	curl -sL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh -o install_nvm.sh && \
 	bash install_nvm.sh && \
 	# Install node + npm
 	export NVM_DIR=$HOME/.nvm && \

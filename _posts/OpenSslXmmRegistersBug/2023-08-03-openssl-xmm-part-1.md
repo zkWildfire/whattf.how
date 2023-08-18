@@ -311,3 +311,5 @@ my findings!
 ## JMP 0xPARTDEUX
 Stay tuned for the next post in this tale! In part 2, I'll cover how I isolated
 this bug in a test app and how I created a patch to fix the issue.
+
+> [Part 2 is now live!]({% post_url OpenSslXmmRegistersBug/2023-08-09-openssl-xmm-part-2 %})

@@ -232,3 +232,57 @@ The code that ChatGPT generated for the interface is exactly what I wanted,
 and the only changes I made to it were stylistic changes - modifying comments
 to use my writing style and a few formatting changes. You can see the version
 of the class that I committed [here](https://github.com/zkWildfire/FamilyTreeDiscordBot/blob/981d5d16c509f4f9a05012517bb3cbf0361c0ebf/src/bot/services/family_tree_service.py).
+
+Note that pasting the contents of `family_tree.py` makes a massive difference.
+For example, when using the exact same prompt but leaving out the
+`family_tree.py` code, ChatGPT generated the following code:
+```py
+from abc import ABC, abstractmethod
+from typing import Union
+
+class TreeNode:
+    # Define your TreeNode class here
+    pass
+
+class IFamilyTreeService(ABC):
+    @abstractmethod
+    def register_discord_server(self, server_id: int, root_node: TreeNode) -> None:
+        """
+        Registers a new Discord server with the specified server ID and creates a new family tree for the server.
+        The root node for the server's family tree instance must be provided as a TreeNode object.
+
+        :param server_id: The unique ID of the Discord server.
+        :param root_node: The root node of the family tree (TreeNode object).
+        """
+        pass
+
+    @abstractmethod
+    def remove_discord_server(self, server_id: int) -> None:
+        """
+        Removes a previously added Discord server.
+
+        :param server_id: The unique ID of the Discord server to remove.
+        """
+        pass
+
+    @abstractmethod
+    def get_family_tree(self, server_id: int) -> Union['IFamilyTree', None]:
+        """
+        Returns the family tree object for a discord server the bot has been added to.
+
+        :param server_id: The unique ID of the Discord server.
+        :return: IFamilyTree object or None if no family tree found for the specified server.
+        """
+        pass
+
+class IFamilyTree(ABC):
+    # Define your IFamilyTree interface here
+    pass
+```
+
+If I were to use this code, I would need to strip out the extra class
+declarations (`TreeNode`, `IFamilyTree`), reformat the comments to match the
+Doxygen style comments I use, replace `pass` with `raise NotImplementedError()`,
+and update the documentation to include `@throws` documentation. The
+`get_family_tree()` method's signature would also need to be tweaked slightly as
+a result of using exceptions in the method's specification.

@@ -91,4 +91,4 @@ prototype agents. These posts are likely to be less frequent as it will take
 time to implement and test the new code, and this research is taking place in
 off hours after my day job.
 
-> Find the next post in this series [here]({% post_url ModularNeuralNetworks/2023-08-11-modular-neural-networks-update-1 %})
+> Find the next post in this series [here]({% post_url Research/ModularNeuralNetworks/2023-08-11-mnn-update-1 %})

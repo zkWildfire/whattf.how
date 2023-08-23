@@ -96,4 +96,4 @@ that I'm planning on testing out. While I have a general idea of how I want to
 implement the various agents, I also expect I'll end up deviating from the
 initial design as I try out different agent designs and come up with new ideas.
 
-> Find the next post in this series [here]({% post_url ModularNeuralNetworks/2023-07-09-initial-design %})
+> Find the next post in this series [here]({% post_url Research/ModularNeuralNetworks/2023-07-09-initial-design %})

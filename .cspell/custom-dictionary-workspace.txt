@@ -1,4 +1,6 @@
 # Custom Dictionary Words
+Blazor
+debuggability
 Doxygen
 endplantuml
 MCVE

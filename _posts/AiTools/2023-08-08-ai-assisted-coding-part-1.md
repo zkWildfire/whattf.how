@@ -45,7 +45,7 @@ else if (menuchoice == 2)
 
 else
 {
-    cout << "Please enter a number that correspods to a menu item. \n";
+    cout << "Please enter a number that corresponds to a menu item. \n";
     system("PAUSE");
 }
 ```
@@ -221,3 +221,5 @@ own, you'll just have to wait for the next post in this series! In the meantime,
 to those of you who want present day AI to write you the next World of
 Warcraft...
 ![That's not how AI works](/assets/img/ai-assisted-coding/thats-not-how-ai-works.png)
+
+> [Part 2 is now live!]({% post_url AiTools/2023-08-26-ai-assisted-coding-part-2 %})

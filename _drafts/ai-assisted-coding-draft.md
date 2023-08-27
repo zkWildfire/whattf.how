@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Leveraging AI-Assisted Coding: Part 2"
+title: "Leveraging AI-Assisted Coding: Part 2 (Draft)"
 tags: software-engineering best-practices ai opinion
 category: software-engineering
 ---

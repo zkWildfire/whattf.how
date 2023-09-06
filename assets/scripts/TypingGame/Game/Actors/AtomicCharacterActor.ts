@@ -6,6 +6,7 @@ import { ICharacterMapping } from "../../Data/CharacterMapping";
 import { IMovementComponent } from "../Components/Movement/MovementComponent";
 import { AtomicCharacterStateComponent } from "../Components/Character/AtomicCharacterStateComponent";
 import { ICharacterStateComponent } from "../Components/Character/CharacterStateComponent";
+import { IAssistanceComponent } from "../Components/Assistance/AssistanceComponent";
 
 /// Character actor that supports atomic characters.
 export class AtomicCharacterActor implements ICharacterActor
@@ -66,11 +67,14 @@ export class AtomicCharacterActor implements ICharacterActor
 	///   the bottom of the screen.
 	private readonly _damage: number;
 
-	/// Component used to keep track of the state of the character set.
-	private readonly _stateComponent: ICharacterStateComponent;
+	/// Component used to enable and disable the input text.
+	private readonly _assistanceComponent: IAssistanceComponent;
 
 	/// Movement component used to move the character set.
 	private readonly _movementComponent: IMovementComponent;
+
+	/// Component used to keep track of the state of the character set.
+	private readonly _stateComponent: ICharacterStateComponent;
 
 	/// Renderer component used to render the character set.
 	private readonly _renderer: ITextRendererComponent;
@@ -79,9 +83,19 @@ export class AtomicCharacterActor implements ICharacterActor
 	private _inputTextVisibility: boolean;
 
 	/// Initializes a new instance of the class.
+	/// @param characterMapping The character mapping to use for the character
+	///   set.
+	/// @param movementComponent The movement component to use for the character
+	///   set.
+	/// @param assistanceComponent The assistance component to use for the
+	///   character set.
+	/// @param points The number of points the character set is worth.
+	/// @param damage The amount of damage the character set will do to the
+	///   player if it reaches the bottom of the screen.
 	constructor(
 		characterMapping: ICharacterMapping,
 		movementComponent: IMovementComponent,
+		assistanceComponent: IAssistanceComponent,
 		points: number,
 		damage: number)
 	{
@@ -89,6 +103,7 @@ export class AtomicCharacterActor implements ICharacterActor
 		this._onRespawned = new SimpleEventDispatcher<ICharacterActor>();
 		this._points = points;
 		this._damage = damage;
+		this._assistanceComponent = assistanceComponent;
 		this._movementComponent = movementComponent;
 		this._inputTextVisibility = true;
 
@@ -118,13 +133,21 @@ export class AtomicCharacterActor implements ICharacterActor
 		);
 
 		// Bind to events
-		this._stateComponent.OnComplete.subscribe(() =>
+		this._assistanceComponent.OnShouldDisplayAssistance.subscribe(() =>
 		{
-			this._onDestroyed.dispatch(this);
+			this._renderer.IsInputTextVisible = true;
+		});
+		this._assistanceComponent.OnShouldHideAssistance.subscribe(() =>
+		{
+			this._renderer.IsInputTextVisible = false;
 		});
 		this._movementComponent.OnReset.subscribe(() =>
 		{
 			this._onRespawned.dispatch(this);
+		});
+		this._stateComponent.OnComplete.subscribe(() =>
+		{
+			this._onDestroyed.dispatch(this);
 		});
 	}
 
@@ -141,6 +164,7 @@ export class AtomicCharacterActor implements ICharacterActor
 	public Tick(deltaTime: number): void
 	{
 		this._movementComponent.Tick(deltaTime);
+		this._assistanceComponent.Update(this._movementComponent.Position);
 	}
 
 	/// Renders the character set.

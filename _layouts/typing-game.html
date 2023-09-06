@@ -86,9 +86,8 @@ tail_includes:
 </div>
 
 <!-- Main Menu -->
-<div class="game">
-	<form id="game-menu"
-		class="main-menu px-2 pb-4 d-flex flex-column align-items-stretch">
+<div class="game" id="game-menu">
+	<form class="main-menu px-2 pb-4 d-flex flex-column align-items-stretch">
 		<!-- Settings Title Bar -->
 		<h3 class="text-center border-bottom border-light">
 			Game Settings
@@ -108,7 +107,7 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="radio"
-							name="difficulty-easy"
+							name="difficulty"
 							id="difficulty-easy">
 						<label class="form-check-label" for="difficulty-easy">
 							Easy
@@ -119,8 +118,9 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="radio"
-							name="difficulty-normal"
-							id="difficulty-normal">
+							name="difficulty"
+							id="difficulty-normal"
+							checked>
 						<label class="form-check-label" for="difficulty-normal">
 							Normal
 						</label>
@@ -130,7 +130,7 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="radio"
-							name="difficulty-hard"
+							name="difficulty"
 							id="difficulty-hard">
 						<label class="form-check-label" for="difficulty-hard">
 							Hard
@@ -141,7 +141,7 @@ tail_includes:
 					<div class="form-check">
 						<input class="form-check-input"
 							type="radio"
-							name="difficulty-expert"
+							name="difficulty"
 							id="difficulty-expert">
 						<label class="form-check-label" for="difficulty-expert">
 							Expert
@@ -161,7 +161,7 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="radio"
-							name="assistance-always"
+							name="assistance"
 							id="assistance-always">
 						<label class="form-check-label" for="assistance-always">
 							Always
@@ -172,7 +172,7 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="radio"
-							name="assistance-halfway"
+							name="assistance"
 							id="assistance-halfway">
 						<label class="form-check-label" for="assistance-halfway">
 							Halfway
@@ -183,8 +183,9 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="radio"
-							name="assistance-quarter"
-							id="assistance-quarter">
+							name="assistance"
+							id="assistance-quarter"
+							checked>
 						<label class="form-check-label" for="assistance-quarter">
 							Quarter Way
 						</label>
@@ -194,7 +195,7 @@ tail_includes:
 					<div class="form-check">
 						<input class="form-check-input"
 							type="radio"
-							name="assistance-off"
+							name="assistance"
 							id="assistance-off">
 						<label class="form-check-label" for="assistance-off">
 							Off
@@ -222,9 +223,9 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="checkbox"
-							name="vocabulary-hiragana-base"
-							id="vocabulary-hiragana-base">
-						<label class="form-check-label" for="vocabulary-hiragana-base">
+							id="vocab-hiragana-base"
+							checked>
+						<label class="form-check-label" for="vocab-hiragana-base">
 							Base
 						</label>
 					</div>
@@ -233,9 +234,9 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="checkbox"
-							name="vocabulary-hiragana-dakuon"
-							id="vocabulary-hiragana-dakuon">
-						<label class="form-check-label" for="vocabulary-hiragana-dakuon">
+							id="vocab-hiragana-dakuon"
+							checked>
+						<label class="form-check-label" for="vocab-hiragana-dakuon">
 							Dakuon
 						</label>
 					</div>
@@ -244,9 +245,9 @@ tail_includes:
 					<div class="form-check">
 						<input class="form-check-input"
 							type="checkbox"
-							name="vocabulary-hiragana-combo"
-							id="vocabulary-hiragana-combo">
-						<label class="form-check-label" for="vocabulary-hiragana-combo">
+							id="vocab-hiragana-combo"
+							checked>
+						<label class="form-check-label" for="vocab-hiragana-combo">
 							Combo
 						</label>
 					</div>
@@ -265,9 +266,9 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="checkbox"
-							name="vocabulary-katakana-base"
-							id="vocabulary-katakana-base">
-						<label class="form-check-label" for="vocabulary-katakana-base">
+							id="vocab-katakana-base"
+							checked>
+						<label class="form-check-label" for="vocab-katakana-base">
 							Base
 						</label>
 					</div>
@@ -276,9 +277,9 @@ tail_includes:
 					<div class="form-check me-4">
 						<input class="form-check-input"
 							type="checkbox"
-							name="vocabulary-katakana-dakuon"
-							id="vocabulary-katakana-dakuon">
-						<label class="form-check-label" for="vocabulary-katakana-dakuon">
+							id="vocab-katakana-dakuon"
+							checked>
+						<label class="form-check-label" for="vocab-katakana-dakuon">
 							Dakuon
 						</label>
 					</div>
@@ -287,9 +288,9 @@ tail_includes:
 					<div class="form-check">
 						<input class="form-check-input"
 							type="checkbox"
-							name="vocabulary-katakana-combo"
-							id="vocabulary-katakana-combo">
-						<label class="form-check-label" for="vocabulary-katakana-combo">
+							id="vocab-katakana-combo"
+							checked>
+						<label class="form-check-label" for="vocab-katakana-combo">
 							Combo
 						</label>
 					</div>
@@ -301,7 +302,9 @@ tail_includes:
 		<!-- Buttons Row -->
 		<div class="flex-fill d-flex flex-column justify-content-end">
 			<div class="d-flex justify-content-center">
-				<button class="btn btn-success rounded-0 px-4" type="button">
+				<button id="start-button"
+					class="btn btn-success rounded-0 px-4"
+					type="button">
 					Start
 				</button>
 			</div>

@@ -8,7 +8,7 @@ import { EMatrixSize } from "./Demo/Config/MatrixSize";
 import { ESimulationSpeed } from "./Demo/Config/SimulationSpeed";
 import { EDisplayElements } from "./Demo/Config/DisplayElements";
 
-export const runMatrixCacheSim = () =>
+export const RunMatrixCacheSim = () =>
 {
 	//
 	// Miscellaneous constants

@@ -4,6 +4,8 @@ import { ITextRendererComponent } from "../Components/Renderers/TextRendererComp
 import { MonoTextRendererComponent } from "../Components/Renderers/MonoTextRendererComponent";
 import { ICharacterMapping } from "../../Data/CharacterMapping";
 import { IMovementComponent } from "../Components/Movement/MovementComponent";
+import { AtomicCharacterStateComponent } from "../Components/Character/AtomicCharacterStateComponent";
+import { ICharacterStateComponent } from "../Components/Character/CharacterStateComponent";
 
 /// Character actor that supports atomic characters.
 export class AtomicCharacterActor implements ICharacterActor
@@ -64,6 +66,9 @@ export class AtomicCharacterActor implements ICharacterActor
 	///   the bottom of the screen.
 	private readonly _damage: number;
 
+	/// Component used to keep track of the state of the character set.
+	private readonly _stateComponent: ICharacterStateComponent;
+
 	/// Movement component used to move the character set.
 	private readonly _movementComponent: IMovementComponent;
 
@@ -87,6 +92,11 @@ export class AtomicCharacterActor implements ICharacterActor
 		this._movementComponent = movementComponent;
 		this._inputTextVisibility = true;
 
+		// Set up the character state component
+		this._stateComponent = new AtomicCharacterStateComponent(
+			characterMapping
+		);
+
 		// Set up the text renderer
 		this._renderer = new MonoTextRendererComponent(
 			characterMapping.DisplayCharacters,
@@ -108,6 +118,10 @@ export class AtomicCharacterActor implements ICharacterActor
 		);
 
 		// Bind to events
+		this._stateComponent.OnComplete.subscribe(() =>
+		{
+			this._onDestroyed.dispatch(this);
+		});
 		this._movementComponent.OnReset.subscribe(() =>
 		{
 			this._onRespawned.dispatch(this);
@@ -119,6 +133,7 @@ export class AtomicCharacterActor implements ICharacterActor
 	///   character string and will always be a lower case English letter.
 	public OnCharacterTyped(c: string): void
 	{
+		this._stateComponent.OnCharacterTyped(c);
 	}
 
 	/// Runs the update logic for the character set.

@@ -2,10 +2,10 @@ const path = require("path");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 module.exports = {
-	entry: "./assets/scripts/MatrixCacheSim/MatrixCacheSim.ts",
+	entry: "./assets/scripts/Launcher.ts",
 	mode: "development",
 	output: {
-		filename: "./assets/scripts/MatrixCacheSim/demo.js",
+		filename: "./assets/scripts/whattf.js",
 		path: __dirname
 	},
 	module: {

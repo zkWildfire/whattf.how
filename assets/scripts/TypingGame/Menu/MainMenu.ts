@@ -3,6 +3,8 @@ import { EAssistanceLevel } from "./Assistance";
 import { EDifficulty } from "./Difficulty";
 import { EVocabularySet } from "./VocabularySet";
 import { Settings } from "./Settings";
+import { ICharacterMapping } from "../Data/CharacterMapping";
+import { VOCABULARY_SET_DATA_LOADERS } from "../Data/VocabularySets";
 
 /// ID of the game menu HTML element
 const ID_GAME_MENU = "game-menu";
@@ -47,13 +49,25 @@ export const DisplayMenu: () => void = () =>
 }
 
 /// Method to invoke when the start button is clicked
-export const OnStartClicked: () => void = () =>
+export const OnStartClicked: () => void = async () =>
 {
-	// Get the selected settings
+	// Get the vocabulary sets to use
+	// TODO: Handle the case where no vocabulary sets are selected
+	const selectedVocabularySets = GetSelectedVocabularySets();
+
+	// Load the character mappings for each vocabulary set
+	const characterMappings = new Array<ICharacterMapping>();
+	for (const vocabularySet of selectedVocabularySets)
+	{
+		const mappings = await LoadVocabularySet(vocabularySet);
+		characterMappings.push(...mappings);
+	}
+
+	// Return the selected settings
 	const settings: Settings = {
 		difficulty: GetSelectedDifficulty(),
 		assistanceLevel: GetSelectedAssistanceLevel(),
-		vocabularySets: GetSelectedVocabularySets()
+		vocabularySets: characterMappings
 	};
 }
 
@@ -116,7 +130,7 @@ const GetSelectedDifficulty: () => EDifficulty = () =>
 	}
 	else
 	{
-		assert(false, "No difficulty level selected.");
+		throw new Error("No difficulty selected.");
 	}
 }
 
@@ -179,7 +193,7 @@ const GetSelectedAssistanceLevel: () => EAssistanceLevel = () =>
 	}
 	else
 	{
-		assert(false, "No assistance level selected.");
+		throw new Error("No assistance level selected.");
 	}
 }
 
@@ -218,4 +232,22 @@ const GetSelectedVocabularySets: () => Set<EVocabularySet> = () =>
 	}
 
 	return selectedVocabularySets;
+}
+
+/// Loads the character mappings for the given vocabulary set.
+/// @param vocabularySet The vocabulary set to load the character mappings for.
+/// @returns The character mappings for the given vocabulary set.
+const LoadVocabularySet:
+	(vocabularySet: EVocabularySet) => Promise<Array<ICharacterMapping>> =
+	async (vocabularySet: EVocabularySet) =>
+{
+	// Get the data loader for the vocabulary set
+	const dataLoader = VOCABULARY_SET_DATA_LOADERS.get(vocabularySet);
+	assert(
+		dataLoader !== undefined,
+		`No data loader found for vocabulary set ${vocabularySet}`
+	);
+
+	// Load the character mappings
+	return dataLoader().LoadAsync();
 }

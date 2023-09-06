@@ -1,6 +1,6 @@
+import { ICharacterMapping } from "../Data/CharacterMapping";
 import { EAssistanceLevel } from "./Assistance";
 import { EDifficulty } from "./Difficulty";
-import { EVocabularySet } from "./VocabularySet";
 
 /// Struct that defines the settings to use for the game.
 export interface Settings
@@ -11,6 +11,6 @@ export interface Settings
 	/// The assistance level to provide.
 	assistanceLevel: EAssistanceLevel;
 
-	/// The vocabulary sets to use.
-	vocabularySets: Set<EVocabularySet>;
+	/// The character sets to use for the game.
+	vocabularySets: Array<ICharacterMapping>;
 }

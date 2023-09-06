@@ -1,18 +1,18 @@
 import { ISimpleEvent } from "strongly-typed-events";
 
 /// Base interface for actors that display a character set on screen.
-export interface ICharacterSet
+export interface ICharacterActor
 {
 	/// Event broadcast when the character set is destroyed.
 	/// The event parameter will be the character set that was destroyed.
-	get OnDestroyed(): ISimpleEvent<ICharacterSet>;
+	get OnDestroyed(): ISimpleEvent<ICharacterActor>;
 
 	/// Event broadcast when the character set is respawned.
 	/// If the character set reaches the bottom of the screen, it will be
 	///   respawned at the top of the screen. Note that the word "respawn" is
 	///   a bit of a misnomer; the character set is not destroyed and recreated,
 	///   it is simply moved to the top of the screen.
-	get OnRespawned(): ISimpleEvent<ICharacterSet>;
+	get OnRespawned(): ISimpleEvent<ICharacterActor>;
 
 	/// Number of points the character set is worth.
 	get Points(): number;

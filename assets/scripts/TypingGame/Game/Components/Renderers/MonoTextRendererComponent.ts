@@ -1,3 +1,5 @@
+import { ITextRendererComponent } from "./TextRendererComponent";
+
 /// Struct that defines the style to use for text.
 export interface TextStyle
 {
@@ -20,7 +22,7 @@ export interface TextStyle
 /// Text renderer that renders text in a single color.
 /// This class will use the same color for all characters in the text, but
 ///   allows the display text and input text to be different colors.
-export class MonoTextRendererComponent
+export class MonoTextRendererComponent implements ITextRendererComponent
 {
 	/// Gets whether or not the input text is visible.
 	get IsInputTextVisible(): boolean

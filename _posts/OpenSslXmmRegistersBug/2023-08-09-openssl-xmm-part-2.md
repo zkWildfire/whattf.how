@@ -96,7 +96,7 @@ setXmmRegister0:
 
 > Interested in learning more about how ChatGPT can be leveraged in different
 > software engineering work? I've written about AI tools as part of my
-> [Leveraging AI-Assisted Coding]({% post_url AiAssistedCoding/2023-08-08-ai-assisted-coding-part-1 %})
+> [Leveraging AI-Assisted Coding]({% post_url AiTools/2023-08-08-ai-assisted-coding-part-1 %})
 > series of posts.
 
 The problem is, since it isn't possible to specify the register to target via

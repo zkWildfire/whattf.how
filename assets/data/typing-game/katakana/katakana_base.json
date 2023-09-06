@@ -1,0 +1,189 @@
+{
+	"DisplayName": "Katakana Base Set",
+	"CharacterPairs": [
+		{
+			"DisplayText": "ア",
+			"EnglishText": "a"
+		},
+		{
+			"DisplayText": "イ",
+			"EnglishText": "i"
+		},
+		{
+			"DisplayText": "ウ",
+			"EnglishText": "u"
+		},
+		{
+			"DisplayText": "エ",
+			"EnglishText": "e"
+		},
+		{
+			"DisplayText": "オ",
+			"EnglishText": "o"
+		},
+		{
+			"DisplayText": "カ",
+			"EnglishText": "ka"
+		},
+		{
+			"DisplayText": "キ",
+			"EnglishText": "ki"
+		},
+		{
+			"DisplayText": "ク",
+			"EnglishText": "ku"
+		},
+		{
+			"DisplayText": "ケ",
+			"EnglishText": "ke"
+		},
+		{
+			"DisplayText": "コ",
+			"EnglishText": "ko"
+		},
+		{
+			"DisplayText": "サ",
+			"EnglishText": "sa"
+		},
+		{
+			"DisplayText": "シ",
+			"EnglishText": "shi"
+		},
+		{
+			"DisplayText": "ス",
+			"EnglishText": "su"
+		},
+		{
+			"DisplayText": "セ",
+			"EnglishText": "se"
+		},
+		{
+			"DisplayText": "ソ",
+			"EnglishText": "so"
+		},
+		{
+			"DisplayText": "タ",
+			"EnglishText": "ta"
+		},
+		{
+			"DisplayText": "チ",
+			"EnglishText": "chi"
+		},
+		{
+			"DisplayText": "ツ",
+			"EnglishText": "tsu"
+		},
+		{
+			"DisplayText": "テ",
+			"EnglishText": "te"
+		},
+		{
+			"DisplayText": "ト",
+			"EnglishText": "to"
+		},
+		{
+			"DisplayText": "ナ",
+			"EnglishText": "na"
+		},
+		{
+			"DisplayText": "ニ",
+			"EnglishText": "ni"
+		},
+		{
+			"DisplayText": "ヌ",
+			"EnglishText": "nu"
+		},
+		{
+			"DisplayText": "ネ",
+			"EnglishText": "ne"
+		},
+		{
+			"DisplayText": "ノ",
+			"EnglishText": "no"
+		},
+		{
+			"DisplayText": "ハ",
+			"EnglishText": "ha"
+		},
+		{
+			"DisplayText": "ヒ",
+			"EnglishText": "hi"
+		},
+		{
+			"DisplayText": "フ",
+			"EnglishText": "fu"
+		},
+		{
+			"DisplayText": "ヘ",
+			"EnglishText": "he"
+		},
+		{
+			"DisplayText": "ホ",
+			"EnglishText": "ho"
+		},
+		{
+			"DisplayText": "マ",
+			"EnglishText": "ma"
+		},
+		{
+			"DisplayText": "ミ",
+			"EnglishText": "mi"
+		},
+		{
+			"DisplayText": "ム",
+			"EnglishText": "mu"
+		},
+		{
+			"DisplayText": "メ",
+			"EnglishText": "me"
+		},
+		{
+			"DisplayText": "モ",
+			"EnglishText": "mo"
+		},
+		{
+			"DisplayText": "ヤ",
+			"EnglishText": "ya"
+		},
+		{
+			"DisplayText": "ユ",
+			"EnglishText": "yu"
+		},
+		{
+			"DisplayText": "ヨ",
+			"EnglishText": "yo"
+		},
+		{
+			"DisplayText": "ラ",
+			"EnglishText": "ra"
+		},
+		{
+			"DisplayText": "リ",
+			"EnglishText": "ri"
+		},
+		{
+			"DisplayText": "ル",
+			"EnglishText": "ru"
+		},
+		{
+			"DisplayText": "レ",
+			"EnglishText": "re"
+		},
+		{
+			"DisplayText": "ロ",
+			"EnglishText": "ro"
+		},
+		{
+			"DisplayText": "ワ",
+			"EnglishText": "wa"
+		},
+		{
+			"DisplayText": "ヲ",
+			"EnglishText": "wo"
+		},
+		{
+			"DisplayText": "ン",
+			"EnglishText": "n"
+		}
+	]
+}

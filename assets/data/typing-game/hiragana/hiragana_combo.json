@@ -1,0 +1,137 @@
+{
+	"DisplayName": "Hiragana Combo Set",
+	"CharacterPairs": [
+		{
+			"DisplayText": "きゃ",
+			"EnglishText": "kya"
+		},
+		{
+			"DisplayText": "きゅ",
+			"EnglishText": "kyu"
+		},
+		{
+			"DisplayText": "きょ",
+			"EnglishText": "kyo"
+		},
+		{
+			"DisplayText": "しゃ",
+			"EnglishText": "sha"
+		},
+		{
+			"DisplayText": "しゅ",
+			"EnglishText": "shu"
+		},
+		{
+			"DisplayText": "しょ",
+			"EnglishText": "sho"
+		},
+		{
+			"DisplayText": "ちゃ",
+			"EnglishText": "cha"
+		},
+		{
+			"DisplayText": "ちゅ",
+			"EnglishText": "chu"
+		},
+		{
+			"DisplayText": "ちょ",
+			"EnglishText": "cho"
+		},
+		{
+			"DisplayText": "にゃ",
+			"EnglishText": "nya"
+		},
+		{
+			"DisplayText": "にゅ",
+			"EnglishText": "nyu"
+		},
+		{
+			"DisplayText": "にょ",
+			"EnglishText": "nyo"
+		},
+		{
+			"DisplayText": "ひゃ",
+			"EnglishText": "hya"
+		},
+		{
+			"DisplayText": "ひゅ",
+			"EnglishText": "hyu"
+		},
+		{
+			"DisplayText": "ひょ",
+			"EnglishText": "hyo"
+		},
+		{
+			"DisplayText": "みゃ",
+			"EnglishText": "mya"
+		},
+		{
+			"DisplayText": "みゅ",
+			"EnglishText": "myu"
+		},
+		{
+			"DisplayText": "みょ",
+			"EnglishText": "myo"
+		},
+		{
+			"DisplayText": "りゃ",
+			"EnglishText": "rya"
+		},
+		{
+			"DisplayText": "りゅ",
+			"EnglishText": "ryu"
+		},
+		{
+			"DisplayText": "りょ",
+			"EnglishText": "ryo"
+		},
+		{
+			"DisplayText": "ぎゃ",
+			"EnglishText": "gya"
+		},
+		{
+			"DisplayText": "ぎゅ",
+			"EnglishText": "gyu"
+		},
+		{
+			"DisplayText": "ぎょ",
+			"EnglishText": "gyo"
+		},
+		{
+			"DisplayText": "じゃ",
+			"EnglishText": "ja"
+		},
+		{
+			"DisplayText": "じゅ",
+			"EnglishText": "ju"
+		},
+		{
+			"DisplayText": "じょ",
+			"EnglishText": "jo"
+		},
+		{
+			"DisplayText": "びゃ",
+			"EnglishText": "bya"
+		},
+		{
+			"DisplayText": "びゅ",
+			"EnglishText": "byu"
+		},
+		{
+			"DisplayText": "びょ",
+			"EnglishText": "byo"
+		},
+		{
+			"DisplayText": "ぴゃ",
+			"EnglishText": "pya"
+		},
+		{
+			"DisplayText": "ぴゅ",
+			"EnglishText": "pyu"
+		},
+		{
+			"DisplayText": "ぴょ",
+			"EnglishText": "pyo"
+		}
+	]
+}

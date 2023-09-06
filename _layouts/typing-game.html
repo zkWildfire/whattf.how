@@ -1,0 +1,364 @@
+---
+layout: page
+refactor: true
+panel_includes:
+  - toc
+tail_includes:
+  - related-posts
+  - post-nav
+  - comments
+---
+
+{% include lang.html %}
+<link rel="stylesheet"
+	href="{{ '/assets/css/TypingGame/styles.css' | relative_url }}">
+
+<h1 data-toc-skip>{{ page.title }}</h1>
+
+<div class="post-meta text-muted">
+		<!-- published date -->
+		<span>
+			{{ site.data.locales[lang].post.posted }}
+			{% include datetime.html date=page.date tooltip=true lang=lang %}
+		</span>
+
+		<!-- lastmod date -->
+		{% if page.last_modified_at and page.last_modified_at != page.date %}
+		<span>
+			{{ site.data.locales[lang].post.updated }}
+			{% include datetime.html date=page.last_modified_at tooltip=true lang=lang %}
+		</span>
+		{% endif %}
+
+	{% if page.image %}
+		{% capture src %}src="{{ page.image.path | default: page.image }}"{% endcapture %}
+		{% capture class %}class="preview-img{% if page.image.no_bg %}{{ ' no-bg' }}{% endif %}"{% endcapture %}
+		{% capture alt %}alt="{{ page.image.alt | default: "Preview Image" }}"{% endcapture %}
+
+		{% capture lqip %}
+			{% if page.image.lqip %}
+				lqip="{{ page.image.lqip }}"
+			{% endif %}
+		{% endcapture %}
+
+		<div class="mt-3 mb-3">
+			<img {{ src }} {{ class }} {{ alt }} w="1200" h="630" {{ lqip | strip }}>
+			{%- if page.image.alt -%}
+				<figcaption class="text-center pt-2 pb-2">{{ page.image.alt }}</figcaption>
+			{%- endif -%}
+		</div>
+	{% endif %}
+
+	<div class="d-flex justify-content-between">
+		<!-- author(s) -->
+		<span>
+			{% if page.author %}
+				{% assign authors = page.author %}
+			{% elsif page.authors %}
+				{% assign authors = page.authors %}
+			{% endif %}
+
+			{{ site.data.locales[lang].post.written_by }}
+
+			<em>
+			{% if authors %}
+				{% for author in authors %}
+					<a href="{{ site.data.authors[author].url }}">{{ site.data.authors[author].name }}</a>
+					{% unless forloop.last %}</em>, <em>{% endunless %}
+				{% endfor %}
+			{% else %}
+				<a href="{{ site.social.links[0] }}">{{ site.social.name }}</a>
+			{% endif %}
+			</em>
+		</span>
+
+		<div>
+			<!-- read time -->
+			{% include read-time.html content=content prompt=true lang=lang %}
+		</div>
+
+	</div> <!-- .d-flex -->
+
+</div> <!-- .post-meta -->
+
+<div class="post-content">
+	{{ content }}
+</div>
+
+<!-- Main Menu -->
+<div class="game">
+	<form id="game-menu"
+		class="main-menu px-2 pb-4 d-flex flex-column align-items-stretch">
+		<!-- Settings Title Bar -->
+		<h3 class="text-center border-bottom border-light">
+			Game Settings
+		</h3>
+
+		<!-- Game Settings -->
+		<div class="mx-2">
+
+			<!-- Game Difficulty -->
+			<div class="mb-3">
+				<span class="form-label h5">
+					Difficulty
+				</span>
+
+				<div class="d-flex">
+					<!-- Easy -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="radio"
+							name="difficulty-easy"
+							id="difficulty-easy">
+						<label class="form-check-label" for="difficulty-easy">
+							Easy
+						</label>
+					</div>
+
+					<!-- Normal -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="radio"
+							name="difficulty-normal"
+							id="difficulty-normal">
+						<label class="form-check-label" for="difficulty-normal">
+							Normal
+						</label>
+					</div>
+
+					<!-- Hard -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="radio"
+							name="difficulty-hard"
+							id="difficulty-hard">
+						<label class="form-check-label" for="difficulty-hard">
+							Hard
+						</label>
+					</div>
+
+					<!-- Expert -->
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="difficulty-expert"
+							id="difficulty-expert">
+						<label class="form-check-label" for="difficulty-expert">
+							Expert
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<!-- Assist Level -->
+			<div class="mb-3">
+				<span class="form-label h5">
+					Assistance
+				</span>
+
+				<div class="d-flex">
+					<!-- Always On -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="radio"
+							name="assistance-always"
+							id="assistance-always">
+						<label class="form-check-label" for="assistance-always">
+							Always
+						</label>
+					</div>
+
+					<!-- Halfway -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="radio"
+							name="assistance-halfway"
+							id="assistance-halfway">
+						<label class="form-check-label" for="assistance-halfway">
+							Halfway
+						</label>
+					</div>
+
+					<!-- Quarter Way -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="radio"
+							name="assistance-quarter"
+							id="assistance-quarter">
+						<label class="form-check-label" for="assistance-quarter">
+							Quarter Way
+						</label>
+					</div>
+
+					<!-- Off -->
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="assistance-off"
+							id="assistance-off">
+						<label class="form-check-label" for="assistance-off">
+							Off
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Settings Title Bar -->
+		<h3 class="text-center border-bottom border-light">
+			Vocabulary
+		</h3>
+
+		<div class="mx-2">
+			<!-- Vocabulary - Hiragana -->
+			<div class="mb-3">
+				<span class="form-label h5">
+					Hiragana
+				</span>
+
+				<div class="d-flex">
+
+					<!-- Hiragana Base Characters -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="checkbox"
+							name="vocabulary-hiragana-base"
+							id="vocabulary-hiragana-base">
+						<label class="form-check-label" for="vocabulary-hiragana-base">
+							Base
+						</label>
+					</div>
+
+					<!-- Hiragana w/Dakuon Characters -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="checkbox"
+							name="vocabulary-hiragana-dakuon"
+							id="vocabulary-hiragana-dakuon">
+						<label class="form-check-label" for="vocabulary-hiragana-dakuon">
+							Dakuon
+						</label>
+					</div>
+
+					<!-- Multi-Character Hiragana Characters -->
+					<div class="form-check">
+						<input class="form-check-input"
+							type="checkbox"
+							name="vocabulary-hiragana-combo"
+							id="vocabulary-hiragana-combo">
+						<label class="form-check-label" for="vocabulary-hiragana-combo">
+							Combo
+						</label>
+					</div>
+				</div>
+			</div>
+
+			<!-- Vocabulary - Katakana -->
+			<div class="mb-3">
+				<span class="form-label h5">
+					Katakana
+				</span>
+
+				<div class="d-flex">
+
+					<!-- Katakana Base Characters -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="checkbox"
+							name="vocabulary-katakana-base"
+							id="vocabulary-katakana-base">
+						<label class="form-check-label" for="vocabulary-katakana-base">
+							Base
+						</label>
+					</div>
+
+					<!-- Katakana w/Dakuon Characters -->
+					<div class="form-check me-4">
+						<input class="form-check-input"
+							type="checkbox"
+							name="vocabulary-katakana-dakuon"
+							id="vocabulary-katakana-dakuon">
+						<label class="form-check-label" for="vocabulary-katakana-dakuon">
+							Dakuon
+						</label>
+					</div>
+
+					<!-- Multi-Character Katakana Characters -->
+					<div class="form-check">
+						<input class="form-check-input"
+							type="checkbox"
+							name="vocabulary-katakana-combo"
+							id="vocabulary-katakana-combo">
+						<label class="form-check-label" for="vocabulary-katakana-combo">
+							Combo
+						</label>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<!-- Buttons Row -->
+		<div class="flex-fill d-flex flex-column justify-content-end">
+			<div class="d-flex justify-content-center">
+				<button class="btn btn-success rounded-0 px-4" type="button">
+					Start
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!-- Canvas used to render the game -->
+<canvas id="game-canvas" class="game d-none">
+</canvas>
+
+<div class="post-tail-wrapper text-muted">
+
+	<!-- categories -->
+	{% if page.categories.size > 0 %}
+	<div class="post-meta mb-3">
+		<i class="far fa-folder-open fa-fw me-1"></i>
+		{% for category in page.categories %}
+			<a href='{{ site.baseurl }}/categories/{{ category | slugify | url_encode }}/'>{{ category }}</a>
+			{%- unless forloop.last -%}, {%- endunless -%}
+		{% endfor %}
+	</div>
+	{% endif %}
+
+	<!-- tags -->
+	{% if page.tags.size > 0 %}
+	<div class="post-tags">
+		<i class="fa fa-tags fa-fw me-1"></i>
+			{% for tag in page.tags %}
+			<a href="{{ site.baseurl }}/tags/{{ tag | slugify | url_encode }}/"
+					class="post-tag no-text-decoration" >
+				{{- tag -}}
+			</a>
+			{% endfor %}
+	</div>
+	{% endif %}
+
+	<div class="post-tail-bottom
+		d-flex justify-content-between align-items-center mt-3 pt-5 pb-2">
+		<div class="license-wrapper">
+
+			{% if site.data.locales[lang].copyright.license.template %}
+
+				{% capture _replacement %}
+				<a href="{{ site.data.locales[lang].copyright.license.link }}">
+					{{ site.data.locales[lang].copyright.license.name }}
+				</a>
+				{% endcapture %}
+
+				{{ site.data.locales[lang].copyright.license.template | replace: ':LICENSE_NAME', _replacement }}
+
+			{% endif %}
+		</div>
+
+		{% include post-sharing.html lang=lang %}
+
+	</div><!-- .post-tail-bottom -->
+
+</div><!-- div.post-tail-wrapper -->
+<script src="/assets/scripts/whattf.js" type="module"></script>

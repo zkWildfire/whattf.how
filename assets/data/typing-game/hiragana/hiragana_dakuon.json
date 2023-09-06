@@ -1,0 +1,105 @@
+{
+	"DisplayName": "Hiragana Dakuon Set",
+	"CharacterPairs": [
+		{
+			"DisplayText": "が",
+			"EnglishText": "ga"
+		},
+		{
+			"DisplayText": "ぎ",
+			"EnglishText": "gi"
+		},
+		{
+			"DisplayText": "ぐ",
+			"EnglishText": "gu"
+		},
+		{
+			"DisplayText": "げ",
+			"EnglishText": "ge"
+		},
+		{
+			"DisplayText": "ご",
+			"EnglishText": "go"
+		},
+		{
+			"DisplayText": "ざ",
+			"EnglishText": "za"
+		},
+		{
+			"DisplayText": "じ",
+			"EnglishText": "ji"
+		},
+		{
+			"DisplayText": "ず",
+			"EnglishText": "zu"
+		},
+		{
+			"DisplayText": "ぜ",
+			"EnglishText": "ze"
+		},
+		{
+			"DisplayText": "ぞ",
+			"EnglishText": "zo"
+		},
+		{
+			"DisplayText": "だ",
+			"EnglishText": "da"
+		},
+		{
+			"DisplayText": "ぢ",
+			"EnglishText": "ji"
+		},
+		{
+			"DisplayText": "づ",
+			"EnglishText": "zu"
+		},
+		{
+			"DisplayText": "で",
+			"EnglishText": "de"
+		},
+		{
+			"DisplayText": "ど",
+			"EnglishText": "do"
+		},
+		{
+			"DisplayText": "ば",
+			"EnglishText": "ba"
+		},
+		{
+			"DisplayText": "び",
+			"EnglishText": "bi"
+		},
+		{
+			"DisplayText": "ぶ",
+			"EnglishText": "bu"
+		},
+		{
+			"DisplayText": "べ",
+			"EnglishText": "be"
+		},
+		{
+			"DisplayText": "ぼ",
+			"EnglishText": "bo"
+		},
+		{
+			"DisplayText": "ぱ",
+			"EnglishText": "pa"
+		},
+		{
+			"DisplayText": "ぴ",
+			"EnglishText": "pi"
+		},
+		{
+			"DisplayText": "ぷ",
+			"EnglishText": "pu"
+		},
+		{
+			"DisplayText": "ぺ",
+			"EnglishText": "pe"
+		},
+		{
+			"DisplayText": "ぽ",
+			"EnglishText": "po"
+		}
+	]
+}

@@ -1,0 +1,105 @@
+{
+	"DisplayName": "Katakana Dakuon Set",
+	"CharacterPairs": [
+		{
+			"DisplayText": "ガ",
+			"EnglishText": "ga"
+		},
+		{
+			"DisplayText": "ギ",
+			"EnglishText": "gi"
+		},
+		{
+			"DisplayText": "グ",
+			"EnglishText": "gu"
+		},
+		{
+			"DisplayText": "ゲ",
+			"EnglishText": "ge"
+		},
+		{
+			"DisplayText": "ゴ",
+			"EnglishText": "go"
+		},
+		{
+			"DisplayText": "ザ",
+			"EnglishText": "za"
+		},
+		{
+			"DisplayText": "ジ",
+			"EnglishText": "ji"
+		},
+		{
+			"DisplayText": "ズ",
+			"EnglishText": "zu"
+		},
+		{
+			"DisplayText": "ゼ",
+			"EnglishText": "ze"
+		},
+		{
+			"DisplayText": "ゾ",
+			"EnglishText": "zo"
+		},
+		{
+			"DisplayText": "ダ",
+			"EnglishText": "da"
+		},
+		{
+			"DisplayText": "ヂ",
+			"EnglishText": "ji"
+		},
+		{
+			"DisplayText": "ヅ",
+			"EnglishText": "zu"
+		},
+		{
+			"DisplayText": "デ",
+			"EnglishText": "de"
+		},
+		{
+			"DisplayText": "ド",
+			"EnglishText": "do"
+		},
+		{
+			"DisplayText": "バ",
+			"EnglishText": "ba"
+		},
+		{
+			"DisplayText": "ビ",
+			"EnglishText": "bi"
+		},
+		{
+			"DisplayText": "ブ",
+			"EnglishText": "bu"
+		},
+		{
+			"DisplayText": "ベ",
+			"EnglishText": "be"
+		},
+		{
+			"DisplayText": "ボ",
+			"EnglishText": "bo"
+		},
+		{
+			"DisplayText": "パ",
+			"EnglishText": "pa"
+		},
+		{
+			"DisplayText": "ピ",
+			"EnglishText": "pi"
+		},
+		{
+			"DisplayText": "プ",
+			"EnglishText": "pu"
+		},
+		{
+			"DisplayText": "ペ",
+			"EnglishText": "pe"
+		},
+		{
+			"DisplayText": "ポ",
+			"EnglishText": "po"
+		}
+	]
+}

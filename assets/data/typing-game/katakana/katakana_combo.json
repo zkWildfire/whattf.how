@@ -1,0 +1,137 @@
+{
+	"DisplayName": "Katakana Combo Set",
+	"CharacterPairs": [
+		{
+			"DisplayText": "キャ",
+			"EnglishText": "kya"
+		},
+		{
+			"DisplayText": "キュ",
+			"EnglishText": "kyu"
+		},
+		{
+			"DisplayText": "キョ",
+			"EnglishText": "kyo"
+		},
+		{
+			"DisplayText": "シャ",
+			"EnglishText": "sha"
+		},
+		{
+			"DisplayText": "シュ",
+			"EnglishText": "shu"
+		},
+		{
+			"DisplayText": "ショ",
+			"EnglishText": "sho"
+		},
+		{
+			"DisplayText": "チャ",
+			"EnglishText": "cha"
+		},
+		{
+			"DisplayText": "チュ",
+			"EnglishText": "chu"
+		},
+		{
+			"DisplayText": "チョ",
+			"EnglishText": "cho"
+		},
+		{
+			"DisplayText": "ニャ",
+			"EnglishText": "nya"
+		},
+		{
+			"DisplayText": "ニュ",
+			"EnglishText": "nyu"
+		},
+		{
+			"DisplayText": "ニョ",
+			"EnglishText": "nyo"
+		},
+		{
+			"DisplayText": "ヒャ",
+			"EnglishText": "hya"
+		},
+		{
+			"DisplayText": "ヒュ",
+			"EnglishText": "hyu"
+		},
+		{
+			"DisplayText": "ヒョ",
+			"EnglishText": "hyo"
+		},
+		{
+			"DisplayText": "ミャ",
+			"EnglishText": "mya"
+		},
+		{
+			"DisplayText": "ミュ",
+			"EnglishText": "myu"
+		},
+		{
+			"DisplayText": "ミョ",
+			"EnglishText": "myo"
+		},
+		{
+			"DisplayText": "リャ",
+			"EnglishText": "rya"
+		},
+		{
+			"DisplayText": "リュ",
+			"EnglishText": "ryu"
+		},
+		{
+			"DisplayText": "リョ",
+			"EnglishText": "ryo"
+		},
+		{
+			"DisplayText": "ギャ",
+			"EnglishText": "gya"
+		},
+		{
+			"DisplayText": "ギュ",
+			"EnglishText": "gyu"
+		},
+		{
+			"DisplayText": "ギョ",
+			"EnglishText": "gyo"
+		},
+		{
+			"DisplayText": "ジャ",
+			"EnglishText": "ja"
+		},
+		{
+			"DisplayText": "ジュ",
+			"EnglishText": "ju"
+		},
+		{
+			"DisplayText": "ジョ",
+			"EnglishText": "jo"
+		},
+		{
+			"DisplayText": "ビャ",
+			"EnglishText": "bya"
+		},
+		{
+			"DisplayText": "ビュ",
+			"EnglishText": "byu"
+		},
+		{
+			"DisplayText": "ビョ",
+			"EnglishText": "byo"
+		},
+		{
+			"DisplayText": "ピャ",
+			"EnglishText": "pya"
+		},
+		{
+			"DisplayText": "ピュ",
+			"EnglishText": "pyu"
+		},
+		{
+			"DisplayText": "ピョ",
+			"EnglishText": "pyo"
+		}
+	]
+}

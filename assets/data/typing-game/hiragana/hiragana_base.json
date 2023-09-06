@@ -1,0 +1,189 @@
+{
+	"DisplayName": "Hiragana Base Set",
+	"CharacterPairs": [
+		{
+			"DisplayText": "あ",
+			"EnglishText": "a"
+		},
+		{
+			"DisplayText": "い",
+			"EnglishText": "i"
+		},
+		{
+			"DisplayText": "う",
+			"EnglishText": "u"
+		},
+		{
+			"DisplayText": "え",
+			"EnglishText": "e"
+		},
+		{
+			"DisplayText": "お",
+			"EnglishText": "o"
+		},
+		{
+			"DisplayText": "か",
+			"EnglishText": "ka"
+		},
+		{
+			"DisplayText": "き",
+			"EnglishText": "ki"
+		},
+		{
+			"DisplayText": "く",
+			"EnglishText": "ku"
+		},
+		{
+			"DisplayText": "け",
+			"EnglishText": "ke"
+		},
+		{
+			"DisplayText": "こ",
+			"EnglishText": "ko"
+		},
+		{
+			"DisplayText": "さ",
+			"EnglishText": "sa"
+		},
+		{
+			"DisplayText": "し",
+			"EnglishText": "shi"
+		},
+		{
+			"DisplayText": "す",
+			"EnglishText": "su"
+		},
+		{
+			"DisplayText": "せ",
+			"EnglishText": "se"
+		},
+		{
+			"DisplayText": "そ",
+			"EnglishText": "so"
+		},
+		{
+			"DisplayText": "た",
+			"EnglishText": "ta"
+		},
+		{
+			"DisplayText": "ち",
+			"EnglishText": "chi"
+		},
+		{
+			"DisplayText": "つ",
+			"EnglishText": "tsu"
+		},
+		{
+			"DisplayText": "て",
+			"EnglishText": "te"
+		},
+		{
+			"DisplayText": "と",
+			"EnglishText": "to"
+		},
+		{
+			"DisplayText": "な",
+			"EnglishText": "na"
+		},
+		{
+			"DisplayText": "に",
+			"EnglishText": "ni"
+		},
+		{
+			"DisplayText": "ぬ",
+			"EnglishText": "nu"
+		},
+		{
+			"DisplayText": "ね",
+			"EnglishText": "ne"
+		},
+		{
+			"DisplayText": "の",
+			"EnglishText": "no"
+		},
+		{
+			"DisplayText": "は",
+			"EnglishText": "ha"
+		},
+		{
+			"DisplayText": "ひ",
+			"EnglishText": "hi"
+		},
+		{
+			"DisplayText": "ふ",
+			"EnglishText": "fu"
+		},
+		{
+			"DisplayText": "へ",
+			"EnglishText": "he"
+		},
+		{
+			"DisplayText": "ほ",
+			"EnglishText": "ho"
+		},
+		{
+			"DisplayText": "ま",
+			"EnglishText": "ma"
+		},
+		{
+			"DisplayText": "み",
+			"EnglishText": "mi"
+		},
+		{
+			"DisplayText": "む",
+			"EnglishText": "mu"
+		},
+		{
+			"DisplayText": "め",
+			"EnglishText": "me"
+		},
+		{
+			"DisplayText": "も",
+			"EnglishText": "mo"
+		},
+		{
+			"DisplayText": "や",
+			"EnglishText": "ya"
+		},
+		{
+			"DisplayText": "ゆ",
+			"EnglishText": "yu"
+		},
+		{
+			"DisplayText": "よ",
+			"EnglishText": "yo"
+		},
+		{
+			"DisplayText": "ら",
+			"EnglishText": "ra"
+		},
+		{
+			"DisplayText": "り",
+			"EnglishText": "ri"
+		},
+		{
+			"DisplayText": "る",
+			"EnglishText": "ru"
+		},
+		{
+			"DisplayText": "れ",
+			"EnglishText": "re"
+		},
+		{
+			"DisplayText": "ろ",
+			"EnglishText": "ro"
+		},
+		{
+			"DisplayText": "わ",
+			"EnglishText": "wa"
+		},
+		{
+			"DisplayText": "を",
+			"EnglishText": "wo"
+		},
+		{
+			"DisplayText": "ん",
+			"EnglishText": "n"
+		}
+	]
+}

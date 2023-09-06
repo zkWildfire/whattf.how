@@ -1,0 +1,35 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"properties": {
+		"DisplayName": {
+			"type": "string",
+			"description": "Name to display on the UI for the file's contents."
+		},
+		"CharacterPairs": {
+			"type": "array",
+			"description": "The pairs of foreign and English characters in the file.",
+			"items": {
+				"type": "object",
+				"properties": {
+					"DisplayText": {
+						"type": "string",
+						"description": "The character(s) to display on screen."
+					},
+					"EnglishText": {
+						"type": "string",
+						"description": "The English character(s) that the display characters correspond to."
+					}
+				},
+				"required": [
+					"DisplayText",
+					"EnglishText"
+				]
+			}
+		}
+	},
+	"required": [
+		"DisplayName",
+		"CharacterPairs"
+	]
+}

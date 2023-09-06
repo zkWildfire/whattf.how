@@ -1,0 +1,2 @@
+# Ignore the downloaded `code` binary used to run code-server
+download-code-server/code

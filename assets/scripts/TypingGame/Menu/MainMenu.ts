@@ -42,6 +42,10 @@ const ID_GAME_ROOT = "game";
 /// ID of the game canvas HTML element
 const ID_GAME_CANVAS = "game-canvas";
 
+/// IDs of the elements used to display the player's score and lives
+const ID_SCORE = "score";
+const ID_LIVES = "lives";
+
 /// Displays the game menu element.
 export const DisplayMenu: () => void = () =>
 {
@@ -96,6 +100,18 @@ export const OnStartClicked: () => void = async () =>
 		`Could not find game canvas element with ID ${ID_GAME_CANVAS}`
 	);
 
+	// Get the game UI elements
+	const scoreElement = document.getElementById(ID_SCORE);
+	assert(
+		scoreElement !== null,
+		`Could not find score element with ID ${ID_SCORE}`
+	);
+	const livesElement = document.getElementById(ID_LIVES);
+	assert(
+		livesElement !== null,
+		`Could not find lives element with ID ${ID_LIVES}`
+	);
+
 	// Create the game instance
 	const settings: Settings = {
 		difficulty: GetSelectedDifficulty(),
@@ -107,6 +123,16 @@ export const OnStartClicked: () => void = async () =>
 		gameCanvas,
 		settings
 	);
+
+	// Bind to the game instance's events
+	gameInstance.OnScoreChanged.subscribe((score: number) =>
+	{
+		scoreElement.innerText = score.toString();
+	});
+	gameInstance.OnLivesChanged.subscribe((lives: number) =>
+	{
+		livesElement.innerText = lives.toString();
+	});
 
 	// Run the game
 	gameInstance.Start();

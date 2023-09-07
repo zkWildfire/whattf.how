@@ -314,6 +314,18 @@ tail_includes:
 
 <!-- Canvas used to render the game -->
 <div id="game" class="game d-none flex-column align-items-stretch">
+	<div id="stats-bar"
+		class="d-flex justify-content-evenly border-bottom border-light">
+		<div class="d-flex justify-content-start">
+			<span class="h3">Score:&nbsp;</span>
+			<span id="score" class="h3"></span>
+		</div>
+
+		<div class="d-flex justify-content-end">
+			<span class="h3">Lives:&nbsp;</span>
+			<span id="lives" class="h3"></span>
+		</div>
+	</div>
 	<canvas id="game-canvas">
 	</canvas>
 </div>

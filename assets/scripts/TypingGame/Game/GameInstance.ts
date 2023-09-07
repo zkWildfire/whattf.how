@@ -1,3 +1,4 @@
+import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
 import { ICharacterMapping } from "../Data/CharacterMapping";
 import { EAssistanceLevel } from "../Menu/Assistance";
 import { EDifficulty } from "../Menu/Difficulty";
@@ -15,11 +16,31 @@ import { ISpawner } from "./Spawners/Spawner";
 /// Class that handles running an instance of the typing game.
 export class GameInstance
 {
+	/// Event broadcast to when the player's score changes.
+	/// The event parameter will be the new score.
+	get OnScoreChanged(): ISimpleEvent<number>
+	{
+		return this._onScoreChanged.asEvent();
+	}
+
+	/// Event broadcast to when the player's lives change.
+	/// The event parameter will be the new number of lives.
+	get OnLivesChanged(): ISimpleEvent<number>
+	{
+		return this._onLivesChanged.asEvent();
+	}
+
 	/// Convenience alias for the game's ruleset instance.
 	private get Ruleset(): IRuleset
 	{
 		return this._settings.ruleset;
 	}
+
+	/// Dispatcher for the `OnScoreChanged` event.
+	private readonly _onScoreChanged: SimpleEventDispatcher<number>;
+
+	/// Dispatcher for the `OnLivesChanged` event.
+	private readonly _onLivesChanged: SimpleEventDispatcher<number>;
 
 	/// The canvas to use for the game.
 	private readonly _canvas: HTMLCanvasElement;
@@ -68,6 +89,8 @@ export class GameInstance
 		settings: Settings)
 	{
 		// Initialize basic fields
+		this._onScoreChanged = new SimpleEventDispatcher<number>();
+		this._onLivesChanged = new SimpleEventDispatcher<number>();
 		this._canvas = canvas;
 		this._canvasSize = GameInstance.SetupCanvas(canvas);
 		this._settings = settings;
@@ -136,6 +159,10 @@ export class GameInstance
 		// Initialize game state for the start of the game
 		this._isActive = true;
 		this._spawnTimer.Start();
+
+		// Broadcast the starting data for the game
+		this._onScoreChanged.dispatch(this._results.points);
+		this._onLivesChanged.dispatch(this._remainingLives);
 
 		// Bind to events
 		window.addEventListener("keypress", this.OnKeyPress.bind(this))
@@ -293,11 +320,13 @@ export class GameInstance
 		character.OnDestroyed.subscribe((actor) =>
 		{
 			this._results.points += actor.Points;
+			this._onScoreChanged.dispatch(this._results.points);
 			this._actors.delete(actor);
 		});
 		character.OnRespawned.subscribe((actor) =>
 		{
 			this._remainingLives -= actor.Damage;
+			this._onLivesChanged.dispatch(this._remainingLives);
 		});
 	}
 

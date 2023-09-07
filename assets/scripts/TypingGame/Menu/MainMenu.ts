@@ -6,12 +6,13 @@ import { Settings } from "./Settings";
 import { ICharacterMapping } from "../Data/CharacterMapping";
 import { VOCABULARY_SET_DATA_LOADERS } from "../Data/VocabularySets";
 import { ClassicRuleset } from "../Game/Rulesets/ClassicRuleset";
+import { GameInstance } from "../Game/GameInstance";
 
 /// ID of the game menu HTML element
 const ID_GAME_MENU = "game-menu";
 
 /// ID of the start button HTML element
-const ID_START_BUTTON = "start-button";
+export const ID_START_BUTTON = "start-button";
 
 /// IDs of the game difficulty radio buttons
 const ID_DIFFICULTY_EASY = "difficulty-easy";
@@ -34,6 +35,12 @@ const ID_VOCAB_HIRAGANA_COMBO = "vocab-hiragana-combo";
 const ID_VOCAB_KATAKANA_BASE = "vocab-katakana-base";
 const ID_VOCAB_KATAKANA_DAKUON = "vocab-katakana-dakuon";
 const ID_VOCAB_KATAKANA_COMBO = "vocab-katakana-combo";
+
+/// ID of the top-level element for all game elements
+const ID_GAME_ROOT = "game";
+
+/// ID of the game canvas HTML element
+const ID_GAME_CANVAS = "game-canvas";
 
 /// Displays the game menu element.
 export const DisplayMenu: () => void = () =>
@@ -64,13 +71,45 @@ export const OnStartClicked: () => void = async () =>
 		characterMappings.push(...mappings);
 	}
 
-	// Return the selected settings
+	// Hide the main menu and show the game canvas
+	const gameMenu = document.getElementById(ID_GAME_MENU);
+	assert(
+		gameMenu !== null,
+		`Could not find game menu element with ID ${ID_GAME_MENU}`
+	);
+	gameMenu.classList.add("d-none");
+
+	const gameRoot = document.getElementById(ID_GAME_ROOT);
+	assert(
+		gameRoot !== null,
+		`Could not find game root element with ID ${ID_GAME_ROOT}`
+	);
+	gameRoot.classList.remove("d-none");
+	gameRoot.classList.add("d-flex");
+
+	// Get the game canvas
+	const gameCanvas = document.getElementById(
+		ID_GAME_CANVAS
+	) as HTMLCanvasElement;
+	assert(
+		gameCanvas !== null,
+		`Could not find game canvas element with ID ${ID_GAME_CANVAS}`
+	);
+
+	// Create the game instance
 	const settings: Settings = {
 		difficulty: GetSelectedDifficulty(),
 		assistanceLevel: GetSelectedAssistanceLevel(),
 		characterMappings: characterMappings,
 		ruleset: new ClassicRuleset()
 	};
+	const gameInstance = new GameInstance(
+		gameCanvas,
+		settings
+	);
+
+	// Run the game
+	gameInstance.Start();
 }
 
 /// Gets the selected difficulty level.

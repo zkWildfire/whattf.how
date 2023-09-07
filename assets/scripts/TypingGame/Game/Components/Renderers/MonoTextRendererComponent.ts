@@ -73,17 +73,17 @@ export class MonoTextRendererComponent implements ITextRendererComponent
 	/// @param displayTextStyle The style to use for the display text.
 	/// @param inputText The text to display for the input text.
 	/// @param inputTextStyle The style to use for the input text.
-	/// @param isInputTextVisible Whether or not the input text should be
-	///   visible.
 	/// @param textGap The gap in pixels between the display text and the input
 	///   text.
+	/// @param isInputTextVisible Whether or not the input text should be
+	///   visible.
 	constructor(
 		displayText: string,
 		displayTextStyle: TextStyle,
 		inputText: string,
 		inputTextStyle: TextStyle,
-		isInputTextVisible: boolean = false,
-		textGap: number = 5)
+		textGap: number = 5,
+		isInputTextVisible: boolean = false)
 	{
 		this._displayText = displayText;
 		this._displayTextStyle = displayTextStyle;
@@ -115,8 +115,8 @@ export class MonoTextRendererComponent implements ITextRendererComponent
 		{
 			const inputPosition = {
 				x: position.x,
-				y: position.y - this._displayTextStyle.fontSize - 5
-			}; // 5 is the gap between texts
+				y: position.y - this._displayTextStyle.fontSize - this._textGap
+			};
 			MonoTextRendererComponent.RenderText(
 				ctx,
 				this._inputText,

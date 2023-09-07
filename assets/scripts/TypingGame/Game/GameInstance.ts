@@ -42,6 +42,9 @@ export class GameInstance
 	/// Y-position at which point assistance should be provided.
 	private readonly _assistanceThreshold: number;
 
+	/// Effective size of the canvas, ignoring the device pixel ratio.
+	private readonly _canvasSize: { width: number, height: number };
+
 	/// Current score data for the game
 	private _results: GameResults;
 
@@ -66,6 +69,7 @@ export class GameInstance
 	{
 		// Initialize basic fields
 		this._canvas = canvas;
+		this._canvasSize = GameInstance.SetupCanvas(canvas);
 		this._settings = settings;
 		this._actors = new Set<ICharacterActor>();
 		this._userInput = "";
@@ -73,7 +77,6 @@ export class GameInstance
 		this._results = {
 			points: 0
 		};
-		GameInstance.SetupCanvas(canvas);
 
 		// Initialize the assistance threshold
 		switch (settings.assistanceLevel)
@@ -82,10 +85,10 @@ export class GameInstance
 				this._assistanceThreshold = -Infinity;
 				break;
 			case EAssistanceLevel.Halfway:
-				this._assistanceThreshold = canvas.height * 0.5;
+				this._assistanceThreshold = this._canvasSize.height * 0.5;
 				break;
 			case EAssistanceLevel.Quarter:
-				this._assistanceThreshold = canvas.height * 0.75;
+				this._assistanceThreshold = this._canvasSize.height * 0.75;
 				break;
 			case EAssistanceLevel.Off:
 				this._assistanceThreshold = Infinity;
@@ -111,11 +114,14 @@ export class GameInstance
 		);
 
 		// For now, spawn characters anywhere along the top of the screen
-		// TODO: Restrict this to a smaller range to account for longer
-		//   characters' width
+		// TODO: Base the minimum and maximum X-values on the widest character
+		//   mapping in the game
+		const offset = 0.1;
+		const minX = this._canvasSize.width * offset;
+		const maxX = this._canvasSize.width * (1 - offset);
 		this._spawner = new LineSpawner(
-			{ x: 0, y: 0 },
-			{ x: canvas.width, y: 0 }
+			{ x: minX, y: 0 },
+			{ x: maxX, y: 0 }
 		);
 
 		// Bind to events
@@ -268,7 +274,7 @@ export class GameInstance
 			characterMapping,
 			this.Ruleset.CreateMovementComponent(
 				spawnPosition,
-				{ width: this._canvas.width, height: this._canvas.height },
+				this._canvasSize,
 				this._settings.difficulty
 			),
 			assistanceComponent,
@@ -297,7 +303,9 @@ export class GameInstance
 
 	/// Initializes canvas properties for the game.
 	/// @param canvas The canvas to initialize.
-	private static SetupCanvas(canvas: HTMLCanvasElement)
+	/// @returns The effective canvas size, ignoring the device pixel ratio.
+	private static SetupCanvas(canvas: HTMLCanvasElement):
+		{ width: number, height: number}
 	{
 		// Get the device pixel ratio, falling back to 1 as necessary
 		const dpr = window.devicePixelRatio || 1;
@@ -314,5 +322,11 @@ export class GameInstance
 		//   doesn't affect the canvas's internal coordinate system
 		const ctx = canvas.getContext('2d')!;
 		ctx.scale(dpr, dpr);
+
+		// Return the effective canvas size
+		return {
+			width: rect.width,
+			height: rect.height
+		};
 	}
 }

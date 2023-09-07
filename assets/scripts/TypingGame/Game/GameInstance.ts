@@ -1,7 +1,10 @@
 import { ICharacterMapping } from "../Data/CharacterMapping";
+import { EAssistanceLevel } from "../Menu/Assistance";
 import { EDifficulty } from "../Menu/Difficulty";
 import { Settings } from "../Menu/Settings";
+import { AtomicCharacterActor } from "./Actors/AtomicCharacterActor";
 import { ICharacterActor } from "./Actors/CharacterActor";
+import { ThresholdAssistanceComponent } from "./Components/Assistance/ThresholdAssistanceComponent";
 import { GameResults } from "./GameResults";
 import { IRuleset } from "./Rulesets/Ruleset";
 import { FixedIntervalSpawnTimer } from "./SpawnTimers/FixedIntervalSpawnTimer";
@@ -21,6 +24,9 @@ export class GameInstance
 	/// The canvas to use for the game.
 	private readonly _canvas: HTMLCanvasElement;
 
+	/// The rendering context for the canvas.
+	private readonly _ctx: CanvasRenderingContext2D;
+
 	/// The spawn timer to use for the game.
 	private readonly _spawnTimer: ISpawnTimer;
 
@@ -32,6 +38,9 @@ export class GameInstance
 
 	/// All active actors in the game.
 	private readonly _actors: Set<ICharacterActor>;
+
+	/// Y-position at which point assistance should be provided.
+	private readonly _assistanceThreshold: number;
 
 	/// Current score data for the game
 	private _results: GameResults;
@@ -59,9 +68,35 @@ export class GameInstance
 		this._userInput = "";
 		this._isActive = false;
 		this._results = {
-			correctCharacters: 0,
 			points: 0
 		};
+		switch (settings.assistanceLevel)
+		{
+			case EAssistanceLevel.Always:
+				this._assistanceThreshold = -Infinity;
+				break;
+			case EAssistanceLevel.Halfway:
+				this._assistanceThreshold = canvas.height / 2;
+				break;
+			case EAssistanceLevel.Quarter:
+				this._assistanceThreshold = canvas.height / 4;
+				break;
+			case EAssistanceLevel.Off:
+				this._assistanceThreshold = Infinity;
+				break;
+			default:
+				throw new Error(
+					`Unknown assistance level: ${settings.assistanceLevel}`
+				);
+		}
+
+		// Get the rendering context for the canvas
+		const ctx = canvas.getContext("2d");
+		if (ctx === null)
+		{
+			throw new Error("Could not get 2D rendering context for canvas");
+		}
+		this._ctx = ctx;
 
 		// Initialize ruleset-dependent fields
 		this._spawnTimer = this.Ruleset.GetSpawnTimer(settings.difficulty);
@@ -109,6 +144,13 @@ export class GameInstance
 		for (const actor of this._actors)
 		{
 			actor.Tick(timestamp);
+		}
+
+		// Render all actors
+		this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+		for (const actor of this._actors)
+		{
+			actor.Render(this._canvas, this._ctx);
 		}
 
 		// Check whether the game is over
@@ -193,5 +235,41 @@ export class GameInstance
 
 		// Determine the spawn location for the new character
 		const spawnPosition = this._spawner.GetNextSpawnPosition();
+
+		// Create the assistance component for the new character
+		const assistanceComponent = new ThresholdAssistanceComponent(
+			this._assistanceThreshold
+		);
+
+		// Create the new character
+		// TODO: Support other types of characters
+		const character = new AtomicCharacterActor(
+			characterMapping,
+			this.Ruleset.CreateMovementComponent(
+				spawnPosition,
+				this._settings.difficulty
+			),
+			assistanceComponent,
+			this.Ruleset.GetPoints(
+				characterMapping,
+				this._settings.difficulty
+			),
+			this.Ruleset.GetDamage(
+				characterMapping,
+				this._settings.difficulty
+			)
+		);
+		this._actors.add(character);
+
+		// Bind to events
+		character.OnDestroyed.subscribe((actor) =>
+		{
+			this._results.points += actor.Points;
+			this._actors.delete(actor);
+		});
+		character.OnRespawned.subscribe((actor) =>
+		{
+			this._remainingLives -= actor.Damage;
+		});
 	}
 }

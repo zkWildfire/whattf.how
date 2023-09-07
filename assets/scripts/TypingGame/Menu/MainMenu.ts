@@ -75,8 +75,13 @@ export const DisplayMenu: () => void = () =>
 export const OnStartClicked: () => void = async () =>
 {
 	// Get the vocabulary sets to use
-	// TODO: Handle the case where no vocabulary sets are selected
+	// TODO: Display an error instead of doing nothing if no vocabulary sets are
+	//   selected
 	const selectedVocabularySets = GetSelectedVocabularySets();
+	if (selectedVocabularySets.size === 0)
+	{
+		return;
+	}
 
 	// Load the character mappings for each vocabulary set
 	const characterMappings = new Array<ICharacterMapping>();

@@ -302,9 +302,6 @@ export class GameInstance
 			//   result in actors being destroyed, which would cause the actor
 			//   to be removed from the set while it is being iterated over.
 			const localActors = new Set<ICharacterActor>(this._actors);
-
-			// TODO: Keep track of whether the input matched the next character
-			//   of any of the active actors
 			for (const actor of localActors)
 			{
 				actor.OnCharacterTyped(c);

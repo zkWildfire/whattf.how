@@ -11,7 +11,8 @@
 				"jekyll",
 				"serve",
 				"--drafts",
-				"--livereload"
+				"--livereload",
+				"--incremental"
 			],
 			"group": "none",
 			"isBackground": true,

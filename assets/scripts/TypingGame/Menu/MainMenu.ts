@@ -134,6 +134,10 @@ export const OnStartClicked: () => void = async () =>
 		livesElement.innerText = lives.toString();
 	});
 
+	// Scroll the page so that the top of the game's element is at the top of
+	//   the viewport
+	gameRoot.scrollIntoView();
+
 	// Run the game
 	gameInstance.Start();
 }

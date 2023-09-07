@@ -12,6 +12,8 @@ import { FixedIntervalSpawnTimer } from "./SpawnTimers/FixedIntervalSpawnTimer";
 import { ISpawnTimer } from "./SpawnTimers/SpawnTimer";
 import { LineSpawner } from "./Spawners/LineSpawner";
 import { ISpawner } from "./Spawners/Spawner";
+import { IActiveText } from "./Typing/ActiveText";
+import { BasicActiveText } from "./Typing/BasicActiveText";
 
 /// Class that handles running an instance of the typing game.
 export class GameInstance
@@ -30,6 +32,13 @@ export class GameInstance
 		return this._onLivesChanged.asEvent();
 	}
 
+	/// Event broadcast to when the active text changes.
+	/// The event parameter will be the new text to display as active.
+	get OnActiveTextChanged(): ISimpleEvent<string>
+	{
+		return this._onActiveTextChanged.asEvent();
+	}
+
 	/// Convenience alias for the game's ruleset instance.
 	private get Ruleset(): IRuleset
 	{
@@ -41,6 +50,9 @@ export class GameInstance
 
 	/// Dispatcher for the `OnLivesChanged` event.
 	private readonly _onLivesChanged: SimpleEventDispatcher<number>;
+
+	/// Dispatcher for the `OnActiveTextChanged` event.
+	private readonly _onActiveTextChanged: SimpleEventDispatcher<string>;
 
 	/// The canvas to use for the game.
 	private readonly _canvas: HTMLCanvasElement;
@@ -65,6 +77,9 @@ export class GameInstance
 
 	/// Effective size of the canvas, ignoring the device pixel ratio.
 	private readonly _canvasSize: { width: number, height: number };
+
+	/// Component that keeps track of active text.
+	private readonly _activeText: IActiveText;
 
 	/// Current score data for the game
 	private _results: GameResults;
@@ -91,8 +106,11 @@ export class GameInstance
 		// Initialize basic fields
 		this._onScoreChanged = new SimpleEventDispatcher<number>();
 		this._onLivesChanged = new SimpleEventDispatcher<number>();
+		this._onActiveTextChanged = new SimpleEventDispatcher<string>();
+
 		this._canvas = canvas;
 		this._canvasSize = GameInstance.SetupCanvas(canvas);
+		this._activeText = new BasicActiveText();
 		this._settings = settings;
 		this._actors = new Set<ICharacterActor>();
 		this._userInput = "";
@@ -148,6 +166,10 @@ export class GameInstance
 		);
 
 		// Bind to events
+		this._activeText.OnActiveTextChanged.subscribe((text) =>
+		{
+			this._onActiveTextChanged.dispatch(text);
+		});
 		this._spawnTimer.OnShouldSpawn.subscribe(
 			this.SpawnCharacter.bind(this)
 		);
@@ -163,6 +185,7 @@ export class GameInstance
 		// Broadcast the starting data for the game
 		this._onScoreChanged.dispatch(this._results.points);
 		this._onLivesChanged.dispatch(this._remainingLives);
+		this._onActiveTextChanged.dispatch("");
 
 		// Bind to events
 		window.addEventListener("keypress", this.OnKeyPress.bind(this))
@@ -278,7 +301,12 @@ export class GameInstance
 			{
 				actor.OnCharacterTyped(c);
 			}
+
+			// Update the active text
+			this._activeText.OnKeyPressed(c);
 		}
+
+		this._userInput = "";
 	}
 
 	/// Spawns a new character.
@@ -315,6 +343,7 @@ export class GameInstance
 			)
 		);
 		this._actors.add(character);
+		this._activeText.OnCharacterSetSpawned(character);
 
 		// Bind to events
 		character.OnDestroyed.subscribe((actor) =>
@@ -322,6 +351,7 @@ export class GameInstance
 			this._results.points += actor.Points;
 			this._onScoreChanged.dispatch(this._results.points);
 			this._actors.delete(actor);
+			this._activeText.OnCharacterSetDestroyed(actor);
 		});
 		character.OnRespawned.subscribe((actor) =>
 		{

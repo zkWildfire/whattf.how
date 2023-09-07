@@ -28,6 +28,12 @@ export class AtomicCharacterActor implements ICharacterActor
 		return this._onRespawned.asEvent();
 	}
 
+	/// The character mapping that the character set is displaying.
+	get CharacterMapping(): ICharacterMapping
+	{
+		return this._stateComponent.CharacterMapping;
+	}
+
 	/// Number of points the character set is worth.
 	public get Points(): number
 	{

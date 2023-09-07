@@ -42,9 +42,10 @@ const ID_GAME_ROOT = "game";
 /// ID of the game canvas HTML element
 const ID_GAME_CANVAS = "game-canvas";
 
-/// IDs of the elements used to display the player's score and lives
+/// IDs of the various UI elements for the game
 const ID_SCORE = "score";
 const ID_LIVES = "lives";
+const ID_ACTIVE_TEXT = "active-text";
 
 /// Displays the game menu element.
 export const DisplayMenu: () => void = () =>
@@ -111,6 +112,11 @@ export const OnStartClicked: () => void = async () =>
 		livesElement !== null,
 		`Could not find lives element with ID ${ID_LIVES}`
 	);
+	const activeTextElement = document.getElementById(ID_ACTIVE_TEXT);
+	assert(
+		activeTextElement !== null,
+		`Could not find active text element with ID ${ID_ACTIVE_TEXT}`
+	);
 
 	// Create the game instance
 	const settings: Settings = {
@@ -132,6 +138,10 @@ export const OnStartClicked: () => void = async () =>
 	gameInstance.OnLivesChanged.subscribe((lives: number) =>
 	{
 		livesElement.innerText = lives.toString();
+	});
+	gameInstance.OnActiveTextChanged.subscribe((activeText: string) =>
+	{
+		activeTextElement.innerText = activeText;
 	});
 
 	// Scroll the page so that the top of the game's element is at the top of

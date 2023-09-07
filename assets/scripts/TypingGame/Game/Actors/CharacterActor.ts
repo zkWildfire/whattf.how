@@ -1,4 +1,5 @@
 import { ISimpleEvent } from "strongly-typed-events";
+import { ICharacterMapping } from "../../Data/CharacterMapping";
 
 /// Base interface for actors that display a character set on screen.
 export interface ICharacterActor
@@ -13,6 +14,9 @@ export interface ICharacterActor
 	///   a bit of a misnomer; the character set is not destroyed and recreated,
 	///   it is simply moved to the top of the screen.
 	get OnRespawned(): ISimpleEvent<ICharacterActor>;
+
+	/// The character mapping that the character set is displaying.
+	get CharacterMapping(): ICharacterMapping;
 
 	/// Number of points the character set is worth.
 	get Points(): number;

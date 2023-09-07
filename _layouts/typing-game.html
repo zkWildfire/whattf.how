@@ -314,8 +314,8 @@ tail_includes:
 
 <!-- Canvas used to render the game -->
 <div id="game" class="game d-none flex-column align-items-stretch">
-	<div id="stats-bar"
-		class="d-flex justify-content-evenly border-bottom border-light">
+	<!-- Top stats bar -->
+	<div class="d-flex justify-content-evenly border-bottom border-light ui-bar">
 		<div class="d-flex justify-content-start">
 			<span class="h3">Score:&nbsp;</span>
 			<span id="score" class="h3"></span>
@@ -326,8 +326,30 @@ tail_includes:
 			<span id="lives" class="h3"></span>
 		</div>
 	</div>
+
+	<!-- Game rendering region -->
 	<canvas id="game-canvas">
 	</canvas>
+
+	<!-- Bottom bar for the game -->
+	<div class="d-flex justify-content-between border-top border-light ui-bar">
+		<!-- Dummy element used to maintain element height -->
+		<span class="h1">
+			&nbsp;
+		</span>
+
+		<!--
+			Displays text the user has type that has partially matched an element
+			displayed on screen.
+		-->
+		<span id="active-text" class="h1">
+		</span>
+
+		<!-- Dummy element used to maintain element height -->
+		<span class="h1">
+			&nbsp;
+		</span>
+	</div>
 </div>
 
 <div class="post-tail-wrapper text-muted">

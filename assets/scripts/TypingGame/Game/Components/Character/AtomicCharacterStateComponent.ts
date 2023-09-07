@@ -25,6 +25,12 @@ export class AtomicCharacterStateComponent implements ICharacterStateComponent
 		return this._onComplete.asEvent();
 	}
 
+	/// The character mapping that the character set is displaying.
+	get CharacterMapping(): ICharacterMapping
+	{
+		return this._characterMapping;
+	}
+
 	/// Gets the string of display characters that have been typed.
 	get TypedDisplayCharacters(): string
 	{

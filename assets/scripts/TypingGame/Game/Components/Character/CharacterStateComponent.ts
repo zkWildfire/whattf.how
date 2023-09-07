@@ -1,4 +1,5 @@
 import { ISignal } from "strongly-typed-events";
+import { ICharacterMapping } from "../../../Data/CharacterMapping";
 
 /// Component that tracks the current progress towards typing the character.
 export interface ICharacterStateComponent
@@ -13,6 +14,9 @@ export interface ICharacterStateComponent
 
 	/// Event broadcast to when the character(s) have been fully typed.
 	get OnComplete(): ISignal;
+
+	/// The character mapping that the component is handling.
+	get CharacterMapping(): ICharacterMapping;
 
 	/// Gets the string of display characters that have been typed.
 	get TypedDisplayCharacters(): string;

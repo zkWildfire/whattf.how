@@ -1,4 +1,5 @@
 import { ICharacterMapping } from "../Data/CharacterMapping";
+import { IRuleset } from "../Game/Rulesets/Ruleset";
 import { EAssistanceLevel } from "./Assistance";
 import { EDifficulty } from "./Difficulty";
 
@@ -11,6 +12,9 @@ export interface Settings
 	/// The assistance level to provide.
 	assistanceLevel: EAssistanceLevel;
 
-	/// The character sets to use for the game.
-	vocabularySets: Array<ICharacterMapping>;
+	/// The character mappings to use for the game.
+	characterMappings: Array<ICharacterMapping>;
+
+	/// The ruleset to use for the game.
+	ruleset: IRuleset;
 }

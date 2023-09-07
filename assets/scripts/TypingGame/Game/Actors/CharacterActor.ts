@@ -31,7 +31,9 @@ export interface ICharacterActor
 	/// Notifies the character set that a character was typed.
 	/// @param c The character that was typed. This will always be a single
 	///   character string and will always be a lower case English letter.
-	OnCharacterTyped(c: string): void;
+	/// @returns Whether or not the typed character matched the next character
+	///   required to be typed for this character set.
+	OnCharacterTyped(c: string): boolean;
 
 	/// Runs the update logic for the character set.
 	/// @param deltaTime The time in seconds since the last update.

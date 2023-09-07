@@ -12,6 +12,7 @@ overfitting
 plantuml
 respawned
 roadmap
+ruleset
 Skylake
 tparam
 underfitting

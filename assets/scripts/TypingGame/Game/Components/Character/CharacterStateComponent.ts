@@ -27,5 +27,7 @@ export interface ICharacterStateComponent
 	get RemainingInputCharacters(): string;
 
 	/// Notifies the component that a character was typed.
-	OnCharacterTyped(c: string): void;
+	/// @returns Whether or not the typed character matched the next character
+	///   required to be typed for this character set.
+	OnCharacterTyped(c: string): boolean;
 }

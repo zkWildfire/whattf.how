@@ -5,6 +5,7 @@ import { EVocabularySet } from "./VocabularySet";
 import { Settings } from "./Settings";
 import { ICharacterMapping } from "../Data/CharacterMapping";
 import { VOCABULARY_SET_DATA_LOADERS } from "../Data/VocabularySets";
+import { ClassicRuleset } from "../Game/Rulesets/ClassicRuleset";
 
 /// ID of the game menu HTML element
 const ID_GAME_MENU = "game-menu";
@@ -67,7 +68,8 @@ export const OnStartClicked: () => void = async () =>
 	const settings: Settings = {
 		difficulty: GetSelectedDifficulty(),
 		assistanceLevel: GetSelectedAssistanceLevel(),
-		vocabularySets: characterMappings
+		characterMappings: characterMappings,
+		ruleset: new ClassicRuleset()
 	};
 }
 

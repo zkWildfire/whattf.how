@@ -86,7 +86,9 @@ export class AtomicCharacterStateComponent implements ICharacterStateComponent
 	}
 
 	/// Notifies the component that a character was typed.
-	public OnCharacterTyped(c: string): void
+	/// @returns Whether or not the typed character matched the next character
+	///   required to be typed for this character set.
+	public OnCharacterTyped(c: string): boolean
 	{
 		// Check if the character is correct
 		if (c === this._characterMapping.InputCharacters[this._index])
@@ -103,6 +105,8 @@ export class AtomicCharacterStateComponent implements ICharacterStateComponent
 			{
 				this._onCorrectInput.dispatch();
 			}
+
+			return true;
 		}
 		else if (this._index > 0)
 		{
@@ -114,5 +118,7 @@ export class AtomicCharacterStateComponent implements ICharacterStateComponent
 			//   was typed
 			this._onIncorrectInput.dispatch();
 		}
+
+		return false;
 	}
 }

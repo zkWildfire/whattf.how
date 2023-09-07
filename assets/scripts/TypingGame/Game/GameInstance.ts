@@ -73,6 +73,7 @@ export class GameInstance
 		this._results = {
 			points: 0
 		};
+		GameInstance.SetupCanvas(canvas);
 
 		// Initialize the assistance threshold
 		switch (settings.assistanceLevel)
@@ -292,5 +293,26 @@ export class GameInstance
 		{
 			this._remainingLives -= actor.Damage;
 		});
+	}
+
+	/// Initializes canvas properties for the game.
+	/// @param canvas The canvas to initialize.
+	private static SetupCanvas(canvas: HTMLCanvasElement)
+	{
+		// Get the device pixel ratio, falling back to 1 as necessary
+		const dpr = window.devicePixelRatio || 1;
+
+		// Get the size of the canvas in CSS pixels
+		const rect = canvas.getBoundingClientRect();
+
+		// Modify the canvas's width and height properties to match the
+		//   canvas's on screen size in device pixels
+		canvas.width = rect.width * dpr;
+		canvas.height = rect.height * dpr;
+
+		// Scale all drawing operations by the dpr so that the pixel ratio
+		//   doesn't affect the canvas's internal coordinate system
+		const ctx = canvas.getContext('2d')!;
+		ctx.scale(dpr, dpr);
 	}
 }

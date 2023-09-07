@@ -43,7 +43,7 @@ export class ConstantMovementComponent implements IMovementComponent
 	{
 		this._onReset = new SignalDispatcher();
 		this._startPosition = position;
-		this._position = position;
+		this._position = { ...position };
 		this._speed = speed;
 		this._resetY = resetY;
 	}
@@ -61,7 +61,7 @@ export class ConstantMovementComponent implements IMovementComponent
 		// Check if the entity should reset
 		if (this._position.y >= this._resetY)
 		{
-			this._position = this._startPosition;
+			this._position = { ...this._startPosition };
 			this._onReset.dispatch();
 		}
 	}

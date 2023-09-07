@@ -43,6 +43,7 @@ export class FixedIntervalSpawnTimer implements ISpawnTimer
 		// Start the timer
 		this._intervalId = window.setInterval(() =>
 			{
+				console.log("Spawn timer elapsed");
 				this._onShouldSpawn.dispatch();
 			},
 			this._intervalMs

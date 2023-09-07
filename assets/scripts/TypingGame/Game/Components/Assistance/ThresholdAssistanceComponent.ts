@@ -51,7 +51,7 @@ export class ThresholdAssistanceComponent
 	/// @param position The current position of the character set.
 	public Update(position: { x: number, y: number }): void
 	{
-		const newVisibility = position.y < this._threshold;
+		const newVisibility = position.y > this._threshold;
 		if (newVisibility !== this._isInputTextVisible)
 		{
 			// If the visibility has changed, broadcast the appropriate event

@@ -12,43 +12,43 @@ export class ClassicRuleset implements IRuleset
 	/// Constructs a new movement component for a character actor.
 	/// @param spawnPosition The position that the character actor is being
 	///   spawned at.
+	/// @param canvasSize The size of the game canvas.
 	/// @param difficulty The difficulty setting for the game.
 	/// @returns A new movement component for a character actor.
 	public CreateMovementComponent(
 		spawnPosition: { x: number, y: number },
+		canvasSize: { width: number, height: number },
 		difficulty: EDifficulty): IMovementComponent
 	{
-		// TODO: The movement speed should be scaled by the canvas size
-		// TODO: The reset Y position should be based on the canvas size
+		// Amount of time it should take for the entity to move from the top of
+		// the screen to the bottom
+		let movementTime: number;
 		switch (difficulty)
 		{
 			case EDifficulty.Easy:
-				return new ConstantMovementComponent(
-					spawnPosition,
-					0.75,
-					0
-				);
+				movementTime = 10;
+				break;
 			case EDifficulty.Normal:
-				return new ConstantMovementComponent(
-					spawnPosition,
-					1,
-					0
-				);
+				movementTime = 7.5;
+				break;
 			case EDifficulty.Hard:
-				return new ConstantMovementComponent(
-					spawnPosition,
-					1.25,
-					0
-				);
+				movementTime = 5;
+				break;
 			case EDifficulty.Expert:
-				return new ConstantMovementComponent(
-					spawnPosition,
-					1.5,
-					0
-				);
+				movementTime = 4;
+				break;
 			default:
 				throw new Error(`Unknown difficulty: ${difficulty}`);
 		}
+
+		// Calculate the movement speed in pixels per second necessary to
+		//   complete the movement in the specified amount of time
+		const movementSpeed = canvasSize.height / movementTime;
+		return new ConstantMovementComponent(
+			spawnPosition,
+			movementSpeed,
+			canvasSize.height
+		);
 	}
 
 	/// Gets the damage a character mapping should deal.

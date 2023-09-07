@@ -10,10 +10,12 @@ export interface IRuleset
 	/// Constructs a new movement component for a character actor.
 	/// @param spawnPosition The position that the character actor is being
 	///   spawned at.
+	/// @param canvasSize The size of the game canvas.
 	/// @param difficulty The difficulty setting for the game.
 	/// @returns A new movement component for a character actor.
 	CreateMovementComponent(
 		spawnPosition: { x: number, y: number },
+		canvasSize: { width: number, height: number },
 		difficulty: EDifficulty
 	): IMovementComponent;
 

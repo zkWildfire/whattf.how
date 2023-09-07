@@ -54,6 +54,9 @@ export class GameInstance
 	/// Whether the game is running.
 	private _isActive: boolean;
 
+	/// Timestamp of the last tick.
+	private _lastTickTimestamp: DOMHighResTimeStamp | null = null;
+
 	/// Initializes a new instance of the class.
 	/// @param canvas The canvas to use for the game.
 	/// @param settings The settings to use for the game.
@@ -70,16 +73,18 @@ export class GameInstance
 		this._results = {
 			points: 0
 		};
+
+		// Initialize the assistance threshold
 		switch (settings.assistanceLevel)
 		{
 			case EAssistanceLevel.Always:
 				this._assistanceThreshold = -Infinity;
 				break;
 			case EAssistanceLevel.Halfway:
-				this._assistanceThreshold = canvas.height / 2;
+				this._assistanceThreshold = canvas.height * 0.5;
 				break;
 			case EAssistanceLevel.Quarter:
-				this._assistanceThreshold = canvas.height / 4;
+				this._assistanceThreshold = canvas.height * 0.75;
 				break;
 			case EAssistanceLevel.Off:
 				this._assistanceThreshold = Infinity;
@@ -135,6 +140,19 @@ export class GameInstance
 	/// @param timestamp Timestamp data provided by the browser.
 	private Tick(timestamp: DOMHighResTimeStamp): void
 	{
+		// Calculate the amount of time since the last tick
+		if (this._lastTickTimestamp === null)
+		{
+			this._lastTickTimestamp = timestamp;
+		}
+		const deltaTimeMs = timestamp > this._lastTickTimestamp
+			? timestamp - this._lastTickTimestamp
+			: 0.01;
+		this._lastTickTimestamp = timestamp;
+
+		// Get the delta time in seconds
+		const deltaTime = deltaTimeMs / 1000;
+
 		// Process user input
 		// This may also result in actors being removed from `_actors` by way
 		//   of the callback for the `OnDestroyed` event
@@ -143,7 +161,7 @@ export class GameInstance
 		// Update the position of all actors
 		for (const actor of this._actors)
 		{
-			actor.Tick(timestamp);
+			actor.Tick(deltaTime);
 		}
 
 		// Render all actors
@@ -158,6 +176,7 @@ export class GameInstance
 		{
 			this._isActive = false;
 		}
+		this._isActive = true;
 
 		// If the game is still running, queue up for the next tick
 		if (this._isActive)
@@ -176,6 +195,7 @@ export class GameInstance
 		this._spawnTimer.Stop();
 
 		// TODO: Transition to the score screen
+		console.log(`Game over! Score: ${this._results.points}`);
 	}
 
 	/// Gets a random character mapping to use for a new character.
@@ -247,6 +267,7 @@ export class GameInstance
 			characterMapping,
 			this.Ruleset.CreateMovementComponent(
 				spawnPosition,
+				{ width: this._canvas.width, height: this._canvas.height },
 				this._settings.difficulty
 			),
 			assistanceComponent,

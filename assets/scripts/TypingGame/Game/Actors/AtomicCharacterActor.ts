@@ -117,7 +117,7 @@ export class AtomicCharacterActor implements ICharacterActor
 			characterMapping.DisplayCharacters,
 			{
 				font: "\"Courier New\", Courier, monospace",
-				fontSize: 24,
+				fontSize: 12,
 				textColor: "#FFFFFF",
 				strokeColor: "#000000",
 				strokeWidth: 2
@@ -125,10 +125,10 @@ export class AtomicCharacterActor implements ICharacterActor
 			characterMapping.InputCharacters,
 			{
 				font: "\"Courier New\", Courier, monospace",
-				fontSize: 24,
+				fontSize: 8,
 				textColor: "#FFFFFF",
 				strokeColor: "#000000",
-				strokeWidth: 2
+				strokeWidth: 1
 			}
 		);
 

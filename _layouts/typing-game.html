@@ -86,8 +86,8 @@ tail_includes:
 </div>
 
 <!-- Main Menu -->
-<div class="game" id="game-menu">
-	<form class="main-menu px-2 pb-4 d-flex flex-column align-items-stretch">
+<div id="game-menu" class="game">
+	<form class="ui-menu px-2 pb-4 d-flex flex-column align-items-stretch">
 		<!-- Settings Title Bar -->
 		<h3 class="text-center pb-1 border-bottom border-light">
 			Game Settings
@@ -328,7 +328,7 @@ tail_includes:
 	</div>
 
 	<!-- Game rendering region -->
-	<canvas id="game-canvas">
+	<canvas id="game-canvas" class="flex-fill">
 	</canvas>
 
 	<!-- Bottom bar for the game -->
@@ -349,6 +349,26 @@ tail_includes:
 		<span class="h1">
 			&nbsp;
 		</span>
+	</div>
+</div>
+
+<!-- Post-Game UI -->
+<div id="post-game-menu" class="game d-none">
+	<div class="ui-menu d-flex flex-column justify-content-center align-items-stretch">
+
+		<!-- Results -->
+		<h1 class="text-center">Game Over!</h1>
+		<div class="d-flex justify-content-center">
+			<span class="h4">Score:&nbsp;</span>
+			<span id="post-game-score" class="h4"></span>
+		</div>
+
+		<!-- Buttons -->
+		<div class="d-flex justify-content-center">
+			<button id="play-again" class="btn btn-success rounded-0">
+				Play Again
+			</button>
+		</div>
 	</div>
 </div>
 

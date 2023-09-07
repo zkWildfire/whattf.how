@@ -39,6 +39,13 @@ export class GameInstance
 		return this._onActiveTextChanged.asEvent();
 	}
 
+	/// Event broadcast to when the game ends.
+	/// The event parameter will be the results of the game.
+	get OnGameOver(): ISimpleEvent<GameResults>
+	{
+		return this._onGameOver.asEvent();
+	}
+
 	/// Convenience alias for the game's ruleset instance.
 	private get Ruleset(): IRuleset
 	{
@@ -53,6 +60,9 @@ export class GameInstance
 
 	/// Dispatcher for the `OnActiveTextChanged` event.
 	private readonly _onActiveTextChanged: SimpleEventDispatcher<string>;
+
+	/// Dispatcher for the `OnGameOver` event.
+	private readonly _onGameOver: SimpleEventDispatcher<GameResults>;
 
 	/// The canvas to use for the game.
 	private readonly _canvas: HTMLCanvasElement;
@@ -107,6 +117,7 @@ export class GameInstance
 		this._onScoreChanged = new SimpleEventDispatcher<number>();
 		this._onLivesChanged = new SimpleEventDispatcher<number>();
 		this._onActiveTextChanged = new SimpleEventDispatcher<string>();
+		this._onGameOver = new SimpleEventDispatcher<GameResults>();
 
 		this._canvas = canvas;
 		this._canvasSize = GameInstance.SetupCanvas(canvas);
@@ -233,7 +244,6 @@ export class GameInstance
 		{
 			this._isActive = false;
 		}
-		this._isActive = true;
 
 		// If the game is still running, queue up for the next tick
 		if (this._isActive)
@@ -250,9 +260,7 @@ export class GameInstance
 	private FinishGame(): void
 	{
 		this._spawnTimer.Stop();
-
-		// TODO: Transition to the score screen
-		console.log(`Game over! Score: ${this._results.points}`);
+		this._onGameOver.dispatch(this._results);
 	}
 
 	/// Gets a random character mapping to use for a new character.

@@ -7,6 +7,7 @@ import { ICharacterMapping } from "../Data/CharacterMapping";
 import { VOCABULARY_SET_DATA_LOADERS } from "../Data/VocabularySets";
 import { ClassicRuleset } from "../Game/Rulesets/ClassicRuleset";
 import { GameInstance } from "../Game/GameInstance";
+import { GameResults } from "../Game/GameResults";
 
 /// ID of the game menu HTML element
 const ID_GAME_MENU = "game-menu";
@@ -46,6 +47,15 @@ const ID_GAME_CANVAS = "game-canvas";
 const ID_SCORE = "score";
 const ID_LIVES = "lives";
 const ID_ACTIVE_TEXT = "active-text";
+
+/// ID of the top-level element for the post-game menu
+const ID_POST_GAME_MENU = "post-game-menu";
+
+/// ID of the score element on the post-game menu
+const ID_POST_GAME_SCORE = "post-game-score";
+
+/// ID of the play again button on the post-game menu
+export const ID_PLAY_AGAIN_BUTTON = "play-again";
 
 /// Displays the game menu element.
 export const DisplayMenu: () => void = () =>
@@ -118,6 +128,18 @@ export const OnStartClicked: () => void = async () =>
 		`Could not find active text element with ID ${ID_ACTIVE_TEXT}`
 	);
 
+	// Get the post-game menu elements
+	const postGameMenu = document.getElementById(ID_POST_GAME_MENU);
+	assert(
+		postGameMenu !== null,
+		`Could not find post-game menu element with ID ${ID_POST_GAME_MENU}`
+	);
+	const postGameScoreElement = document.getElementById(ID_POST_GAME_SCORE);
+	assert(
+		postGameScoreElement !== null,
+		`Could not find post-game score element with ID ${ID_POST_GAME_SCORE}`
+	);
+
 	// Create the game instance
 	const settings: Settings = {
 		difficulty: GetSelectedDifficulty(),
@@ -143,6 +165,17 @@ export const OnStartClicked: () => void = async () =>
 	{
 		activeTextElement.innerText = activeText;
 	});
+	gameInstance.OnGameOver.subscribe((results: GameResults) =>
+	{
+		// Hide the game UI elements
+		gameRoot.classList.add("d-none");
+
+		// Set the score on the post-game menu
+		postGameScoreElement.innerText = results.points.toString();
+
+		// Show the post-game menu
+		postGameMenu.classList.remove("d-none");
+	});
 
 	// Scroll the page so that the top of the game's element is at the top of
 	//   the viewport
@@ -151,6 +184,29 @@ export const OnStartClicked: () => void = async () =>
 	// Run the game
 	gameInstance.Start();
 }
+
+export const OnPlayAgainClicked: () => void = () =>
+{
+	// Get the post-game menu element
+	const postGameMenu = document.getElementById(ID_POST_GAME_MENU);
+	assert(
+		postGameMenu !== null,
+		`Could not find post-game menu element with ID ${ID_POST_GAME_MENU}`
+	);
+
+	// Hide the post-game menu
+	postGameMenu.classList.add("d-none");
+
+	// Get the game menu element
+	const gameMenu = document.getElementById(ID_GAME_MENU);
+	assert(
+		gameMenu !== null,
+		`Could not find game menu element with ID ${ID_GAME_MENU}`
+	);
+
+	// Show the game menu
+	gameMenu.classList.remove("d-none");
+};
 
 /// Gets the selected difficulty level.
 /// @returns The selected difficulty level.

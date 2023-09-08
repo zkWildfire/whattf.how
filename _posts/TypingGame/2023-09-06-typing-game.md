@@ -23,6 +23,6 @@ Good luck and have fun!
 
 > Interested in seeing the source code for the game? The game's logic is written
 > entirely in TypeScript and does not make use of any external frameworks. You
-> can find the game's code in this repository's `assetss/scripts/TypingGame`
+> can find the game's code in this repository's `assets/scripts/TypingGame`
 > folder on [GitHub](https://github.com/zkWildfire/whattf.how/tree/master/assets/scripts/TypingGame).
 {: .prompt-info }

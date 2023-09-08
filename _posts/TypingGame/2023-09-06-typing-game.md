@@ -12,6 +12,10 @@ this case. Expect to see new vocabulary sets and possibly a few new game
 features get added over time!
 
 ## How to play
+> This game is not playable on mobile as it does not trigger the keyboard to
+> appear.
+{: .prompt-danger }
+
 Once the game starts, characters will spawn at the top of the screen. Your goal
 is to type the English characters that each Japanese character corresponds to
 before the character(s) reach the bottom. For example, if you see the character

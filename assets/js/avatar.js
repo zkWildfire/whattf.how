@@ -37,6 +37,17 @@ const makeSetThemeFunc = (imageSrc, borderColor, isLightTheme) => {
 		);
 		avatarImage.src = imageSrc;
 		isCurrentlyLightTheme = isLightTheme;
+
+		// Add an attribute that will always be available that indicates the
+		//   theme
+		// Note that this is added to the `<body>` element because Chirpy
+		//   already adds an attribute to the `<html>` element, but Chirpy's
+		//   attribute is not always available (e.g. it doesn't exist if the
+		//   theme is the dark theme).
+		document.body.setAttribute(
+			"data-theme",
+			isLightTheme ? "light" : "dark"
+		);
 	};
 };
 const setDarkTheme = makeSetThemeFunc(

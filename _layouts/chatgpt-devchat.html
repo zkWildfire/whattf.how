@@ -201,6 +201,124 @@ tail_includes:
 	<!-- Add New Conversation tab -->
 	<div id="tab-new-conversation"
 		class="d-none container-fluid">
+		<!-- Header Row -->
+		<div class="row">
+			<div class="col-auto">
+				<h4 class="mt-3">
+					New Conversation
+				</h4>
+			</div>
+		</div>
+
+		<!-- Form -->
+		<div class="row">
+			<form class="col">
+
+				<!-- Conversation Name -->
+				<div class="mb-3">
+					<label for="conversation-name"
+						class="form-label">
+						Conversation Name
+					</label>
+					<input id="conversation-name"
+						type="text"
+						class="form-control rounded-0"
+						placeholder="Enter a name for this conversation"
+						required>
+					<span id="conversation-name-error-label"
+						class="text-danger">
+					</span>
+				</div>
+
+				<!-- LLM -->
+				<div class="mb-3">
+					<span class="form-label">
+						Model
+					</span>
+
+					<!-- GPT-3.5 (4K context window) -->
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="llm-radios"
+							id="conversation-llm-gpt-3.5-4k">
+						<label for="conversation-llm-gpt-3.5-4k"
+							class="form-check-label">
+							GPT-3.5 (4k)
+						</label>
+					</div>
+
+					<!-- GPT-3.5 (16K context window) -->
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="llm-radios"
+							id="conversation-llm-gpt-3.5-16k">
+						<label for="conversation-llm-gpt-3.5-16k"
+							class="form-check-label">
+							GPT-3.5 (16k)
+						</label>
+					</div>
+
+					<!-- GPT-4 (8K context window) -->
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="llm-radios"
+							id="conversation-llm-gpt-4-8k"
+							checked>
+						<label for="conversation-llm-gpt-4-8k"
+							class="form-check-label">
+							GPT-4 (8k)
+						</label>
+					</div>
+
+					<!-- GPT-4 (32K context window) -->
+					<div class="form-check">
+						<input class="form-check-input"
+							type="radio"
+							name="llm-radios"
+							id="conversation-llm-gpt-4-32k">
+						<label for="conversation-llm-gpt-4-32k"
+							class="form-check-label">
+							GPT-4 (32k)
+						</label>
+					</div>
+
+					<!-- OpenAI pricing link -->
+					<a href="https://openai.com/pricing"
+						target="_blank">
+						OpenAI API Pricing
+					</a>
+				</div>
+
+				<!-- Initial message -->
+				<div class="mb-3">
+					<label for="conversation-initial-message"
+						class="form-label">
+						Initial Message
+					</label>
+					<textarea id="conversation-initial-message"
+						class="form-control rounded-0"
+						rows="10"
+						placeholder="Enter the initial message for this conversation"
+						required></textarea>
+				</div>
+
+				<!-- Buttons -->
+				<div class="row justify-content-end">
+					<div class="col-auto">
+						<button type="button"
+							id="button-create-conversation"
+							class="btn btn-success rounded-0">
+							Create
+						</button>
+					</div>
+				</div>
+
+			</form>
+		</div>
+
 	</div>
 
 	<!-- Thread Graph tab -->

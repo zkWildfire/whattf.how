@@ -1,6 +1,6 @@
 import { BindApiPaneEventHandlers } from "./ApiKeyPane";
 import { OpenAiApiKeyProvider } from "./Auth/OpenAiApiKeyProvider";
-import { OpenAiConversationsService } from "./Chat/OpenAiConversationsService";
+import { TransientConversationsService } from "./Chat/Services/Conversations/TransientConversationsService";
 import { BindChatNavEventHandlers } from "./ChatNav";
 import { BindNewConversationEventHandlers } from "./NewConversationTab";
 
@@ -9,13 +9,13 @@ export const RunDevChat = () =>
 {
 	// Set up the services for the chat interface
 	const openAiApiKeyProvider = new OpenAiApiKeyProvider("openai");
-	const openAiConversationsService = new OpenAiConversationsService();
+	const conversationsService = new TransientConversationsService();
 
 	// Bind event handlers for each set of UI elements
 	BindApiPaneEventHandlers(openAiApiKeyProvider);
 	BindChatNavEventHandlers(
 		openAiApiKeyProvider,
-		openAiConversationsService
+		conversationsService
 	);
 	BindNewConversationEventHandlers();
 }

@@ -11,7 +11,7 @@ tail_includes:
 
 {% include lang.html %}
 <link rel="stylesheet"
-	href="{{ '/assets/css/TypingGame/styles.css' | relative_url }}">
+	href="{{ '/assets/css/ChatGptDevChat/styles.css' | relative_url }}">
 
 <h1 data-toc-skip>{{ page.title }}</h1>
 
@@ -100,7 +100,7 @@ tail_includes:
 		</label>
 		<input id="api-key-input"
 			type="password"
-			class="form-control"
+			class="form-control rounded-0"
 			placeholder="Enter your API key here">
 		<span id="api-key-error-label" class="text-danger">
 		</span>
@@ -126,12 +126,12 @@ tail_includes:
 		<div>
 			<button id="api-key-clear"
 				type="button"
-				class="btn btn-danger px-4 ms-2">
+				class="btn btn-danger rounded-0 px-4 ms-2">
 				Clear
 			</button>
 			<button id="api-key-save"
 				type="button"
-				class="btn btn-success px-4 ms-2">
+				class="btn btn-success rounded-0 px-4 ms-2">
 				Save
 			</button>
 		</div>
@@ -139,7 +139,79 @@ tail_includes:
 </form>
 
 <!-- Main Chat Interface -->
-<div id="devchat-container">
+<h2>Dev Chat</h2>
+<div class="devchat-container d-flex flex-column align-items-stretch">
+	<ul class="nav nav-tabs border-secondary">
+		<li class="nav-item">
+			<button type="button"
+				id="button-conversations-tab"
+				class="btn btn-outline-secondary border-bottom-0 rounded-0 px-4">
+				Conversations
+			</button>
+		</li>
+		<li class="nav-item">
+			<button type="button"
+				id="button-graph-tab"
+				class="btn btn-outline-secondary border-bottom-0 rounded-0 px-4">
+				Thread Graph
+			</button>
+		</li>
+		<li class="nav-item">
+			<button type="button"
+				id="button-chat-tab"
+				class="btn btn-outline-secondary border-bottom-0 rounded-0 px-4">
+				Chat
+			</button>
+		</li>
+	</ul>
+
+	<!-- No API Key Selected tab -->
+	<div id="tab-no-api-key"
+		class="visible flex-fill container-fluid">
+		<div class="row justify-content-center">
+			<span class="col-auto py-2">
+				No API key added! Please add an API key to use the Dev Chat.
+			</span>
+		</div>
+	</div>
+
+	<!-- Conversations tab -->
+	<div id="tab-conversations"
+		class="d-none container-fluid">
+		<!-- Main row of the conversations tab -->
+		<div class="row align-items-stretch">
+
+			<!-- Sidebar -->
+			<div class="col-2 d-flex flex-column">
+				<!-- Conversations -->
+				<div class="flex-fill d-flex flex-column">
+				</div>
+
+				<!-- TODO: Make this button a different color -->
+				<button type="button"
+					id="button-new-conversation"
+					class="btn btn-outline-secondary rounded-0">
+					New Conversation
+				</button>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- Add New Conversation tab -->
+	<div id="tab-new-conversation"
+		class="d-none container-fluid">
+	</div>
+
+	<!-- Thread Graph tab -->
+	<div id="tab-graph"
+		class="d-none container-fluid">
+	</div>
+
+	<!-- Chat tab -->
+	<div id="tab-chat"
+		class="d-none container-fluid">
+	</div>
 </div>
 
 <div class="post-tail-wrapper text-muted">

@@ -19,9 +19,34 @@ const ID_API_KEY_LABEL = "api-key-label";
 /// ID of the element that displays API key validation error messages
 const ID_API_KEY_ERROR_LABEL = "api-key-error-label";
 
+/// Initializes all generic navigation elements for the dev chat interface.
+/// @param apiKeyProvider The provider used to manage the API key.
+export const BindApiPaneEventHandlers = (apiKeyProvider: IApiKeyProvider) =>
+{
+	// Find key UI elements
+	const apiKeySaveButton = GetSaveButton();
+	const apiKeyClearButton = GetClearButton();
+
+	// Bind to service events
+	apiKeyProvider.OnApiKeyChanged.subscribe(UpdateApiKeyLabel);
+
+	// Bind to UI events
+	apiKeySaveButton.addEventListener("click", () =>
+	{
+		OnSaveApiKeyClicked(apiKeyProvider)
+	});
+	apiKeyClearButton.addEventListener("click", () =>
+	{
+		OnClearApiKeyClicked(apiKeyProvider)
+	});
+
+	// Also update the API key label on page load
+	UpdateApiKeyLabel(apiKeyProvider);
+}
+
 /// Finds the button that saves the current API key entered by the user.
 /// @returns A reference to the button element.
-export const GetSaveButton = (): HTMLButtonElement =>
+const GetSaveButton = (): HTMLButtonElement =>
 {
 	const button = document.getElementById(
 		ID_SAVE_API_KEY_BUTTON
@@ -38,7 +63,7 @@ export const GetSaveButton = (): HTMLButtonElement =>
 
 /// Finds the button that clears the current API key.
 /// @returns A reference to the button element.
-export const GetClearButton = (): HTMLButtonElement =>
+const GetClearButton = (): HTMLButtonElement =>
 {
 	const button = document.getElementById(
 		ID_CLEAR_API_KEY_BUTTON
@@ -55,7 +80,7 @@ export const GetClearButton = (): HTMLButtonElement =>
 
 /// Callback to invoke when the API key changes.
 /// @param apiKeyProvider The provider for which the API key changed.
-export const UpdateApiKeyLabel = (apiKeyProvider: IApiKeyProvider): void =>
+const UpdateApiKeyLabel = (apiKeyProvider: IApiKeyProvider): void =>
 {
 	// Find the element that displays the API key
 	const apiKeyLabel = document.getElementById(ID_API_KEY_LABEL);
@@ -82,7 +107,7 @@ export const UpdateApiKeyLabel = (apiKeyProvider: IApiKeyProvider): void =>
 
 /// Callback to invoke when the user clicks the "Save" button.
 /// @param apiKeyProvider The provider to save the API key to.
-export const OnSaveApiKeyClicked = (apiKeyProvider: IApiKeyProvider): void =>
+const OnSaveApiKeyClicked = (apiKeyProvider: IApiKeyProvider): void =>
 {
 	// Find the input element
 	const input = document.getElementById(ID_API_KEY_INPUT) as HTMLInputElement;
@@ -130,7 +155,7 @@ export const OnSaveApiKeyClicked = (apiKeyProvider: IApiKeyProvider): void =>
 
 /// Callback to invoke when the user clicks the "Clear" button.
 /// @param apiKeyProvider The provider to clear the API key from.
-export const OnClearApiKeyClicked = (apiKeyProvider: IApiKeyProvider): void =>
+const OnClearApiKeyClicked = (apiKeyProvider: IApiKeyProvider): void =>
 {
 	apiKeyProvider.ClearApiKey();
 }

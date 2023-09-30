@@ -2,6 +2,7 @@ import { BindApiPaneEventHandlers } from "./ApiKeyPane";
 import { OpenAiApiKeyProvider } from "./Auth/OpenAiApiKeyProvider";
 import { OpenAiConversationsService } from "./Chat/OpenAiConversationsService";
 import { BindChatNavEventHandlers } from "./ChatNav";
+import { BindNewConversationEventHandlers } from "./NewConversationTab";
 
 /// Entry point for the dev chat interface.
 export const RunDevChat = () =>
@@ -16,4 +17,5 @@ export const RunDevChat = () =>
 		openAiApiKeyProvider,
 		openAiConversationsService
 	);
+	BindNewConversationEventHandlers();
 }

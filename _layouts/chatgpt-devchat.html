@@ -141,29 +141,46 @@ tail_includes:
 <!-- Main Chat Interface -->
 <h2>Dev Chat</h2>
 <div class="devchat-container d-flex flex-column align-items-stretch">
-	<ul class="nav nav-tabs border-secondary">
-		<li class="nav-item">
-			<button type="button"
+	<div class="d-flex">
+		<!-- Conversations button -->
+		<div>
+			<input type="radio"
+				class="btn-check"
+				name="devchat-tabs"
 				id="button-conversations-tab"
+				autocomplete="off">
+			<label for="devchat-tab-conversations"
 				class="btn btn-outline-secondary border-bottom-0 rounded-0 px-4">
 				Conversations
-			</button>
-		</li>
-		<li class="nav-item">
-			<button type="button"
+			</label>
+		</div>
+
+		<!-- Thread Graph button -->
+		<div>
+			<input type="radio"
+				class="btn-check"
+				name="devchat-tabs"
 				id="button-graph-tab"
+				autocomplete="off">
+			<label for="devchat-tab-graph"
 				class="btn btn-outline-secondary border-bottom-0 rounded-0 px-4">
 				Thread Graph
-			</button>
-		</li>
-		<li class="nav-item">
-			<button type="button"
+			</label>
+		</div>
+
+		<!-- Chat button -->
+		<div>
+			<input type="radio"
+				class="btn-check"
+				name="devchat-tabs"
 				id="button-chat-tab"
+				autocomplete="off">
+			<label for="devchat-tab-chat"
 				class="btn btn-outline-secondary border-bottom-0 rounded-0 px-4">
 				Chat
-			</button>
-		</li>
-	</ul>
+			</label>
+		</div>
+	</div>
 
 	<!-- No API Key Selected tab -->
 	<div id="tab-no-api-key"

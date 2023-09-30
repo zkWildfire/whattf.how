@@ -1,32 +1,6 @@
 import { IApiKeyProvider } from "./Auth/ApiKeyProvider";
 import { IConversationsService } from "./Chat/ConversationsService";
-
-/// ID of the "Conversations" button.
-const ID_CONVERSATIONS_BUTTON = "button-conversations-tab";
-
-/// ID of the "Thread Graph" button.
-const ID_THREAD_GRAPH_BUTTON = "button-graph-tab";
-
-/// ID of the "Chat" button.
-const ID_CHAT_BUTTON = "button-chat-tab";
-
-/// ID of the "New Conversation" button.
-const ID_NEW_CONVERSATION_BUTTON = "button-new-conversation";
-
-/// ID of the tab to display when no API key has been provided.
-const ID_NO_API_KEY_TAB = "tab-no-api-key";
-
-/// ID of the "Conversations" tab.
-const ID_CONVERSATIONS_TAB = "tab-conversations";
-
-/// ID of the "Thread Graph" tab.
-const ID_THREAD_GRAPH_TAB = "tab-graph";
-
-/// ID of the "Chat" tab.
-const ID_CHAT_TAB = "tab-chat";
-
-/// ID of the "New Conversation" tab.
-const ID_NEW_CONVERSATION_TAB = "tab-new-conversation";
+import { IPageElementLocator } from "./Util/PageElementLocator";
 
 // CSS class to add to the selected button
 const SELECTED_CLASS = "btn-secondary";
@@ -49,318 +23,284 @@ export const BindChatNavEventHandlers = (
 	apiKeyProvider: IApiKeyProvider,
 	conversationsService: IConversationsService) =>
 {
-	// Get each button on the page
-	const conversationsButton = GetConversationsButton();
-	const threadGraphButton = GetThreadGraphButton();
-	const chatButton = GetChatButton();
-	const newConversationButton = GetNewConversationButton();
-	const buttons = [
-		conversationsButton,
-		threadGraphButton,
-		chatButton,
-		newConversationButton,
-	];
+	// Find all key page elements
+	const pageElements = new ChatNavElements();
 
-	// Helper methods for managing the buttons
-	const deselectAllButtons = () =>
+	// Bind to nav button events
+	pageElements.ConversationsButton.addEventListener("onchange", () =>
 	{
-		for (const button of buttons)
+		if (pageElements.ConversationsButton.checked)
 		{
-			button.classList.remove(SELECTED_CLASS);
-			button.classList.add(UNSELECTED_CLASS);
+			pageElements.ActivateTab(pageElements.ConversationsTab);
 		}
-	}
-	const selectButton = (button: HTMLButtonElement) =>
+	});
+	pageElements.ThreadGraphButton.addEventListener("onchange", () =>
 	{
-		button.classList.remove(UNSELECTED_CLASS);
-		button.classList.add(SELECTED_CLASS);
-	}
-	const activateButton = (button: HTMLButtonElement) =>
-	{
-		deselectAllButtons();
-		selectButton(button);
-	}
-
-	// Get each tab on the page
-	const conversationsTab = GetConversationsTab();
-	const threadGraphTab = GetThreadGraphTab();
-	const chatTab = GetChatTab();
-	const newConversationTab = GetNewConversationTab();
-	const tabs = [
-		conversationsTab,
-		threadGraphTab,
-		chatTab,
-		newConversationTab,
-	];
-
-	// Helper methods for managing the tabs
-	const deselectAllTabs = () =>
-	{
-		for (const tab of tabs)
+		if (pageElements.ThreadGraphButton.checked)
 		{
-			for (const selectedClass of SELECTED_TAB_CLASSES)
-			{
-				tab.classList.remove(selectedClass);
-			}
-			tab.classList.add(UNSELECTED_TAB_CLASS);
+			pageElements.ActivateTab(pageElements.ThreadGraphTab);
 		}
-	}
-	const selectTab = (tab: HTMLDivElement) =>
+	});
+	pageElements.ChatButton.addEventListener("onchange", () =>
 	{
-		tab.classList.remove(UNSELECTED_TAB_CLASS);
-		for (const selectedClass of SELECTED_TAB_CLASSES)
+		if (pageElements.ChatButton.checked)
 		{
-			tab.classList.add(selectedClass);
+			pageElements.ActivateTab(pageElements.ChatTab);
 		}
-	}
-	const activateTab = (tab: HTMLDivElement) =>
-	{
-		deselectAllTabs();
-		selectTab(tab);
-	}
+	});
 
-	// Bind to button click events
-	conversationsButton.addEventListener("click", () =>
+	// Bind to other buttons' events
+	pageElements.NewConversationButton.addEventListener("click", () =>
 	{
-		activateButton(conversationsButton);
-		activateTab(conversationsTab);
-		OnConversationsButtonClicked();
-	});
-	threadGraphButton.addEventListener("click", () =>
-	{
-		activateButton(threadGraphButton);
-		activateTab(threadGraphTab);
-		OnThreadGraphButtonClicked();
-	});
-	chatButton.addEventListener("click", () =>
-	{
-		activateButton(chatButton);
-		activateTab(chatTab);
-		OnChatButtonClicked();
-	});
-	newConversationButton.addEventListener("click", () =>
-	{
-		activateButton(newConversationButton);
-		activateTab(newConversationTab);
-		OnNewConversationButtonClicked();
+		pageElements.DisableNavButtons();
+		pageElements.ActivateTab(pageElements.NewConversationTab);
 	});
 
 	// Bind to service events
 	apiKeyProvider.OnApiKeyChanged.subscribe(() =>
 	{
-		InitializePage(apiKeyProvider, conversationsService);
+		InitializePage(
+			pageElements,
+			apiKeyProvider,
+			conversationsService
+		);
 	});
 
 	// Initialize the page to the correct tab
-	InitializePage(apiKeyProvider, conversationsService);
+	InitializePage(
+		pageElements,
+		apiKeyProvider,
+		conversationsService
+	);
 }
 
-/// Displays the correct tab based on the current state of the page.
-/// @param apiKeyProvider The provider that manages the user's API key.
-/// @param conversationsService The service that manages conversations.
-const InitializePage = (
-	apiKeyProvider: IApiKeyProvider,
-	conversationsService: IConversationsService) =>
+/// Helper class used to locate all elements for handling chat navigation.
+class ChatNavElements extends IPageElementLocator
 {
-	// Get the tabs that may be used as the initial tab
-	const noApiKeyTab = GetNoApiKeyTab();
-	const conversationsTab = GetConversationsTab();
-	const newConversationTab = GetNewConversationTab();
-	const tabs = [
-		noApiKeyTab,
-		conversationsTab,
-		newConversationTab,
-	];
+	/// Button that navigates to the conversations tab.
+	get ConversationsButton(): HTMLInputElement
+	{
+		return this.GetElementById<HTMLInputElement>(
+			ChatNavElements.ID_CONVERSATIONS_BUTTON
+		);
+	}
 
-	// Get each of the nav buttons
-	const conversationsButton = GetConversationsButton();
-	const threadGraphButton = GetThreadGraphButton();
-	const chatButton = GetChatButton();
-	const buttons = [
-		conversationsButton,
-		threadGraphButton,
-		chatButton,
-	];
+	/// Button that navigates to the thread graph tab.
+	get ThreadGraphButton(): HTMLInputElement
+	{
+		return this.GetElementById<HTMLInputElement>(
+			ChatNavElements.ID_THREAD_GRAPH_BUTTON
+		);
+	}
 
-	// Helper methods
-	const deselectAllTabs = () =>
+	/// Button that navigates to the chat tab.
+	get ChatButton(): HTMLInputElement
 	{
-		for (const tab of tabs)
-		{
-			for (const selectedClass of SELECTED_TAB_CLASSES)
-			{
-				tab.classList.remove(selectedClass);
-			}
-			tab.classList.add(UNSELECTED_TAB_CLASS);
-		}
+		return this.GetElementById<HTMLInputElement>(
+			ChatNavElements.ID_CHAT_BUTTON
+		);
 	}
-	const selectTab = (tab: HTMLDivElement) =>
+
+	/// Button that navigates to the new conversation tab.
+	get NewConversationButton(): HTMLInputElement
 	{
-		tab.classList.remove(UNSELECTED_TAB_CLASS);
-		for (const selectedClass of SELECTED_TAB_CLASSES)
-		{
-			tab.classList.add(selectedClass);
-		}
+		return this.GetElementById<HTMLInputElement>(
+			ChatNavElements.ID_NEW_CONVERSATION_BUTTON
+		);
 	}
-	const activateTab = (tab: HTMLDivElement) =>
+
+	/// Buttons that are part of the chat navigation bar.
+	get NavButtons(): HTMLInputElement[]
 	{
-		deselectAllTabs();
-		selectTab(tab);
+		return [
+			this.ConversationsButton,
+			this.ThreadGraphButton,
+			this.ChatButton
+		];
 	}
-	const disableButtons = () =>
+
+	/// Tab to be displayed when no API key has been provided.
+	get NoApiKeyTab(): HTMLDivElement
 	{
-		for (const button of buttons)
+		return this.GetElementById<HTMLDivElement>(
+			ChatNavElements.ID_NO_API_KEY_TAB
+		);
+	}
+
+	/// Tab that displays the list of conversations.
+	get ConversationsTab(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			ChatNavElements.ID_CONVERSATIONS_TAB
+		);
+	}
+
+	/// Tab that displays the thread graph.
+	get ThreadGraphTab(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			ChatNavElements.ID_THREAD_GRAPH_TAB
+		);
+	}
+
+	/// Tab that displays the chat.
+	get ChatTab(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			ChatNavElements.ID_CHAT_TAB
+		);
+	}
+
+	/// Tab that displays the new conversation form.
+	get NewConversationTab(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			ChatNavElements.ID_NEW_CONVERSATION_TAB
+		);
+	}
+
+	/// List of all tabs on the page.
+	/// Tabs are the page elements for which only one should be visible at a
+	///   time.
+	get Tabs(): HTMLDivElement[]
+	{
+		return [
+			this.NoApiKeyTab,
+			this.ConversationsTab,
+			this.ThreadGraphTab,
+			this.ChatTab,
+			this.NewConversationTab
+		];
+	}
+
+	/// ID of the "Conversations" button.
+	private static readonly ID_CONVERSATIONS_BUTTON = "button-conversations-tab";
+
+	/// ID of the "Thread Graph" button.
+	private static readonly ID_THREAD_GRAPH_BUTTON = "button-graph-tab";
+
+	/// ID of the "Chat" button.
+	private static readonly ID_CHAT_BUTTON = "button-chat-tab";
+
+	/// ID of the "New Conversation" button.
+	private static readonly ID_NEW_CONVERSATION_BUTTON = "button-new-conversation";
+
+	/// ID of the tab to display when no API key has been provided.
+	private static readonly ID_NO_API_KEY_TAB = "tab-no-api-key";
+
+	/// ID of the "Conversations" tab.
+	private static readonly ID_CONVERSATIONS_TAB = "tab-conversations";
+
+	/// ID of the "Thread Graph" tab.
+	private static readonly ID_THREAD_GRAPH_TAB = "tab-graph";
+
+	/// ID of the "Chat" tab.
+	private static readonly ID_CHAT_TAB = "tab-chat";
+
+	/// ID of the "New Conversation" tab.
+	private static readonly ID_NEW_CONVERSATION_TAB = "tab-new-conversation";
+
+	/// Initializes the class.
+	constructor()
+	{
+		super([
+			ChatNavElements.ID_CONVERSATIONS_BUTTON,
+			ChatNavElements.ID_THREAD_GRAPH_BUTTON,
+			ChatNavElements.ID_CHAT_BUTTON,
+			ChatNavElements.ID_NEW_CONVERSATION_BUTTON,
+			ChatNavElements.ID_NO_API_KEY_TAB,
+			ChatNavElements.ID_CONVERSATIONS_TAB,
+			ChatNavElements.ID_THREAD_GRAPH_TAB,
+			ChatNavElements.ID_CHAT_TAB,
+			ChatNavElements.ID_NEW_CONVERSATION_TAB,
+		]);
+	}
+
+	/// Disables the buttons that are part of the chat navigation.
+	public DisableNavButtons(): void
+	{
+		for (const button of this.NavButtons)
 		{
 			button.disabled = true;
 		}
+
+		// Also make sure none of the buttons appear selected
+		for (const button of this.NavButtons)
+		{
+			button.checked = false;
+		}
 	}
-	const enableButtons = () =>
+
+	/// Sets the given nav button as the active nav button.
+	/// @param button The button to select. Must be one of the buttons that are
+	///   part of the chat navigation.
+	public SelectNavButton(button: HTMLInputElement): void
 	{
-		for (const button of buttons)
+		// Make sure all buttons are enabled
+		for (const button of this.NavButtons)
 		{
 			button.disabled = false;
 		}
-	}
-	const deselectButtons = () =>
-	{
-		for (const button of buttons)
+
+		// Deselect all of the nav buttons
+		for (const button of this.NavButtons)
 		{
-			button.classList.remove(SELECTED_CLASS);
-			button.classList.add(UNSELECTED_CLASS);
+			button.checked = false;
 		}
-	}
-	const selectButton = (button: HTMLButtonElement) =>
-	{
-		button.classList.remove(UNSELECTED_CLASS);
-		button.classList.add(SELECTED_CLASS);
+
+		// Select the given button
+		button.checked = true;
 	}
 
+	/// Shows the given tab.
+	public ActivateTab(tab: HTMLDivElement): void
+	{
+		// Hide all tabs
+		for (const tab of this.Tabs)
+		{
+			tab.classList.add("d-none");
+		}
+
+		// Show the given tab
+		tab.classList.remove("d-none");
+	}
+}
+
+/// Displays the correct tab based on the current state of the page.
+/// @param pageElements The elements used to navigate the page.
+/// @param apiKeyProvider The provider that manages the user's API key.
+/// @param conversationsService The service that manages conversations.
+const InitializePage = (
+	pageElements: ChatNavElements,
+	apiKeyProvider: IApiKeyProvider,
+	conversationsService: IConversationsService) =>
+{
 	// If no API key has been provided, show the "No API Key" tab
 	if (!apiKeyProvider.HasApiKey)
 	{
-		activateTab(noApiKeyTab);
+		pageElements.ActivateTab(pageElements.NoApiKeyTab);
 
 		// If the user has no API key, disable all buttons and make sure none
 		//   of the buttons appear selected
-		disableButtons();
-		deselectButtons();
+		pageElements.DisableNavButtons();
 	}
 	// If the user has an API key but no conversations, show the "New
 	//   Conversation" tab
 	else if (conversationsService.Count === 0)
 	{
-		activateTab(newConversationTab);
+		pageElements.ActivateTab(pageElements.NewConversationTab);
 
 		// Don't allow the user to switch to any tabs until they've created a
 		//   conversation
-		disableButtons();
-		deselectButtons();
+		pageElements.DisableNavButtons();
 	}
 	// Otherwise, show the "Conversations" tab
 	else
 	{
-		activateTab(conversationsTab);
+		pageElements.ActivateTab(pageElements.ConversationsTab);
 
 		// Make sure all buttons are enabled and that the "Conversations" button
 		//   appears selected
-		enableButtons();
-		deselectButtons();
-		selectButton(conversationsButton);
+		pageElements.SelectNavButton(pageElements.ConversationsButton);
 	}
-}
-
-/// Helper method for creating each find button function.
-/// @param buttonId The ID of the button to find.
-/// @returns A function that finds the button with the given ID.
-const MakeGetButtonFunc = (buttonId: string) =>
-{
-	return () =>
-	{
-		const button = document.getElementById(buttonId) as HTMLButtonElement;
-		if (!button)
-		{
-			throw new Error(`Could not find button with ID ${buttonId}`);
-		}
-
-		return button;
-	};
-}
-
-/// Helper method for creating each find tab function.
-/// @param tabId The ID of the tab to find.
-/// @returns A function that finds the tab with the given ID.
-const MakeGetTabFunc = (tabId: string) =>
-{
-	return () =>
-	{
-		const tab = document.getElementById(tabId) as HTMLDivElement;
-		if (!tab)
-		{
-			throw new Error(`Could not find tab with ID ${tabId}`);
-		}
-
-		return tab;
-	};
-}
-
-/// Gets the "Conversations" button.
-/// @returns A reference to the button element.
-const GetConversationsButton = MakeGetButtonFunc(
-	ID_CONVERSATIONS_BUTTON
-);
-
-/// Gets the "Thread Graph" button.
-/// @returns A reference to the button element.
-const GetThreadGraphButton = MakeGetButtonFunc(
-	ID_THREAD_GRAPH_BUTTON
-);
-
-/// Gets the "Chat" button.
-/// @returns A reference to the button element.
-const GetChatButton = MakeGetButtonFunc(ID_CHAT_BUTTON);
-
-/// Gets the "New Conversation" button.
-/// @returns A reference to the button element.
-const GetNewConversationButton = MakeGetButtonFunc(
-	ID_NEW_CONVERSATION_BUTTON
-);
-
-/// Gets the tab to display when no API key has been provided.
-/// @returns A reference to the tab element.
-const GetNoApiKeyTab = MakeGetTabFunc(ID_NO_API_KEY_TAB);
-
-/// Gets the "Conversations" tab.
-/// @returns A reference to the tab element.
-const GetConversationsTab = MakeGetTabFunc(ID_CONVERSATIONS_TAB);
-
-/// Gets the "Thread Graph" tab.
-/// @returns A reference to the tab element.
-const GetThreadGraphTab = MakeGetTabFunc(ID_THREAD_GRAPH_TAB);
-
-/// Gets the "Chat" tab.
-/// @returns A reference to the tab element.
-const GetChatTab = MakeGetTabFunc(ID_CHAT_TAB);
-
-/// Gets the "New Conversation" tab.
-/// @returns A reference to the tab element.
-const GetNewConversationTab = MakeGetTabFunc(ID_NEW_CONVERSATION_TAB);
-
-/// Event handler to invoke when the "Conversations" button is clicked.
-const OnConversationsButtonClicked = () =>
-{
-}
-
-/// Event handler to invoke when the "Thread Graph" button is clicked.
-const OnThreadGraphButtonClicked = () =>
-{
-}
-
-/// Event handler to invoke when the "Chat" button is clicked.
-const OnChatButtonClicked = () =>
-{
-}
-
-/// Event handler to invoke when the "New Conversation" button is clicked.
-const OnNewConversationButtonClicked = () =>
-{
 }

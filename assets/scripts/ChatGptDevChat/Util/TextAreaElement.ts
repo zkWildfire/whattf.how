@@ -1,18 +1,18 @@
 import { IInputElement } from "./InputElement";
 
-/// Helper class for managing a text input element.
-export abstract class ITextInputElement implements IInputElement
+/// Helper class for managing a text area element.
+export abstract class ITextAreaElement implements IInputElement
 {
 	/// The current value of the input element.
 	get Value(): string
 	{
-		return this._inputElement.value;
+		return this._inputElement.textContent ?? "";
 	}
 
 	/// Sets the current value of the input element.
 	set Value(value: string)
 	{
-		this._inputElement.value = value;
+		this._inputElement.textContent = value;
 
 		// If the input element is cleared, clear any error messages and
 		//   validation CSS classes
@@ -31,7 +31,7 @@ export abstract class ITextInputElement implements IInputElement
 	}
 
 	/// Input element to manage.
-	private readonly _inputElement: HTMLInputElement;
+	private readonly _inputElement: HTMLTextAreaElement;
 
 	/// Error element to display error messages in.
 	private readonly _errorElement: HTMLElement | null;
@@ -41,7 +41,7 @@ export abstract class ITextInputElement implements IInputElement
 	/// @param errorElement Error element to display error messages in. If set
 	///   to null, no error messages will be displayed.
 	constructor(
-		inputElement: HTMLInputElement,
+		inputElement: HTMLTextAreaElement,
 		errorElement: HTMLElement | null)
 	{
 		this._inputElement = inputElement;

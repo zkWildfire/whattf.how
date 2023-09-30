@@ -216,16 +216,16 @@ tail_includes:
 
 				<!-- Conversation Name -->
 				<div class="mb-3">
-					<label for="conversation-name"
+					<label for="input-conversation-name"
 						class="form-label">
 						Conversation Name
 					</label>
-					<input id="conversation-name"
+					<input id="input-conversation-name"
 						type="text"
 						class="form-control rounded-0"
 						placeholder="Enter a name for this conversation"
 						required>
-					<span id="conversation-name-error-label"
+					<span id="label-conversation-name-error"
 						class="text-danger">
 					</span>
 				</div>
@@ -241,7 +241,7 @@ tail_includes:
 						<input class="form-check-input"
 							type="radio"
 							name="llm-radios"
-							id="conversation-llm-gpt-3.5-4k">
+							id="input-llm-gpt-3.5-4k">
 						<label for="conversation-llm-gpt-3.5-4k"
 							class="form-check-label">
 							GPT-3.5 (4k)
@@ -253,7 +253,7 @@ tail_includes:
 						<input class="form-check-input"
 							type="radio"
 							name="llm-radios"
-							id="conversation-llm-gpt-3.5-16k">
+							id="input-llm-gpt-3.5-16k">
 						<label for="conversation-llm-gpt-3.5-16k"
 							class="form-check-label">
 							GPT-3.5 (16k)
@@ -265,7 +265,7 @@ tail_includes:
 						<input class="form-check-input"
 							type="radio"
 							name="llm-radios"
-							id="conversation-llm-gpt-4-8k"
+							id="input-llm-gpt-4-8k"
 							checked>
 						<label for="conversation-llm-gpt-4-8k"
 							class="form-check-label">
@@ -278,7 +278,7 @@ tail_includes:
 						<input class="form-check-input"
 							type="radio"
 							name="llm-radios"
-							id="conversation-llm-gpt-4-32k">
+							id="input-llm-gpt-4-32k">
 						<label for="conversation-llm-gpt-4-32k"
 							class="form-check-label">
 							GPT-4 (32k)
@@ -290,7 +290,7 @@ tail_includes:
 						<input class="form-check-input"
 							type="radio"
 							name="llm-radios"
-							id="conversation-llm-lorem-ipsum">
+							id="input-llm-lorem-ipsum">
 						<label for="conversation-llm-lorem-ipsum"
 							class="form-check-label">
 							Lorem Ipsum
@@ -306,15 +306,18 @@ tail_includes:
 
 				<!-- Initial message -->
 				<div class="mb-3">
-					<label for="conversation-initial-message"
+					<label for="input-initial-message"
 						class="form-label">
 						Initial Message
 					</label>
-					<textarea id="conversation-initial-message"
+					<textarea id="input-initial-message"
 						class="form-control rounded-0"
 						rows="10"
 						placeholder="Enter the initial message for this conversation"
 						required></textarea>
+					<span id="label-initial-message-error"
+						class="text-danger">
+					</span>
 				</div>
 
 				<!-- Buttons -->

@@ -1,9 +1,20 @@
+import { IEvent } from "strongly-typed-events";
 import { ILlm } from "../LLMs/Llm";
 import { IMessage } from "../Messages/Message";
 
 /// Represents a branching conversation with an LLM.
 export interface IConversation
 {
+	/// Event broadcast to when a message is sent to the LLM.
+	/// The event arguments will be the conversation that the sent message is
+	///   part of and the message that was sent.
+	get OnMessageSent(): IEvent<IConversation, IMessage>;
+
+	/// Event broadcast to when a response is received from the LLM.
+	/// The event arguments will be the conversation that the received message
+	///   is for and the message that was received.
+	get OnResponseReceived(): IEvent<IConversation, IMessage>;
+
 	/// User-assigned name of the conversation.
 	get Name(): string;
 
@@ -32,7 +43,18 @@ export interface IConversation
 	/// Total cost of the conversation in dollars.
 	get TotalCost(): number;
 
-	/// Adds a new message to the conversation.
-	/// @param message Message to add.
-	AddMessage(message: IMessage): void;
+	/// Adds a new message to the conversation without sending it to the LLM.
+	/// This is intended for adding initial messages used to start the
+	///   conversation. However, it could also be used to add messages in the
+	///   middle of conversations if necessary.
+	/// @param message Message to add. Must have a known actual token count.
+	/// @warning Messages sent via this method will never trigger the
+	///   on message sent or on message received events.
+	AppendMessage(message: IMessage): void;
+
+	/// Sends a message to the LLM.
+	/// This will also add new messages to the conversation.
+	/// @param message Message to send.
+	/// @returns The message that was received from the LLM.
+	SendMessage(message: IMessage): Promise<IMessage>;
 }

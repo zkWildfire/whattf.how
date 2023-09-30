@@ -1,5 +1,5 @@
 import { IApiKeyProvider } from "./Auth/ApiKeyProvider";
-import { IConversationsService } from "./Chat/ConversationsService";
+import { IConversationsService } from "./Chat/Services/Conversations/ConversationsService";
 import { IPageElementLocator } from "./Util/PageElementLocator";
 
 // CSS class to add to the selected button

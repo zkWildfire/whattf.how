@@ -1,5 +1,5 @@
 import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
-import { IConversation } from "./Conversation";
+import { IConversation } from "../../Conversations/Conversation";
 import { IConversationsService } from "./ConversationsService";
 
 /// Service that keeps track of conversations with OpenAI LLMs.

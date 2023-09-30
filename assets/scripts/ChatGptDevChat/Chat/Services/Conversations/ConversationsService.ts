@@ -1,5 +1,5 @@
 import { ISimpleEvent } from "strongly-typed-events";
-import { IConversation } from "./Conversation";
+import { IConversation } from "../../Conversations/Conversation";
 
 /// Service that keeps track of all conversations created by the user.
 export interface IConversationsService

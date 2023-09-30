@@ -1,4 +1,4 @@
-import { ILlm } from "./Llm";
+import { ILlm } from "../LLMs/Llm";
 import { IMessage } from "./Message";
 
 /// Represents a branching conversation with an LLM.

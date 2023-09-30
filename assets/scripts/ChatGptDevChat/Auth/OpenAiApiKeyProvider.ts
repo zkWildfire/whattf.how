@@ -115,6 +115,10 @@ export class OpenAiApiKeyProvider implements IApiKeyProvider
 		{
 			localStorage.setItem(this._apiKeyLocalStorageKey, apiKey);
 		}
+		else
+		{
+			localStorage.removeItem(this._apiKeyLocalStorageKey);
+		}
 
 		// Notify listeners that the API key changed
 		this._onApiKeyChanged.dispatch(this);

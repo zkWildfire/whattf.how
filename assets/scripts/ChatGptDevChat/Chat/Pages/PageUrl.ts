@@ -1,7 +1,7 @@
-/// Identifies each tab that may be displayed by the Dev Chat.
-export enum EChatTab
+/// Identifies each page that may be displayed by the Dev Chat.
+export enum EPageUrl
 {
-	/// Tab to be displayed when no API key has been provided.
+	/// Page to be displayed when no API key has been provided.
 	NoApiKey,
 
 	/// Tab that displays the list of conversations.
@@ -13,6 +13,6 @@ export enum EChatTab
 	/// Tab that displays the chat.
 	Chat,
 
-	/// Tab that displays the new conversation form.
+	/// Page that displays the new conversation form.
 	NewConversation
 }

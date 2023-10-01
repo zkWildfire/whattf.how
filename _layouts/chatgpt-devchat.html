@@ -378,7 +378,49 @@ tail_includes:
 
 	<!-- Chat tab -->
 	<div id="tab-chat"
-		class="d-none container-fluid">
+		class="d-none flex-fill flex-column align-items-stretch">
+		<!-- Status Bar -->
+		<div class="d-flex justify-content-between border-bottom mb-3">
+			<!-- Tokens -->
+			<div class="d-flex flex-column align-items-start">
+				<span>
+					Total Tokens: <span id="thread-total-tokens">-</span> tokens
+				</span>
+				<span>
+					Outbound Tokens: <span id="thread-outbound-tokens">-</span> tokens
+				</span>
+				<span>
+					Inbound Tokens: <span id="thread-inbound-tokens">-</span> tokens
+				</span>
+			</div>
+
+			<!-- Cost -->
+			<div class="d-flex flex-column align-items-end">
+				<span>
+					Estimated Total Cost: $<span id="thread-total-cost">0.00</span>
+				</span>
+				<span>
+					Estimated Outbound Cost: $<span id="thread-outbound-cost">0.00</span>
+				</span>
+				<span>
+					Estimated Inbound Cost: $<span id="thread-inbound-cost">0.00</span>
+				</span>
+			</div>
+		</div>
+
+		<!-- Messages -->
+		<div id="chat-messages" class="flex-fill container">
+		</div>
+
+		<!-- Input -->
+		<div>
+			<input id="input-message"
+				type="text"
+				class="form-control rounded-0"
+				placeholder="Enter a message"
+				required>
+		</div>
+
 	</div>
 </div>
 

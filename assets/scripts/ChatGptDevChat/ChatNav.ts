@@ -29,26 +29,20 @@ export const BindChatNavEventHandlers = (
 	const pageElements = new ChatNavElements();
 
 	// Bind to nav button events
-	pageElements.ConversationsButton.addEventListener("onchange", () =>
+	pageElements.ConversationsButton.addEventListener("change", () =>
 	{
-		if (pageElements.ConversationsButton.checked)
-		{
-			pageElements.ActivateTab(pageElements.ConversationsTab);
-		}
+		console.log("Conversations button clicked");
+		pageElements.ActivateTab(pageElements.ConversationsTab);
 	});
-	pageElements.ThreadGraphButton.addEventListener("onchange", () =>
+	pageElements.ThreadGraphButton.addEventListener("change", () =>
 	{
-		if (pageElements.ThreadGraphButton.checked)
-		{
-			pageElements.ActivateTab(pageElements.ThreadGraphTab);
-		}
+		console.log("Thread graph button clicked");
+		pageElements.ActivateTab(pageElements.ThreadGraphTab);
 	});
-	pageElements.ChatButton.addEventListener("onchange", () =>
+	pageElements.ChatButton.addEventListener("change", () =>
 	{
-		if (pageElements.ChatButton.checked)
-		{
-			pageElements.ActivateTab(pageElements.ChatTab);
-		}
+		console.log("Chat button clicked");
+		pageElements.ActivateTab(pageElements.ChatTab);
 	});
 
 	// Bind to other buttons' events

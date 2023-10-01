@@ -10,7 +10,12 @@ export class Gpt4_32k extends ILlm
 	{
 		// Costs for the LLM are obtained from here:
 		// https://openai.com/pricing
-		super("GPT-4 (32K)", 0.06, 0.12);
+		super(
+			"GPT-4 (32K)",
+			32 * 1024,
+			0.06,
+			0.12
+		);
 	}
 
 	/// Sends a prompt to the LLM and returns the response.

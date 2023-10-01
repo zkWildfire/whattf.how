@@ -10,6 +10,12 @@ export abstract class ILlm
 		return this._displayName;
 	}
 
+	/// Size of the LLM's context window in number of tokens.
+	get ContextWindowSize(): number
+	{
+		return this._contextWindowSize;
+	}
+
 	/// Cost in dollars per 1000 characters of input text.
 	get InboundCost(): number
 	{
@@ -25,6 +31,9 @@ export abstract class ILlm
 	/// Field backing the `DisplayName` property.
 	private readonly _displayName: string;
 
+	/// Field backing the `ContextWindowSize` property.
+	private readonly _contextWindowSize: number;
+
 	/// Field backing the `InboundCost` property.
 	private readonly _inboundCost: number;
 
@@ -33,14 +42,18 @@ export abstract class ILlm
 
 	/// Initializes the LLM.
 	/// @param displayName UI-displayable name of the LLM.
+	/// @param contextWindowSize Size of the LLM's context window in number of
+	///   tokens.
 	/// @param inboundCost Cost in dollars per 1000 characters of input text.
 	/// @param outboundCost Cost in dollars per 1000 characters of output text.
 	protected constructor(
 		displayName: string,
+		contextWindowSize: number,
 		inboundCost: number,
 		outboundCost: number)
 	{
 		this._displayName = displayName;
+		this._contextWindowSize = contextWindowSize;
 		this._inboundCost = inboundCost;
 		this._outboundCost = outboundCost;
 	}

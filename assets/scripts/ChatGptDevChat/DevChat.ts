@@ -17,5 +17,8 @@ export const RunDevChat = () =>
 		openAiApiKeyProvider,
 		conversationsService
 	);
-	BindNewConversationEventHandlers();
+	BindNewConversationEventHandlers(
+		openAiApiKeyProvider,
+		conversationsService
+	);
 }

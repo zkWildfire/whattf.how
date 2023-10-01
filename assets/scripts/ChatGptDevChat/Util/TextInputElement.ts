@@ -27,7 +27,7 @@ export abstract class ITextInputElement implements IInputElement
 	/// Whether the current value of the input element is valid.
 	get IsValid(): boolean
 	{
-		return this.Validate() === null;
+		return this.ValidateInput() === null;
 	}
 
 	/// Input element to manage.

@@ -1,27 +1,24 @@
 import { IInputElement } from "./InputElement";
 
-/// Helper class for managing a text area element.
-export abstract class ITextAreaElement implements IInputElement
+/// Helper class for managing a number input element.
+export abstract class INumberInputElement implements IInputElement
 {
 	/// The current value of the input element.
-	get Value(): string
+	get Value(): number
 	{
-		return this._inputElement.textContent ?? "";
+		return parseFloat(this._inputElement.value);
 	}
 
 	/// Sets the current value of the input element.
-	set Value(value: string)
+	set Value(value: number)
 	{
-		this._inputElement.textContent = value;
+		this._inputElement.value = value.toString();
 
-		// If the input element is cleared, clear any error messages and
-		//   validation CSS classes
-		if (!value)
-		{
-			this.SetErrorMessage(null);
-			this._inputElement.classList.remove("is-valid");
-			this._inputElement.classList.remove("is-invalid");
-		}
+		// If the input element's value is explicitly set, assume that the value
+		//   is now a valid value
+		this.SetErrorMessage(null);
+		this._inputElement.classList.remove("is-valid");
+		this._inputElement.classList.remove("is-invalid");
 	}
 
 	/// Whether the current value of the input element is valid.
@@ -31,7 +28,7 @@ export abstract class ITextAreaElement implements IInputElement
 	}
 
 	/// Input element to manage.
-	private readonly _inputElement: HTMLTextAreaElement;
+	private readonly _inputElement: HTMLInputElement;
 
 	/// Error element to display error messages in.
 	private readonly _errorElement: HTMLElement | null;
@@ -41,7 +38,7 @@ export abstract class ITextAreaElement implements IInputElement
 	/// @param errorElement Error element to display error messages in. If set
 	///   to null, no error messages will be displayed.
 	constructor(
-		inputElement: HTMLTextAreaElement,
+		inputElement: HTMLInputElement,
 		errorElement: HTMLElement | null)
 	{
 		this._inputElement = inputElement;

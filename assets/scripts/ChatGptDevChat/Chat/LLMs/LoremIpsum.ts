@@ -19,7 +19,7 @@ export class LoremIpsum extends ILlm
 	/// Initializes the LLM.
 	constructor()
 	{
-		super("Lorem Ipsum", 0.0, 0.0);
+		super("Lorem Ipsum", 16 * 1024, 0.0, 0.0);
 	}
 
 	/// Sends a prompt to the LLM and returns the response.

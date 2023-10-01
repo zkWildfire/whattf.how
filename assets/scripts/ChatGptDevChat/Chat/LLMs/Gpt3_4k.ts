@@ -10,7 +10,12 @@ export class Gpt3_4k extends ILlm
 	{
 		// Costs for the LLM are obtained from here:
 		// https://openai.com/pricing
-		super("GPT-3.5 (4K)", 0.0015, 0.002);
+		super(
+			"GPT-3.5 (4K)",
+			4 * 1024,
+			0.0015,
+			0.002
+		);
 	}
 
 	/// Sends a prompt to the LLM and returns the response.

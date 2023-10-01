@@ -3,24 +3,14 @@ import { IResponse } from "../Responses/Response";
 import { ILlm } from "./Llm";
 
 /// LLM implementation that uses OpenAI GPT-3.5 with a 16K context window.
-export class Gpt3_4k implements ILlm
+export class Gpt3_4k extends ILlm
 {
-	/// UI-displayable name of the LLM.
-	get DisplayName(): string
+	/// Initializes the LLM.
+	constructor()
 	{
-		return "GPT-3.5 (16K)";
-	}
-
-	/// Cost in dollars per 1000 characters of input text.
-	get InboundCost(): number
-	{
-		return 0.003;
-	}
-
-	/// Cost in dollars per 1000 characters of output text.
-	get OutboundCost(): number
-	{
-		return 0.004;
+		// Costs for the LLM are obtained from here:
+		// https://openai.com/pricing
+		super("GPT-3.5 (16K)", 0.003, 0.004);
 	}
 
 	/// Sends a prompt to the LLM and returns the response.

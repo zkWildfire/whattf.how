@@ -3,6 +3,9 @@ import { ILlm } from "../LLMs/Llm";
 import { IMessage } from "../Messages/Message";
 
 /// Represents a branching conversation with an LLM.
+/// Conversations are made up of one or more threads, where each thread is a
+///   linear series of messages in the conversation. Conversations as a whole
+///   are made up of a series of messages that form a tree structure.
 export interface IConversation
 {
 	/// Event broadcast to when a message is sent to the LLM.

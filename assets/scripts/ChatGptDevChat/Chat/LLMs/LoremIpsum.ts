@@ -6,26 +6,8 @@ import { ERole } from "../Role";
 import { ILlm } from "./Llm";
 
 /// Fake LLM implementation used for testing.
-export class LoremIpsum implements ILlm
+export class LoremIpsum extends ILlm
 {
-	/// UI-displayable name of the LLM.
-	get DisplayName(): string
-	{
-		return "Lorem Ipsum";
-	}
-
-	/// Cost in dollars per 1000 characters of input text.
-	get InboundCost(): number
-	{
-		return 0.0;
-	}
-
-	/// Cost in dollars per 1000 characters of output text.
-	get OutboundCost(): number
-	{
-		return 0.0;
-	}
-
 	/// List of responses that the LLM may return.
 	private static readonly _responses: IResponse[] = [
 		LoremIpsum.GenerateResponse(1),
@@ -33,6 +15,12 @@ export class LoremIpsum implements ILlm
 		LoremIpsum.GenerateResponse(3),
 		LoremIpsum.GenerateResponse(4)
 	];
+
+	/// Initializes the LLM.
+	constructor()
+	{
+		super("Lorem Ipsum", 0.0, 0.0);
+	}
 
 	/// Sends a prompt to the LLM and returns the response.
 	/// @param prompt Prompt to send.

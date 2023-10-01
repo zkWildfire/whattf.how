@@ -1,4 +1,5 @@
 import { IApiKeyProvider } from "./Auth/ApiKeyProvider";
+import { EChatTab } from "./Chat/ChatTab";
 import { IConversationsService } from "./Chat/Services/Conversations/ConversationsService";
 import { IPageElementLocator } from "./Util/PageElementLocator";
 
@@ -19,6 +20,7 @@ const UNSELECTED_TAB_CLASS = "d-none";
 /// Initializes all generic navigation elements for the dev chat interface.
 /// @param apiKeyProvider The provider that manages the user's API key.
 /// @param conversationsService The service that manages conversations.
+/// @returns The tab that was displayed.
 export const BindChatNavEventHandlers = (
 	apiKeyProvider: IApiKeyProvider,
 	conversationsService: IConversationsService) =>
@@ -67,12 +69,51 @@ export const BindChatNavEventHandlers = (
 	});
 
 	// Initialize the page to the correct tab
-	InitializePage(
+	return InitializePage(
 		pageElements,
 		apiKeyProvider,
 		conversationsService
 	);
 }
+
+/// Navigates to the given tab.
+/// @param tab The tab to navigate to.
+export const NavigateToTab = (tab: EChatTab) =>
+{
+	// Find all key page elements
+	const pageElements = new ChatNavElements();
+
+	switch (tab)
+	{
+		case EChatTab.NoApiKey:
+			pageElements.DisableNavButtons();
+			pageElements.ActivateTab(pageElements.NoApiKeyTab);
+			break;
+
+		case EChatTab.Conversations:
+			pageElements.SelectNavButton(pageElements.ConversationsButton);
+			pageElements.ActivateTab(pageElements.ConversationsTab);
+			break;
+
+		case EChatTab.ThreadGraph:
+			pageElements.SelectNavButton(pageElements.ThreadGraphButton);
+			pageElements.ActivateTab(pageElements.ThreadGraphTab);
+			break;
+
+		case EChatTab.Chat:
+			pageElements.SelectNavButton(pageElements.ChatButton);
+			pageElements.ActivateTab(pageElements.ChatTab);
+			break;
+
+		case EChatTab.NewConversation:
+			pageElements.DisableNavButtons();
+			pageElements.ActivateTab(pageElements.NewConversationTab);
+			break;
+
+		default:
+			throw new Error(`Unknown tab: ${tab}`);
+	}
+};
 
 /// Helper class used to locate all elements for handling chat navigation.
 class ChatNavElements extends IPageElementLocator
@@ -270,37 +311,31 @@ class ChatNavElements extends IPageElementLocator
 /// @param pageElements The elements used to navigate the page.
 /// @param apiKeyProvider The provider that manages the user's API key.
 /// @param conversationsService The service that manages conversations.
+/// @returns The tab that was displayed.
 const InitializePage = (
 	pageElements: ChatNavElements,
 	apiKeyProvider: IApiKeyProvider,
 	conversationsService: IConversationsService) =>
 {
+	let tab = EChatTab.NoApiKey;
+
 	// If no API key has been provided, show the "No API Key" tab
 	if (!apiKeyProvider.HasApiKey)
 	{
-		pageElements.ActivateTab(pageElements.NoApiKeyTab);
-
-		// If the user has no API key, disable all buttons and make sure none
-		//   of the buttons appear selected
-		pageElements.DisableNavButtons();
+		tab = EChatTab.NoApiKey;
 	}
 	// If the user has an API key but no conversations, show the "New
 	//   Conversation" tab
 	else if (conversationsService.Count === 0)
 	{
-		pageElements.ActivateTab(pageElements.NewConversationTab);
-
-		// Don't allow the user to switch to any tabs until they've created a
-		//   conversation
-		pageElements.DisableNavButtons();
+		tab = EChatTab.NewConversation;
 	}
 	// Otherwise, show the "Conversations" tab
 	else
 	{
-		pageElements.ActivateTab(pageElements.ConversationsTab);
-
-		// Make sure all buttons are enabled and that the "Conversations" button
-		//   appears selected
-		pageElements.SelectNavButton(pageElements.ConversationsButton);
+		tab = EChatTab.Conversations;
 	}
+
+	NavigateToTab(tab);
+	return tab;
 }

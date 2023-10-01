@@ -33,6 +33,7 @@ export class LoremIpsum extends ILlm
 		const promptMessageTokenCount = prompt.Message.Contents.split(
 			/\s+/
 		).length;
+		prompt.Message.MessageTokenCountActual = promptMessageTokenCount;
 
 		// Pick a response at random and return it
 		const index = Math.floor(Math.random() * LoremIpsum._responses.length);

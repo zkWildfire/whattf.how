@@ -1,11 +1,20 @@
 import { IApiKeyProvider } from "./Auth/ApiKeyProvider";
+import { EChatTab } from "./Chat/ChatTab";
+import { LinearConversation } from "./Chat/Conversations/LinearConversation";
 import { Gpt3_16k } from "./Chat/LLMs/Gpt3_16k";
 import { Gpt3_4k } from "./Chat/LLMs/Gpt3_4k";
 import { Gpt4_32k } from "./Chat/LLMs/Gpt4_32k";
 import { Gpt4_8k } from "./Chat/LLMs/Gpt4_8k";
 import { ILlm } from "./Chat/LLMs/Llm";
 import { LoremIpsum } from "./Chat/LLMs/LoremIpsum";
+import { LlmMessage } from "./Chat/Messages/LlmMessage";
+import { WhitespaceMessage } from "./Chat/Messages/WhitespaceMessage";
+import { ERole } from "./Chat/Role";
 import { IConversationsService } from "./Chat/Services/Conversations/ConversationsService";
+import { INavigationService } from "./Chat/Services/Navigation/NavigationService";
+import { IConversationSessionService } from "./Chat/Services/Sessions/ConversationSessionService";
+import { IThreadSessionService } from "./Chat/Services/Sessions/ThreadSessionService";
+import { LinearChatThread } from "./Chat/Threads/LinearChatThread";
 import { INumberInputElement } from "./Util/NumberInputElement";
 import { IPageElementLocator } from "./Util/PageElementLocator";
 import { ITextAreaElement } from "./Util/TextAreaElement";
@@ -14,9 +23,15 @@ import { ITextInputElement } from "./Util/TextInputElement";
 /// Sets up all event handlers for the new conversation tab
 /// @param apiKeyProvider Service for retrieving the API key for the LLM API.
 /// @param conversationsService Service for managing conversations.
+/// @param conversationSessionService Service for managing the currently active
+///   conversation.
+/// @param threadSessionService Service for managing the currently active thread.
 export const BindNewConversationEventHandlers = (
 	apiKeyProvider: IApiKeyProvider,
-	conversationsService: IConversationsService) =>
+	conversationsService: IConversationsService,
+	conversationSessionService: IConversationSessionService,
+	threadSessionService: IThreadSessionService,
+	navService: INavigationService) =>
 {
 	// Find key page elements
 	const pageElements = new NewConversationPageElements();
@@ -27,7 +42,10 @@ export const BindNewConversationEventHandlers = (
 		OnCreateConversation(
 			pageElements,
 			apiKeyProvider,
-			conversationsService
+			conversationsService,
+			conversationSessionService,
+			threadSessionService,
+			navService
 		);
 	});
 	pageElements.Gpt3_4kRadioButton.addEventListener("change", () =>
@@ -344,10 +362,13 @@ class InitialMessageInput extends ITextAreaElement
 /// @param pageElements The elements on the new conversation page.
 /// @param apiKeyProvider Service for retrieving the API key for the LLM API.
 /// @param conversationsService Service for managing conversations.
-const OnCreateConversation = (
+const OnCreateConversation = async (
 	pageElements: NewConversationPageElements,
 	apiKeyProvider: IApiKeyProvider,
-	conversationsService: IConversationsService) =>
+	conversationsService: IConversationsService,
+	conversationSessionService: IConversationSessionService,
+	threadSessionService: IThreadSessionService,
+	navService: INavigationService) =>
 {
 	// Validate all inputs
 	// Note that `&&=` must not be used here since all validation methods should
@@ -365,4 +386,40 @@ const OnCreateConversation = (
 
 	// Create the objects for the conversation
 	const llm = pageElements.SelectedLlm;
+	// TODO: Replace `WhitespaceMessage` with a message implementation that
+	//   uses OpenAI's tokenizer
+	const initialMessage = new WhitespaceMessage(
+		null,
+		ERole.User,
+		pageElements.InitialMessageInput.Value,
+	);
+	// TODO: Disable the `Create` button while waiting for a response
+	const response = await llm.SendPrompt({
+		History: [],
+		Message: initialMessage,
+		ApiKey: apiKeyProvider.ApiKeyRaw
+	});
+	const thread = new LinearChatThread(
+		llm,
+		apiKeyProvider,
+		pageElements.TargetContextWindowSizeInput.Value,
+		new LlmMessage(
+			initialMessage,
+			response[0].Contents,
+			response[0].TotalTokens
+		)
+	);
+	const conversation = new LinearConversation(
+		pageElements.ConversationNameInput.Value,
+		llm,
+		thread
+	);
+
+	// Update services to reflect the new conversation
+	conversationsService.AddConversation(conversation);
+	conversationSessionService.ActiveConversation = conversation;
+	threadSessionService.ActiveThread = thread;
+
+	// Set the active tab to the chat tab
+	navService.NavigateToTab(EChatTab.Chat);
 }

@@ -6,13 +6,13 @@ export abstract class ITextAreaElement implements IInputElement
 	/// The current value of the input element.
 	get Value(): string
 	{
-		return this._inputElement.textContent ?? "";
+		return this._inputElement.value ?? "";
 	}
 
 	/// Sets the current value of the input element.
 	set Value(value: string)
 	{
-		this._inputElement.textContent = value;
+		this._inputElement.value = value;
 
 		// If the input element is cleared, clear any error messages and
 		//   validation CSS classes

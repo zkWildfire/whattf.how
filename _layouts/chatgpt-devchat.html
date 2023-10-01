@@ -374,6 +374,20 @@ tail_includes:
 	<!-- Thread Graph tab -->
 	<div id="tab-graph"
 		class="d-none container-fluid">
+		<!-- Status Bar -->
+		<div class="row justify-content-between border-bottom mb-3">
+			<div class="col d-flex flex-column align-items-start">
+				<span>
+					Messages: <span id="graph-total-messages">0</span>
+				</span>
+			</div>
+
+			<div class="col d-flex flex-column align-items-end">
+				<span>
+					Threads: <span id="graph-total-threads">0</span>
+				</span>
+			</div>
+		</div>
 	</div>
 
 	<!-- Chat tab -->
@@ -384,13 +398,13 @@ tail_includes:
 			<!-- Tokens -->
 			<div class="d-flex flex-column align-items-start">
 				<span>
-					Total Tokens: <span id="thread-total-tokens">-</span> tokens
+					Total Tokens: <span id="thread-total-tokens">0</span> tokens
 				</span>
 				<span>
-					Outbound Tokens: <span id="thread-outbound-tokens">-</span> tokens
+					Outbound Tokens: <span id="thread-outbound-tokens">0</span> tokens
 				</span>
 				<span>
-					Inbound Tokens: <span id="thread-inbound-tokens">-</span> tokens
+					Inbound Tokens: <span id="thread-inbound-tokens">0</span> tokens
 				</span>
 			</div>
 
@@ -409,7 +423,7 @@ tail_includes:
 		</div>
 
 		<!-- Messages -->
-		<div id="chat-messages" class="flex-fill container">
+		<div id="chat-messages" class="flex-fill container overflow-auto">
 		</div>
 
 		<!-- Input -->

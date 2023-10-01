@@ -4,7 +4,7 @@ import { IPageElementLocator } from "../../Util/PageElementLocator";
 import { IMessage } from "../Messages/Message";
 import { EPageUrl } from "./PageUrl";
 
-/// Tab that display messages from the current thread.
+/// Tab that displays messages from the current thread.
 export class ChatTab extends IPage
 {
 	/// Service used to get the active thread from.
@@ -47,18 +47,18 @@ class ChatPageElements extends IPageElementLocator
 	get ChatTab(): HTMLDivElement
 	{
 		return this.GetElementById<HTMLDivElement>(
-			ChatPageElements.ID_CHAT_TAB
+			ChatPageElements.ID_TAB_CONTAINER
 		);
 	}
 
 	/// ID of the container element for the chat tab.
-	private static readonly ID_CHAT_TAB = "tab-chat";
+	private static readonly ID_TAB_CONTAINER = "tab-chat";
 
 	/// Initializes the class.
 	constructor()
 	{
 		super([
-			ChatPageElements.ID_CHAT_TAB
+			ChatPageElements.ID_TAB_CONTAINER
 		]);
 	}
 }

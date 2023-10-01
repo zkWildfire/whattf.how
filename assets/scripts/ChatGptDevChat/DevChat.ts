@@ -15,6 +15,8 @@ import { NoApiKeyPage } from "./Chat/Pages/NoApiKeyPage";
 import { IPage } from "./Chat/Pages/Page";
 import { ChatTab } from "./Chat/Pages/ChatTab";
 import { NewConversationPage } from "./Chat/Pages/NewConversationPage";
+import { ConversationsTab } from "./Chat/Pages/ConversationsTab";
+import { ThreadGraphTab } from "./Chat/Pages/ThreadGraphTab";
 
 /// Entry point for the dev chat interface.
 export const RunDevChat = () =>
@@ -35,9 +37,13 @@ export const RunDevChat = () =>
 	const navService: INavigationService = new PageNavigationService(
 		new Map<EPageUrl, IPage>([
 			[EPageUrl.NoApiKey, new NoApiKeyPage()],
-			// TODO
-			// [EPageUrl.Conversations, new ConversationsTab()],
-			// [EPageUrl.ThreadGraph, new ThreadGraphTab()],
+			[EPageUrl.Conversations, new ConversationsTab(
+				conversationSessionService
+			)],
+			[EPageUrl.ThreadGraph, new ThreadGraphTab(
+				conversationSessionService,
+				threadSessionService
+			)],
 			[EPageUrl.Chat, new ChatTab(
 				threadSessionService
 			)],

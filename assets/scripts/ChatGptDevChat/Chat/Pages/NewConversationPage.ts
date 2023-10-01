@@ -164,6 +164,13 @@ export class NewConversationPage extends IPage
 		this._conversationSessionService.ActiveConversation = conversation;
 		this._threadSessionService.ActiveThread = thread;
 
+		// Reset page elements to their default states
+		// Not all page elements are reset here; only the page elements whose
+		//   values are not likely to be relevant to the next conversation are
+		//   reset
+		this._pageElements.ConversationNameInput.Value = "";
+		this._pageElements.InitialMessageInput.Value = "";
+
 		// Set the active tab to the chat tab
 		this._onRedirect.dispatch(EPageUrl.Chat);
 	}

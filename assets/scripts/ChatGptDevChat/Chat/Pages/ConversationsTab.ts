@@ -22,6 +22,12 @@ export class ConversationsTab extends IPage
 	{
 		super(EPageUrl.Conversations);
 		this._conversationSessionService = conversationSessionService;
+
+		// Bind to the new conversation button's events
+		this._pageElements.NewConversationButton.addEventListener("click", () =>
+		{
+			this._onRedirect.dispatch(EPageUrl.NewConversation);
+		});
 	}
 
 	/// Displays the tab.
@@ -54,14 +60,26 @@ class ConversationsPageElements extends IPageElementLocator
 		);
 	}
 
+	/// Gets the create new conversation button.
+	get NewConversationButton(): HTMLButtonElement
+	{
+		return this.GetElementById<HTMLButtonElement>(
+			ConversationsPageElements.ID_NEW_CONVERSATION_BUTTON
+		);
+	}
+
 	/// ID of the container element for the conversations tab.
 	private static readonly ID_TAB_CONTAINER = "tab-conversations";
+
+	/// ID of the create new conversation button
+	private static readonly ID_NEW_CONVERSATION_BUTTON = "button-new-conversation";
 
 	/// Initializes the class.
 	constructor()
 	{
 		super([
-			ConversationsPageElements.ID_TAB_CONTAINER
+			ConversationsPageElements.ID_TAB_CONTAINER,
+			ConversationsPageElements.ID_NEW_CONVERSATION_BUTTON
 		]);
 	}
 }

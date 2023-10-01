@@ -65,7 +65,7 @@ export class PageNavigationService implements INavigationService
 			return;
 		}
 
-		// Hide the current page
+		// Switch to the new page
 		this.ActivePage.Hide();
 		this._activePage = page;
 		this.ActivePage.Show();

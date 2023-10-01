@@ -19,15 +19,15 @@ export const BindChatNavEventHandlers = (
 	// Bind to nav button events
 	pageElements.ConversationsButton.addEventListener("change", () =>
 	{
-		pageElements.ActivateTab(pageElements.ConversationsTab);
+		navService.NavigateToPage(EPageUrl.Conversations);
 	});
 	pageElements.ThreadGraphButton.addEventListener("change", () =>
 	{
-		pageElements.ActivateTab(pageElements.ThreadGraphTab);
+		navService.NavigateToPage(EPageUrl.ThreadGraph);
 	});
 	pageElements.ChatButton.addEventListener("change", () =>
 	{
-		pageElements.ActivateTab(pageElements.ChatTab);
+		navService.NavigateToPage(EPageUrl.Chat);
 	});
 
 	// Bind to service events
@@ -257,21 +257,6 @@ class ChatNavElements extends IPageElementLocator
 
 		// Select the given button
 		button.checked = true;
-	}
-
-	/// Shows the given tab.
-	public ActivateTab(tab: HTMLDivElement): void
-	{
-		// Hide all tabs
-		for (const tab of this.Tabs)
-		{
-			tab.classList.add("d-none");
-			tab.classList.add("flex-fill");
-		}
-
-		// Show the given tab
-		tab.classList.remove("d-none");
-		tab.classList.add("flex-fill");
 	}
 }
 

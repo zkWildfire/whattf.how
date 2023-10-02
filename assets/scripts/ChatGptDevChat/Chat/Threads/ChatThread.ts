@@ -26,7 +26,7 @@ export interface IChatThread
 	/// @invariant This will always be a message from the LLM. Messages written
 	///   by the user are not added to the thread until a response from the LLM
 	///   is received.
-	get LeafMessage(): IMessage;
+	get LastMessage(): IMessage;
 
 	/// Total number of messages in the thread.
 	get MessageCount(): number;

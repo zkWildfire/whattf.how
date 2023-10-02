@@ -8,6 +8,9 @@
 	min-width: 25%
 
 body[data-theme="light"]
+	//
+	// Conversations Tab
+	//
 	#conversations-sidebar
 		background-color: #ccc
 
@@ -15,7 +18,17 @@ body[data-theme="light"]
 		h3, h4
 			color: #5b00c3
 
+	//
+	// Chat Tab
+	//
+	#chat-messages > *:nth-child(odd)
+		background-color: #ddd
+
+
 body[data-theme="dark"]
+	//
+	// Conversations Tab
+	//
 	#conversations-sidebar
 		background-color: #111
 
@@ -23,6 +36,15 @@ body[data-theme="dark"]
 		h3, h4
 			color: #780ef0
 
+	//
+	// Chat Tab
+	//
+	#chat-messages > *:nth-child(odd)
+		background-color: #222
+
+	//
+	// New Conversation Page
+	//
 	input[type="text"],
 	input[type="number"],
 	input[type="password"],

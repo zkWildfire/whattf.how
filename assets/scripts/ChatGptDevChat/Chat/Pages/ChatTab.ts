@@ -9,6 +9,8 @@ import { IConversationSessionService } from "../Services/Sessions/ConversationSe
 import { ILlm } from "../LLMs/Llm";
 import { IConversation } from "../Conversations/Conversation";
 import assert from "assert";
+import { ITextAreaElement } from "../../Util/TextAreaElement";
+import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
 
 /// Tab that displays messages from the current thread.
 export class ChatTab extends IPage
@@ -26,7 +28,10 @@ export class ChatTab extends IPage
 	private readonly _messages: ChatMessage[] = [];
 
 	/// Component that manages the status bar.
-	private readonly _statusBar: ChatStatusBar;
+	private readonly _statusBar = new ChatStatusBar();
+
+	/// Component that manages the input element.
+	private readonly _inputElement: InputTextInput;
 
 	/// Initializes the tab.
 	/// @param conversationSessionService Service used to get the active
@@ -39,7 +44,10 @@ export class ChatTab extends IPage
 		super(EPageUrl.Chat);
 		this._conversationSessionService = conversationSessionService;
 		this._threadSessionService = threadSessionService;
-		this._statusBar = new ChatStatusBar();
+		this._inputElement = new InputTextInput(
+			this._conversationSessionService,
+			this._pageElements.InputElement
+		);
 	}
 
 	/// Displays the tab.
@@ -130,18 +138,30 @@ class ChatPageElements extends IPageElementLocator
 		);
 	}
 
+	/// Gets the input element for the chat tab.
+	get InputElement(): HTMLTextAreaElement
+	{
+		return this.GetElementById<HTMLTextAreaElement>(
+			ChatPageElements.ID_INPUT_ELEMENT
+		);
+	}
+
 	/// ID of the container element for the chat tab.
 	private static readonly ID_TAB_CONTAINER = "tab-chat";
 
 	/// ID of the container element for all messages.
 	private static readonly ID_MESSAGE_CONTAINER = "chat-messages";
 
+	/// ID of the input element for the chat tab.
+	private static readonly ID_INPUT_ELEMENT = "input-chat-message";
+
 	/// Initializes the class.
 	constructor()
 	{
 		super([
 			ChatPageElements.ID_TAB_CONTAINER,
-			ChatPageElements.ID_MESSAGE_CONTAINER
+			ChatPageElements.ID_MESSAGE_CONTAINER,
+			ChatPageElements.ID_INPUT_ELEMENT
 		]);
 	}
 }
@@ -286,6 +306,139 @@ class ChatStatusBar
 		const inboundCost = this._thread?.InboundCost ?? 0;
 		this._pageElements.ThreadInboundCost.innerText =
 			`$${inboundCost.toFixed(2)}`;
+	}
+}
+
+/// Class used to manage the input text area where users type messages.
+class InputTextInput extends ITextAreaElement
+{
+	/// Event broadcast when the user hits the enter key in the text area.
+	/// The event argument will be the text in the text area.
+	get OnSubmit(): ISimpleEvent<string>
+	{
+		return this._onSubmit.asEvent();
+	}
+
+	/// LLM used by the active conversation.
+	private get Llm(): ILlm
+	{
+		const conversation =
+			this._conversationSessionService.ActiveConversation;
+		assert(conversation !== null);
+		return conversation.Llm;
+	}
+
+	/// Maximum text area height in pixels.
+	private static readonly MAX_TEXT_AREA_HEIGHT = 200;
+
+	/// Event dispatcher for the `OnSubmit` event.
+	private readonly _onSubmit = new SimpleEventDispatcher<string>();
+
+	/// Service used to get the active conversation from.
+	private readonly _conversationSessionService: IConversationSessionService;
+
+	/// Text area element to manage.
+	private readonly _textAreaElement: HTMLTextAreaElement;
+
+	/// Initializes the class.
+	/// @param convSessionService Service used to get the active conversation
+	///   from.
+	/// @param element Element to manage.
+	constructor(
+		conversationSessionService: IConversationSessionService,
+		element: HTMLTextAreaElement)
+	{
+		super(element, null);
+		this._conversationSessionService = conversationSessionService;
+		this._textAreaElement = element;
+		this._textAreaElement.addEventListener(
+			"input",
+			() => this.ResizeTextArea()
+		);
+		this._textAreaElement.addEventListener(
+			"keydown",
+			(event) => this.HandleKeyDown(event)
+		);
+	}
+
+	/// Validates the current value of the input element.
+	/// @returns If the input is valid, the method will return `null`.
+	///   If the input is invalid, the method will return an error message.
+	protected ValidateInput(): string | null
+	{
+		// Make sure the input is not empty or all whitespace
+		const value = this.Value.trim();
+		if (value.length === 0)
+		{
+			return "Message cannot be empty";
+		}
+
+		// Make sure the input is not longer than the LLM's context window
+		const maxTokenCount = this.Llm.ContextWindowSize;
+		const tokenCount = this.Llm.CountTokens(value);
+		if (tokenCount > maxTokenCount)
+		{
+			return `Message cannot be longer than ${maxTokenCount} tokens`;
+		}
+
+		return null;
+	}
+
+	/// Callback used to handle key down events.
+	private HandleKeyDown(event: KeyboardEvent): void
+	{
+		// If the user used shift-enter, add a new line instead of submitting
+		//   the message
+		if (event.key === "Enter" && event.shiftKey)
+		{
+			this._textAreaElement.value += "\n";
+			this.ResizeTextArea();
+			event.preventDefault();
+		}
+		// If the user hit enter, submit the message
+		else if (event.key === "Enter")
+		{
+			const value = this.Value.trim();
+			if (value.length > 0)
+			{
+				this._onSubmit.dispatch(value);
+				this.Value = "";
+
+				// Reset the text area to a single line
+				this._textAreaElement.style.height = "auto";
+			}
+			event.preventDefault();
+		}
+		else
+		{
+			// If the key was for anything else, let the default text area
+			//   behavior handle it
+		}
+	}
+
+	/// Callback used to update the text area's size.
+	private ResizeTextArea(): void
+	{
+		// Reset the text area's height
+		this._textAreaElement.style.height = "auto";
+
+		// Set the text area's height to its scroll height or the maximum
+		//   height, whichever is smaller. Also, hide the scroll bar if the
+		//   text area is not at its maximum height since the scroll bar will
+		//   be unnecessary.
+		if (this._textAreaElement.scrollHeight <=
+			InputTextInput.MAX_TEXT_AREA_HEIGHT)
+		{
+			this._textAreaElement.style.height =
+				`${this._textAreaElement.scrollHeight}px`;
+			this._textAreaElement.style.overflow = "hidden";
+		}
+		else
+		{
+			this._textAreaElement.style.height =
+				`${InputTextInput.MAX_TEXT_AREA_HEIGHT}px`;
+			this._textAreaElement.style.overflow = "auto";
+		}
 	}
 }
 

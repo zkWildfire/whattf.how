@@ -101,10 +101,20 @@ export abstract class ILlm
 			this.CalcOutboundCost(outboundCount);
 	}
 
+	/// Counts the number of tokens in the given text.
+	/// The value returned by this method should be considered an estimate, not
+	///   an exact value. This is because the APIs of some LLMs may add
+	///   additional tokens when processing a prompt. Always use the token
+	///   counts returned by the LLM API if an exact token count is needed.
+	/// @param text Text to count tokens in.
+	/// @returns Estimate of the number of tokens in the text.
+	public abstract CountTokens(text: string): number;
+
 	/// Sends a prompt to the LLM and returns the response.
 	/// @param prompt Prompt to send.
 	/// @returns Response(s) from the LLM. If the LLM offers multiple choices
 	///   for a response, multiple responses may be returned. At least one
 	///   response will always be returned.
 	public abstract SendPrompt(prompt: IPrompt): Promise<IResponse[]>;
+
 }

@@ -18,6 +18,9 @@ export class ConversationsTab extends IPage
 	/// Service used to get the active conversation from.
 	private readonly _conversationSessionService: IConversationSessionService;
 
+	/// Service used to get the active thread from.
+	private readonly _threadSessionService: IThreadSessionService;
+
 	/// Page elements used by the tab.
 	private readonly _pageElements = new ConversationsPageElements();
 
@@ -31,13 +34,16 @@ export class ConversationsTab extends IPage
 	/// @param conversationsService Service used to all conversations from.
 	/// @param conversationSessionService Service used to get the active
 	///   conversation from.
+	/// @param threadSessionService Service used to get the active thread from.
 	constructor(
 		conversationsService: IConversationsService,
-		conversationSessionService: IConversationSessionService)
+		conversationSessionService: IConversationSessionService,
+		threadSessionService: IThreadSessionService)
 	{
 		super(EPageUrl.Conversations);
 		this._conversationsService = conversationsService;
 		this._conversationSessionService = conversationSessionService;
+		this._threadSessionService = threadSessionService;
 		this._conversationPane = new ConversationPane(
 			conversationSessionService
 		);
@@ -140,6 +146,13 @@ export class ConversationsTab extends IPage
 	{
 		const conversation = this._conversationPane.DisplayedConversation;
 		assert(conversation !== null);
+
+		// If this is the active conversation, also clear the active thread
+		if (conversation === this._conversationSessionService.ActiveConversation)
+		{
+			this._threadSessionService.ActiveThread = null;
+		}
+
 		this._conversationsService.DeleteConversation(conversation);
 		this._conversationPane.ClearConversation();
 
@@ -159,6 +172,13 @@ export class ConversationsTab extends IPage
 		//   be selected after deleting the current one
 		this._pageElements.LoadConversationButton.disabled = true;
 		this._pageElements.DeleteConversationButton.disabled = true;
+
+		// If this was the last conversation, go back to the new conversation
+		//   page
+		if (this._conversationButtons.length === 0)
+		{
+			this._onRedirect.dispatch(EPageUrl.NewConversation);
+		}
 	}
 }
 

@@ -25,6 +25,9 @@ export class ChatTab extends IPage
 	/// Chat messages currently displayed.
 	private readonly _messages: ChatMessage[] = [];
 
+	/// Component that manages the status bar.
+	private readonly _statusBar: ChatStatusBar;
+
 	/// Initializes the tab.
 	/// @param conversationSessionService Service used to get the active
 	///   conversation from.
@@ -36,6 +39,7 @@ export class ChatTab extends IPage
 		super(EPageUrl.Chat);
 		this._conversationSessionService = conversationSessionService;
 		this._threadSessionService = threadSessionService;
+		this._statusBar = new ChatStatusBar();
 	}
 
 	/// Displays the tab.
@@ -49,6 +53,7 @@ export class ChatTab extends IPage
 				this._conversationSessionService.ActiveConversation;
 			assert(conversation !== null);
 			this.GenerateMessageElement(conversation, thread.LastMessage);
+			this._statusBar.Thread = thread;
 		}
 
 		// Display the tab
@@ -75,6 +80,7 @@ export class ChatTab extends IPage
 		{
 			message.Remove();
 		}
+		this._statusBar.Thread = null;
 	}
 
 	/// Recursively invoked method used to generate message elements.
@@ -137,6 +143,149 @@ class ChatPageElements extends IPageElementLocator
 			ChatPageElements.ID_TAB_CONTAINER,
 			ChatPageElements.ID_MESSAGE_CONTAINER
 		]);
+	}
+}
+
+/// Helper class for finding status bar page elements.
+class ChatStatusBarElements extends IPageElementLocator
+{
+	/// Gets the element that displays the total tokens in the thread.
+	get ThreadTokens(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ChatStatusBarElements.ID_THREAD_TOKENS
+		);
+	}
+
+	/// Gets the element that displays the outbound tokens used by the thread.
+	get ThreadOutboundTokens(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ChatStatusBarElements.ID_THREAD_OUTBOUND_TOKENS
+		);
+	}
+
+	/// Gets the element that displays the inbound tokens used by the thread.
+	get ThreadInboundTokens(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ChatStatusBarElements.ID_THREAD_INBOUND_TOKENS
+		);
+	}
+
+	/// Gets the element that displays the total cost of the thread.
+	get ThreadCost(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ChatStatusBarElements.ID_THREAD_COST
+		);
+	}
+
+	/// Gets the element that displays the outbound cost of the thread.
+	get ThreadOutboundCost(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ChatStatusBarElements.ID_THREAD_OUTBOUND_COST
+		);
+	}
+
+	/// Gets the element that displays the inbound cost of the thread.
+	get ThreadInboundCost(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ChatStatusBarElements.ID_THREAD_INBOUND_COST
+		);
+	}
+
+	/// ID for the element that displays the total tokens in the thread.
+	private static readonly ID_THREAD_TOKENS = "thread-total-tokens";
+
+	/// ID for the element that displays the outbound tokens used by the thread.
+	private static readonly ID_THREAD_OUTBOUND_TOKENS =
+		"thread-outbound-tokens";
+
+	/// ID for the element that displays the inbound tokens used by the thread.
+	private static readonly ID_THREAD_INBOUND_TOKENS =
+		"thread-inbound-tokens";
+
+	/// ID for the element that displays the total cost of the thread.
+	private static readonly ID_THREAD_COST = "thread-total-cost";
+
+	/// ID for the element that displays the outbound cost of the thread.
+	private static readonly ID_THREAD_OUTBOUND_COST =
+		"thread-outbound-cost";
+
+	/// ID for the element that displays the inbound cost of the thread.
+	private static readonly ID_THREAD_INBOUND_COST =
+		"thread-inbound-cost";
+
+	/// Initializes the class.
+	constructor()
+	{
+		super([
+			ChatStatusBarElements.ID_THREAD_TOKENS,
+			ChatStatusBarElements.ID_THREAD_OUTBOUND_TOKENS,
+			ChatStatusBarElements.ID_THREAD_INBOUND_TOKENS,
+			ChatStatusBarElements.ID_THREAD_COST,
+			ChatStatusBarElements.ID_THREAD_OUTBOUND_COST,
+			ChatStatusBarElements.ID_THREAD_INBOUND_COST
+		]);
+	}
+}
+
+/// Manages the status bar for the chat tab.
+class ChatStatusBar
+{
+	/// Thread to display the status of.
+	get Thread(): IChatThread | null
+	{
+		return this._thread;
+	}
+
+	/// Switches the status bar to a new thread.
+	set Thread(value: IChatThread | null)
+	{
+		this._thread = value;
+		this.Update();
+	}
+
+	/// Page elements in the status bar.
+	private readonly _pageElements = new ChatStatusBarElements();
+
+	/// Thread to display the status of.
+	private _thread: IChatThread | null = null;
+
+	/// Updates the status bar.
+	private Update(): void
+	{
+		// Update the total token count
+		const totalTokens = this._thread?.TotalTokenCount ?? 0;
+		this._pageElements.ThreadTokens.innerText = totalTokens.toString();
+
+		// Update the outbound token count
+		const outboundTokens = this._thread?.OutboundTokenCount ?? 0;
+		this._pageElements.ThreadOutboundTokens.innerText =
+			outboundTokens.toString();
+
+		// Update the inbound token count
+		const inboundTokens = this._thread?.InboundTokenCount ?? 0;
+		this._pageElements.ThreadInboundTokens.innerText =
+			inboundTokens.toString();
+
+		// Update the total cost
+		const totalCost = this._thread?.TotalCost ?? 0;
+		this._pageElements.ThreadCost.innerText =
+			`$${totalCost.toFixed(2)}`;
+
+		// Update the outbound cost
+		const outboundCost = this._thread?.OutboundCost ?? 0;
+		this._pageElements.ThreadOutboundCost.innerText =
+			`$${outboundCost.toFixed(2)}`;
+
+		// Update the inbound cost
+		const inboundCost = this._thread?.InboundCost ?? 0;
+		this._pageElements.ThreadInboundCost.innerText =
+			`$${inboundCost.toFixed(2)}`;
 	}
 }
 

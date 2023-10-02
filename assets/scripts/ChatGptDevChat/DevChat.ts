@@ -39,7 +39,8 @@ export const RunDevChat = () =>
 			[EPageUrl.NoApiKey, new NoApiKeyPage()],
 			[EPageUrl.Conversations, new ConversationsTab(
 				conversationsService,
-				conversationSessionService
+				conversationSessionService,
+				threadSessionService
 			)],
 			[EPageUrl.ThreadGraph, new ThreadGraphTab(
 				conversationSessionService,

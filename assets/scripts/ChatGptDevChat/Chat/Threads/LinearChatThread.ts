@@ -332,6 +332,7 @@ export class LinearChatThread implements IChatThread
 				outboundTokenCount += message.MessageTokenCountActual;
 			}
 		};
+		updateTokenCount(message);
 
 		// Walk up the tree to find the root message and to calculate stats
 		let rootMessage = message;

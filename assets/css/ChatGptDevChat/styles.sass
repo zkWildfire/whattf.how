@@ -5,10 +5,24 @@
 	min-height: 80vh
 
 #conversations-sidebar
-	background-color: #111
 	min-width: 25%
 
+body[data-theme="light"]
+	#conversations-sidebar
+		background-color: #ccc
+
+	#conversation-pane
+		h3, h4
+			color: #5b00c3
+
 body[data-theme="dark"]
+	#conversations-sidebar
+		background-color: #111
+
+	#conversation-pane
+		h3, h4
+			color: #780ef0
+
 	input[type="text"],
 	input[type="number"],
 	input[type="password"],

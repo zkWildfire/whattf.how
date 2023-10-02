@@ -47,6 +47,14 @@ export class ConversationsTab extends IPage
 		{
 			this._onRedirect.dispatch(EPageUrl.NewConversation);
 		});
+		this._pageElements.LoadConversationButton.addEventListener("click", () =>
+		{
+			this.OnLoadConversationClicked();
+		});
+		this._pageElements.DeleteConversationButton.addEventListener("click", () =>
+		{
+			this.OnDeleteConversationClicked();
+		});
 	}
 
 	/// Displays the tab.
@@ -105,6 +113,52 @@ export class ConversationsTab extends IPage
 		this._pageElements.LoadConversationButton.disabled = false;
 		this._pageElements.DeleteConversationButton.disabled = false;
 		this._conversationPane.ShowConversation(conversation);
+	}
+
+	/// Callback invoked when the load conversation button is clicked.
+	private OnLoadConversationClicked(): void
+	{
+		const conversation = this._conversationPane.DisplayedConversation;
+		assert(conversation !== null);
+		this._conversationSessionService.ActiveConversation = conversation;
+
+		// If multiple threads are available, show the thread graph so that the
+		//   user can select one. If only one is available, go directly to the
+		//   chat tab.
+		if (conversation.Threads.length > 1)
+		{
+			this._onRedirect.dispatch(EPageUrl.ThreadGraph);
+		}
+		else
+		{
+			this._onRedirect.dispatch(EPageUrl.Chat);
+		}
+	}
+
+	/// Callback invoked when the delete conversation button is clicked.
+	private OnDeleteConversationClicked(): void
+	{
+		const conversation = this._conversationPane.DisplayedConversation;
+		assert(conversation !== null);
+		this._conversationsService.DeleteConversation(conversation);
+		this._conversationPane.ClearConversation();
+
+		// Find the button for the deleted conversation and remove it
+		for (let i = 0; i < this._conversationButtons.length; ++i)
+		{
+			const button = this._conversationButtons[i];
+			if (button.Conversation === conversation)
+			{
+				button.Remove();
+				this._conversationButtons.splice(i, 1);
+				break;
+			}
+		}
+
+		// Also disable the load and delete buttons since no conversation will
+		//   be selected after deleting the current one
+		this._pageElements.LoadConversationButton.disabled = true;
+		this._pageElements.DeleteConversationButton.disabled = true;
 	}
 }
 

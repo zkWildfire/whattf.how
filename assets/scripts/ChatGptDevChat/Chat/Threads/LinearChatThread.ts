@@ -292,6 +292,15 @@ export class LinearChatThread implements IChatThread
 		// Update the current leaf message
 		this._leafMessage = responseMessage;
 
+		// Update thread stats
+		this._messageCount += 2;
+		this._outboundTokenCount += message.MessageTokenCountActual;
+		this._outboundCost += this._llm.CalcInboundCost(
+			message.MessageTokenCountActual);
+		this._inboundTokenCount += responseMessage.MessageTokenCountActual;
+		this._inboundCost += this._llm.CalcOutboundCost(
+			responseMessage.MessageTokenCountActual);
+
 		// Notify observers that the thread was updated
 		this._onResponseReceived.dispatch(this, responseMessage);
 		// Messages are always added in pairs since both the user message and

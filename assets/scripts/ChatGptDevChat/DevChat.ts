@@ -47,6 +47,7 @@ export const RunDevChat = () =>
 				threadSessionService
 			)],
 			[EPageUrl.Chat, new ChatTab(
+				apiKeyProvider,
 				conversationSessionService,
 				threadSessionService
 			)],

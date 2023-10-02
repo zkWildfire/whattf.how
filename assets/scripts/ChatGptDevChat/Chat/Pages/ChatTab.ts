@@ -11,10 +11,16 @@ import { IConversation } from "../Conversations/Conversation";
 import assert from "assert";
 import { ITextAreaElement } from "../../Util/TextAreaElement";
 import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
+import { WhitespaceMessage } from "../Messages/WhitespaceMessage";
+import { IApiKeyProvider } from "../../Auth/ApiKeyProvider";
+import { LinearChatThread } from "../Threads/LinearChatThread";
 
 /// Tab that displays messages from the current thread.
 export class ChatTab extends IPage
 {
+	/// Service used to get the API key from.
+	private readonly _apiKeyProvider: IApiKeyProvider;
+
 	/// Service used to get the active conversation from.
 	private readonly _conversationSessionService: IConversationSessionService;
 
@@ -34,19 +40,27 @@ export class ChatTab extends IPage
 	private readonly _inputElement: InputTextInput;
 
 	/// Initializes the tab.
+	/// @param apiKeyProvider Service used to get the API key from.
 	/// @param conversationSessionService Service used to get the active
 	///   conversation from.
 	/// @param threadSessionService Service used to get the active thread from.
 	constructor(
+		apiKeyProvider: IApiKeyProvider,
 		conversationSessionService: IConversationSessionService,
 		threadSessionService: IThreadSessionService)
 	{
 		super(EPageUrl.Chat);
+		this._apiKeyProvider = apiKeyProvider;
 		this._conversationSessionService = conversationSessionService;
 		this._threadSessionService = threadSessionService;
 		this._inputElement = new InputTextInput(
 			this._conversationSessionService,
 			this._pageElements.InputElement
+		);
+		this._inputElement.OnSubmit.subscribe(
+			(message) => {
+				(async () => this.SendMessage(message))();
+			}
 		);
 	}
 
@@ -60,7 +74,7 @@ export class ChatTab extends IPage
 			const conversation =
 				this._conversationSessionService.ActiveConversation;
 			assert(conversation !== null);
-			this.GenerateMessageElement(conversation, thread.LastMessage);
+			this.GenerateMessageElements(conversation, thread.LastMessage);
 			this._statusBar.Thread = thread;
 		}
 
@@ -94,7 +108,7 @@ export class ChatTab extends IPage
 	/// Recursively invoked method used to generate message elements.
 	/// @param conversation Conversation that the message is from.
 	/// @param message Message to generate an element for.
-	private GenerateMessageElement(
+	private GenerateMessageElements(
 		conversation: IConversation,
 		message: IMessage | null): void
 	{
@@ -106,8 +120,19 @@ export class ChatTab extends IPage
 		{
 			return;
 		}
-		this.GenerateMessageElement(conversation, message.Parent);
+		this.GenerateMessageElements(conversation, message.Parent);
 
+		// Generate the message element
+		this.GenerateSingleMessageElement(conversation, message);
+	}
+
+	/// Generates a single message element and adds it to the UI.
+	/// @param conversation Conversation that the message is from.
+	/// @param message Message to generate an element for.
+	private GenerateSingleMessageElement(
+		conversation: IConversation,
+		message: IMessage): void
+	{
 		// Generate the message element
 		const messageElement = new ChatMessage(
 			message,
@@ -116,6 +141,34 @@ export class ChatTab extends IPage
 			this._messages.length
 		);
 		this._messages.push(messageElement);
+	}
+
+	/// Sends a new message to the LLM.
+	private async SendMessage(message: string): Promise<void>
+	{
+		const thread = this._threadSessionService.ActiveThread;
+		assert(thread !== null);
+
+		// TODO: Replace `WhitespaceMessage` with a message implementation that
+		//   uses OpenAI's tokenizer
+		const userMessage = new WhitespaceMessage(
+			thread.LastMessage,
+			ERole.User,
+			this._inputElement.Value
+		);
+
+		// Disable the text area while waiting for a response
+		this._pageElements.InputElement.disabled = true;
+		const llmMessage = await thread.SendMessage(userMessage);
+		this._pageElements.InputElement.disabled = false;
+
+		// Add the messages to the UI
+		const conversation =
+			this._conversationSessionService.ActiveConversation;
+		assert(conversation !== null);
+		this.GenerateSingleMessageElement(conversation, userMessage);
+		this.GenerateSingleMessageElement(conversation, llmMessage);
+		this._statusBar.Update();
 	}
 }
 
@@ -276,7 +329,7 @@ class ChatStatusBar
 	private _thread: IChatThread | null = null;
 
 	/// Updates the status bar.
-	private Update(): void
+	public Update(): void
 	{
 		// Update the total token count
 		const totalTokens = this._thread?.TotalTokenCount ?? 0;
@@ -378,6 +431,7 @@ class InputTextInput extends ITextAreaElement
 		const tokenCount = this.Llm.CountTokens(value);
 		if (tokenCount > maxTokenCount)
 		{
+			// TODO: Add an error element so that this can be shown
 			return `Message cannot be longer than ${maxTokenCount} tokens`;
 		}
 

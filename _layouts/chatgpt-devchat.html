@@ -200,11 +200,28 @@ tail_includes:
 		<!-- Sidebar -->
 		<div id="conversations-sidebar"
 			class="d-flex flex-column align-items-stretch border-end">
-			<!-- Create New Conversation button -->
+
+			<!-- Create New Conversation -->
 			<button type="button"
 				id="button-new-conversation"
 				class="btn btn-success rounded-0">
 				<i class="bi bi-plus-lg"></i> Add New
+			</button>
+
+			<hr />
+
+			<!-- Load Selected Conversation -->
+			<button type="button"
+				id="button-conversation-load-selected"
+				class="btn btn-outline-success rounded-0 px-4 border-0">
+				Load Selected
+			</button>
+
+			<!-- Delete Selected Conversation -->
+			<button type="button"
+				id="button-conversation-delete-selected"
+				class="btn btn-outline-danger rounded-0 px-4 border-0">
+				Delete Selected
 			</button>
 
 			<hr />
@@ -217,13 +234,123 @@ tail_includes:
 
 		<!-- Main Pane -->
 		<div id="conversation-pane"
-			class="flex-fill container">
+			class="flex-fill container d-none">
 			<!-- Header Row -->
 			<div class="row">
 				<div class="col">
-					<h4 id="selected-conversation-name" class="mt-3"></h4>
+					<h3 id="selected-conversation-name" class="mt-3 mb-2"></h3>
 				</div>
 			</div>
+
+			<!-- LLM Info -->
+			<div class="row">
+				<div class="col">
+					<h4 class="mt-3 mb-2">LLM Info</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<!-- LLM -->
+					<div class="d-flex justify-content-between">
+						<span>LLM:</span>
+						<span id="selected-conversation-llm"></span>
+					</div>
+
+					<!-- LLM Context Window Size -->
+					<div class="d-flex justify-content-between">
+						<span>LLM Context Window:</span>
+						<span id="selected-conversation-llm-context-window"></span>
+					</div>
+
+					<!-- Target Context Window Size -->
+					<div class="d-flex justify-content-between">
+						<span>Target Context Window:</span>
+						<span id="selected-conversation-target-context-window"></span>
+					</div>
+
+					<!-- LLM Inbound Cost -->
+					<div class="d-flex justify-content-between">
+						<span>LLM Inbound Cost per 1K Tokens:</span>
+						<span id="selected-conversation-llm-inbound-cost"></span>
+					</div>
+
+					<!-- LLM Outbound Cost-->
+					<div class="d-flex justify-content-between">
+						<span>LLM Outbound Cost per 1K Tokens:</span>
+						<span id="selected-conversation-llm-outbound-cost"></span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Conversation Info -->
+			<div class="row">
+				<div class="col">
+					<h4 class="mt-3 mb-2">Conversation Info</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<!-- Threads Count -->
+					<div class="d-flex justify-content-between">
+						<span>Threads:</span>
+						<span id="selected-conversation-thread-count"></span>
+					</div>
+
+					<!-- Message Count -->
+					<div class="d-flex justify-content-between">
+						<span>Messages:</span>
+						<span id="selected-conversation-message-count"></span>
+					</div>
+
+					<!-- Total Tokens -->
+					<div class="d-flex justify-content-between">
+						<span>Total Tokens:</span>
+						<span id="selected-conversation-total-tokens"></span>
+					</div>
+
+					<!-- Outbound Tokens -->
+					<div class="d-flex justify-content-between">
+						<span>Outbound Tokens:</span>
+						<span id="selected-conversation-outbound-tokens"></span>
+					</div>
+
+					<!-- Inbound Tokens-->
+					<div class="d-flex justify-content-between">
+						<span>Inbound Tokens:</span>
+						<span id="selected-conversation-inbound-tokens"></span>
+					</div>
+
+					<!-- Total Cost -->
+					<div class="d-flex justify-content-between">
+						<span>Total Cost:</span>
+						<span id="selected-conversation-total-cost"></span>
+					</div>
+
+					<!-- Outbound Cost -->
+					<div class="d-flex justify-content-between">
+						<span>Outbound Cost:</span>
+						<span id="selected-conversation-outbound-cost"></span>
+					</div>
+
+					<!-- Inbound Cost-->
+					<div class="d-flex justify-content-between">
+						<span>Inbound Cost:</span>
+						<span id="selected-conversation-inbound-cost"></span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Initial Message-->
+			<div class="row">
+				<div class="col">
+					<h4 class="mt-3 mb-2">Initial Message</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div id="selected-conversation-initial-message" class="col">
+				</div>
+			</div>
+
 		</div>
 	</div>
 

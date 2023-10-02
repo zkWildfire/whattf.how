@@ -18,7 +18,10 @@ export interface IConversation
 	get Name(): string;
 
 	/// LLM used by the conversation.
-	get ILlm(): ILlm;
+	get Llm(): ILlm;
+
+	/// Target context window size for the conversation, in number of tokens.
+	get TargetContextWindowSize(): number;
 
 	/// Root message of the conversation.
 	get RootMessage(): IMessage;
@@ -28,6 +31,15 @@ export interface IConversation
 
 	/// Total number of messages in the conversation.
 	get MessageCount(): number;
+
+	/// Total number of tokens sent to the LLM.
+	get OutboundTokenCount(): number;
+
+	/// Total number of tokens received from the LLM.
+	get InboundTokenCount(): number;
+
+	/// Total number of tokens sent to and received from the LLM.
+	get TotalTokenCount(): number;
 
 	/// Total cost incurred by sending tokens to the LLM.
 	/// @warning "Outbound" here refers to messages sent to the LLM, which

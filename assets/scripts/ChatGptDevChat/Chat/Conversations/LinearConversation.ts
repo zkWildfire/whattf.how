@@ -24,9 +24,15 @@ export class LinearConversation implements IConversation
 	}
 
 	/// LLM used by the conversation.
-	get ILlm(): ILlm
+	get Llm(): ILlm
 	{
 		return this._llm;
+	}
+
+	/// Target context window size for the conversation, in number of tokens.
+	get TargetContextWindowSize(): number
+	{
+		return this._targetContextWindowSize;
 	}
 
 	/// Root message of the conversation.
@@ -45,6 +51,24 @@ export class LinearConversation implements IConversation
 	get MessageCount(): number
 	{
 		return this._thread.MessageCount;
+	}
+
+	/// Total number of tokens sent to the LLM.
+	get OutboundTokenCount(): number
+	{
+		return this._thread.OutboundTokenCount;
+	}
+
+	/// Total number of tokens received from the LLM.
+	get InboundTokenCount(): number
+	{
+		return this._thread.InboundTokenCount;
+	}
+
+	/// Total number of tokens sent to and received from the LLM.
+	get TotalTokenCount(): number
+	{
+		return this._thread.TotalTokenCount;
 	}
 
 	/// Total cost incurred by sending tokens to the LLM.
@@ -79,20 +103,27 @@ export class LinearConversation implements IConversation
 	/// LLM to use for the conversation.
 	private readonly _llm: ILlm;
 
+	/// Target context window size for the conversation, in number of tokens.
+	private readonly _targetContextWindowSize: number;
+
 	/// Chat thread for the conversation.
 	private _thread: IChatThread;
 
 	/// Initializes the conversation.
 	/// @param name User-assigned name of the conversation.
 	/// @param llm LLM to use for the conversation.
+	/// @param targetContextWindowSize Target context window size for the
+	///   conversation, in number of tokens.
 	/// @param thread Thread to initialize the conversation with.
 	constructor(
 		name: string,
 		llm: ILlm,
+		targetContextWindowSize: number,
 		thread: IChatThread)
 	{
 		this._name = name;
 		this._llm = llm;
+		this._targetContextWindowSize = targetContextWindowSize;
 		this._thread = thread;
 	}
 }

@@ -35,7 +35,6 @@ export class ThreadGraphTab extends IPage
 	{
 		this._pageElements.ThreadGraphTab.classList.remove("d-none");
 		this._pageElements.ThreadGraphTab.classList.add("d-flex");
-		this._pageElements.ThreadGraphTab.classList.add("flex-fill");
 		this._onShow.dispatch(this);
 	}
 
@@ -44,7 +43,6 @@ export class ThreadGraphTab extends IPage
 	{
 		this._pageElements.ThreadGraphTab.classList.add("d-none");
 		this._pageElements.ThreadGraphTab.classList.remove("d-flex");
-		this._pageElements.ThreadGraphTab.classList.remove("flex-fill");
 		this._onHide.dispatch(this);
 	}
 }

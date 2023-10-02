@@ -156,6 +156,7 @@ export class NewConversationPage extends IPage
 		const conversation = new LinearConversation(
 			this._pageElements.ConversationNameInput.Value,
 			llm,
+			this._pageElements.TargetContextWindowSizeInput.Value,
 			thread
 		);
 

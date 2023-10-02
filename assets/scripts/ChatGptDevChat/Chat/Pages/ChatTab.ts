@@ -25,8 +25,10 @@ export class ChatTab extends IPage
 	public Show(): void
 	{
 		this._pageElements.ChatTab.classList.remove("d-none");
-		this._pageElements.ChatTab.classList.add("d-flex");
-		this._pageElements.ChatTab.classList.add("flex-fill");
+		this._pageElements.ChatTab.classList.add(
+			"d-flex",
+			"flex-fill"
+		);
 		this._onShow.dispatch(this);
 	}
 
@@ -34,8 +36,10 @@ export class ChatTab extends IPage
 	public Hide(): void
 	{
 		this._pageElements.ChatTab.classList.add("d-none");
-		this._pageElements.ChatTab.classList.remove("d-flex");
-		this._pageElements.ChatTab.classList.remove("flex-fill");
+		this._pageElements.ChatTab.classList.remove(
+			"d-flex",
+			"flex-fill"
+		);
 		this._onHide.dispatch(this);
 	}
 }

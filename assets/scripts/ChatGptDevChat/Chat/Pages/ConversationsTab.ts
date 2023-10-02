@@ -21,6 +21,9 @@ export class ConversationsTab extends IPage
 	/// Page elements used by the tab.
 	private readonly _pageElements = new ConversationsPageElements();
 
+	/// Component used to handle the conversation pane.
+	private readonly _conversationPane: ConversationPane;
+
 	/// Buttons that can be used to select a conversation.
 	private _conversationButtons: ConversationButton[] = [];
 
@@ -35,6 +38,9 @@ export class ConversationsTab extends IPage
 		super(EPageUrl.Conversations);
 		this._conversationsService = conversationsService;
 		this._conversationSessionService = conversationSessionService;
+		this._conversationPane = new ConversationPane(
+			conversationSessionService
+		);
 
 		// Bind to the new conversation button's events
 		this._pageElements.NewConversationButton.addEventListener("click", () =>
@@ -49,17 +55,27 @@ export class ConversationsTab extends IPage
 		// Generate and add the conversation buttons to the DOM
 		for (const conversation of this._conversationsService.Conversations)
 		{
-			this._conversationButtons.push(
-				new ConversationButton(
-					this._pageElements.ConversationList,
-					conversation
-				)
+			var button = new ConversationButton(
+				this._pageElements.ConversationList,
+				conversation
 			);
+			button.OnClick.subscribe((conversation) =>
+			{
+				this.OnConversationSelected(conversation);
+			});
+			this._conversationButtons.push(button);
 		}
 
+		// Disable the load and delete buttons until a conversation is selected
+		this._pageElements.LoadConversationButton.disabled = true;
+		this._pageElements.DeleteConversationButton.disabled = true;
+
+		// Display the tab
 		this._pageElements.ConversationsTab.classList.remove("d-none");
-		this._pageElements.ConversationsTab.classList.add("d-flex");
-		this._pageElements.ConversationsTab.classList.add("flex-fill");
+		this._pageElements.ConversationsTab.classList.add(
+			"d-flex",
+			"flex-fill"
+		);
 		this._onShow.dispatch(this);
 	}
 
@@ -67,8 +83,10 @@ export class ConversationsTab extends IPage
 	public Hide(): void
 	{
 		this._pageElements.ConversationsTab.classList.add("d-none");
-		this._pageElements.ConversationsTab.classList.remove("d-flex");
-		this._pageElements.ConversationsTab.classList.remove("flex-fill");
+		this._pageElements.ConversationsTab.classList.remove(
+			"d-flex",
+			"flex-fill"
+		);
 
 		// Remove all conversation buttons from the DOM
 		for (const button of this._conversationButtons)
@@ -76,8 +94,17 @@ export class ConversationsTab extends IPage
 			button.Remove();
 		}
 		this._conversationButtons = [];
+		this._conversationPane.ClearConversation();
 
 		this._onHide.dispatch(this);
+	}
+
+	/// Callback invoked when one of the conversation list buttons is clicked.
+	private OnConversationSelected(conversation: IConversation): void
+	{
+		this._pageElements.LoadConversationButton.disabled = false;
+		this._pageElements.DeleteConversationButton.disabled = false;
+		this._conversationPane.ShowConversation(conversation);
 	}
 }
 
@@ -108,14 +135,38 @@ class ConversationsPageElements extends IPageElementLocator
 		);
 	}
 
+	/// Gets the load selected conversation button.
+	get LoadConversationButton(): HTMLButtonElement
+	{
+		return this.GetElementById<HTMLButtonElement>(
+			ConversationsPageElements.ID_LOAD_CONVERSATION_BUTTON
+		);
+	}
+
+	/// Gets the delete selected conversation button.
+	get DeleteConversationButton(): HTMLButtonElement
+	{
+		return this.GetElementById<HTMLButtonElement>(
+			ConversationsPageElements.ID_DELETE_CONVERSATION_BUTTON
+		);
+	}
+
 	/// ID of the container element for the conversations tab.
 	private static readonly ID_TAB_CONTAINER = "tab-conversations";
 
 	/// ID of the element to add conversation buttons to.
 	private static readonly ID_CONVERSATION_LIST = "conversations-list";
 
-	/// ID of the create new conversation button
+	/// ID of the create new conversation button.
 	private static readonly ID_NEW_CONVERSATION_BUTTON = "button-new-conversation";
+
+	/// ID of the load selected conversation button.
+	private static readonly ID_LOAD_CONVERSATION_BUTTON =
+		"button-conversation-load-selected";
+
+	/// ID of the delete selected conversation button.
+	private static readonly ID_DELETE_CONVERSATION_BUTTON =
+		"button-conversation-delete-selected";
 
 	/// Initializes the class.
 	constructor()
@@ -123,7 +174,9 @@ class ConversationsPageElements extends IPageElementLocator
 		super([
 			ConversationsPageElements.ID_TAB_CONTAINER,
 			ConversationsPageElements.ID_CONVERSATION_LIST,
-			ConversationsPageElements.ID_NEW_CONVERSATION_BUTTON
+			ConversationsPageElements.ID_NEW_CONVERSATION_BUTTON,
+			ConversationsPageElements.ID_LOAD_CONVERSATION_BUTTON,
+			ConversationsPageElements.ID_DELETE_CONVERSATION_BUTTON
 		]);
 	}
 }
@@ -131,6 +184,14 @@ class ConversationsPageElements extends IPageElementLocator
 /// Helper class for locating key conversations pane elements.
 class ConversationsPaneElements extends IPageElementLocator
 {
+	/// Gets the container element for the conversations pane.
+	get ConversationPane(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			ConversationsPaneElements.ID_CONVERSATION_PANE
+		);
+	}
+
 	/// Gets the element where the selected conversation's name is displayed.
 	get ConversationName(): HTMLHeadingElement
 	{
@@ -139,14 +200,225 @@ class ConversationsPaneElements extends IPageElementLocator
 		);
 	}
 
+	/// Gets the element where the selected conversation's LLM is displayed.
+	get Llm(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_LLM
+		);
+	}
+
+	/// Gets the element where the selected conversation's LLM's context window
+	///   size is displayed.
+	get LlmContextWindowSize(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_LLM_CONTEXT_WINDOW_SIZE
+		);
+	}
+
+	/// Gets the element where the selected conversation's target context
+	///   window size is displayed.
+	get TargetContextWindowSize(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_TARGET_CONTEXT_WINDOW_SIZE
+		);
+	}
+
+	/// Gets the element where the selected conversation's LLM inbound cost
+	///   is displayed.
+	get LlmInboundCost(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_LLM_INBOUND_COST
+		);
+	}
+
+	/// Gets the element where the selected conversation's LLM outbound cost
+	///   is displayed.
+	get LlmOutboundCost(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_LLM_OUTBOUND_COST
+		);
+	}
+
+	/// Gets the element where the selected conversation's thread count is
+	///   displayed.
+	get ThreadCount(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_THREAD_COUNT
+		);
+	}
+
+	/// Gets the element where the selected conversation's message count is
+	///   displayed.
+	get MessageCount(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_MESSAGE_COUNT
+		);
+	}
+
+	/// Gets the element where the selected conversation's total token count
+	///   is displayed.
+	get TotalTokenCount(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_TOTAL_TOKEN_COUNT
+		);
+	}
+
+	/// Gets the element where the selected conversation's outbound token
+	///   count is displayed.
+	get OutboundTokenCount(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_OUTBOUND_TOKEN_COUNT
+		);
+	}
+
+	/// Gets the element where the selected conversation's inbound token
+	///   count is displayed.
+	get InboundTokenCount(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_INBOUND_TOKEN_COUNT
+		);
+	}
+
+	/// Gets the element where the selected conversation's total cost is
+	///   displayed.
+	get TotalCost(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_TOTAL_COST
+		);
+	}
+
+	/// Gets the element where the selected conversation's outbound cost is
+	///   displayed.
+	get OutboundCost(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_OUTBOUND_COST
+		);
+	}
+
+	/// Gets the element where the selected conversation's inbound cost is
+	///   displayed.
+	get InboundCost(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			ConversationsPaneElements.ID_CONVERSATION_INBOUND_COST
+		);
+	}
+
+	/// Gets the element where the selected conversation's initial message is
+	///   displayed.
+	get InitialMessage(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			ConversationsPaneElements.ID_CONVERSATION_INITIAL_MESSAGE
+		);
+	}
+
+	/// ID for the container element for the conversations pane.
+	private static readonly ID_CONVERSATION_PANE = "conversation-pane";
+
 	/// ID of the element where the selected conversation's name is displayed.
 	private static readonly ID_CONVERSATION_NAME = "selected-conversation-name";
+
+	/// ID of the element where the selected conversation's LLM is displayed.
+	private static readonly ID_CONVERSATION_LLM = "selected-conversation-llm";
+
+	/// ID of the element where the selected conversation's LLM's context window
+	///   size is displayed.
+	private static readonly ID_CONVERSATION_LLM_CONTEXT_WINDOW_SIZE =
+		"selected-conversation-llm-context-window";
+
+	/// ID of the element where the selected conversation's target context
+	///   window size is displayed.
+	private static readonly ID_CONVERSATION_TARGET_CONTEXT_WINDOW_SIZE =
+		"selected-conversation-target-context-window";
+
+	/// ID of the element where the selected conversation's LLM inbound cost
+	///   is displayed.
+	private static readonly ID_CONVERSATION_LLM_INBOUND_COST =
+		"selected-conversation-llm-inbound-cost";
+
+	/// ID of the element where the selected conversation's LLM outbound cost
+	///   is displayed.
+	private static readonly ID_CONVERSATION_LLM_OUTBOUND_COST =
+		"selected-conversation-llm-outbound-cost";
+
+	/// ID of the element where the selected conversation's thread count is
+	///   displayed.
+	private static readonly ID_CONVERSATION_THREAD_COUNT =
+		"selected-conversation-thread-count";
+
+	/// ID of the element where the selected conversation's message count is
+	///   displayed.
+	private static readonly ID_CONVERSATION_MESSAGE_COUNT =
+		"selected-conversation-message-count";
+
+	/// ID of the element where the selected conversation's total token count
+	///   is displayed.
+	private static readonly ID_CONVERSATION_TOTAL_TOKEN_COUNT =
+		"selected-conversation-total-tokens";
+
+	/// ID of the element where the selected conversation's outbound token
+	///   count is displayed.
+	private static readonly ID_CONVERSATION_OUTBOUND_TOKEN_COUNT =
+		"selected-conversation-outbound-tokens";
+
+	/// ID of the element where the selected conversation's inbound token
+	///   count is displayed.
+	private static readonly ID_CONVERSATION_INBOUND_TOKEN_COUNT =
+		"selected-conversation-inbound-tokens";
+
+	/// ID of the element where the selected conversation's total cost is
+	///   displayed.
+	private static readonly ID_CONVERSATION_TOTAL_COST =
+		"selected-conversation-total-cost";
+
+	/// ID of the element where the selected conversation's outbound cost is
+	///   displayed.
+	private static readonly ID_CONVERSATION_OUTBOUND_COST =
+		"selected-conversation-outbound-cost";
+
+	/// ID of the element where the selected conversation's inbound cost is
+	///   displayed.
+	private static readonly ID_CONVERSATION_INBOUND_COST =
+		"selected-conversation-inbound-cost";
+
+	/// ID of the element where the selected conversation's initial message is
+	///   displayed.
+	private static readonly ID_CONVERSATION_INITIAL_MESSAGE =
+		"selected-conversation-initial-message";
 
 	/// Initializes the class.
 	constructor()
 	{
 		super([
-			ConversationsPaneElements.ID_CONVERSATION_NAME
+			ConversationsPaneElements.ID_CONVERSATION_PANE,
+			ConversationsPaneElements.ID_CONVERSATION_NAME,
+			ConversationsPaneElements.ID_CONVERSATION_LLM,
+			ConversationsPaneElements.ID_CONVERSATION_LLM_CONTEXT_WINDOW_SIZE,
+			ConversationsPaneElements.ID_CONVERSATION_TARGET_CONTEXT_WINDOW_SIZE,
+			ConversationsPaneElements.ID_CONVERSATION_LLM_INBOUND_COST,
+			ConversationsPaneElements.ID_CONVERSATION_LLM_OUTBOUND_COST,
+			ConversationsPaneElements.ID_CONVERSATION_THREAD_COUNT,
+			ConversationsPaneElements.ID_CONVERSATION_MESSAGE_COUNT,
+			ConversationsPaneElements.ID_CONVERSATION_TOTAL_TOKEN_COUNT,
+			ConversationsPaneElements.ID_CONVERSATION_OUTBOUND_TOKEN_COUNT,
+			ConversationsPaneElements.ID_CONVERSATION_INBOUND_TOKEN_COUNT,
+			ConversationsPaneElements.ID_CONVERSATION_TOTAL_COST,
+			ConversationsPaneElements.ID_CONVERSATION_OUTBOUND_COST,
+			ConversationsPaneElements.ID_CONVERSATION_INBOUND_COST,
+			ConversationsPaneElements.ID_CONVERSATION_INITIAL_MESSAGE
 		]);
 	}
 }
@@ -178,12 +450,67 @@ class ConversationPane
 		this._conversationSessionService = conversationSessionService;
 	}
 
+	/// Clears the conversation from the pane.
+	public ClearConversation(): void
+	{
+		this._conversation = null;
+		this._pageElements.ConversationPane.classList.add("d-none");
+	}
+
 	/// Displays a conversation in the pane.
 	/// @param conversation The conversation to display.
 	public ShowConversation(conversation: IConversation): void
 	{
 		this._conversation = conversation;
+		this._pageElements.ConversationPane.classList.remove("d-none");
+
+		// Helper method for formatting a number as a dollar amount
+		const formatDollarAmount = (amount: number): string =>
+		{
+			return `$${amount.toFixed(2)}`;
+		};
+
+		// Set the strings to display
 		this._pageElements.ConversationName.innerText = conversation.Name;
+		this._pageElements.Llm.innerText = conversation.Llm.DisplayName;
+		this._pageElements.LlmContextWindowSize.innerText =
+			`${conversation.Llm.ContextWindowSize.toString()} tokens`;
+		this._pageElements.TargetContextWindowSize.innerText =
+			`${conversation.TargetContextWindowSize.toString()} tokens`;
+		this._pageElements.LlmInboundCost.innerText =
+			`$${conversation.Llm.InboundCost.toString()} per 1K tokens`;
+		this._pageElements.LlmOutboundCost.innerText =
+			`$${conversation.Llm.OutboundCost.toString()} per 1K tokens`;
+		this._pageElements.ThreadCount.innerText =
+			`${conversation.Threads.length.toString()} threads`;
+		this._pageElements.MessageCount.innerText =
+			`${conversation.MessageCount.toString()} messages`;
+		this._pageElements.TotalTokenCount.innerText =
+			`${conversation.TotalTokenCount.toString()} tokens`;
+		this._pageElements.OutboundTokenCount.innerText =
+			`${conversation.OutboundTokenCount.toString()} tokens`;
+		this._pageElements.InboundTokenCount.innerText =
+			`${conversation.InboundTokenCount.toString()} tokens`;
+		this._pageElements.TotalCost.innerText =
+			formatDollarAmount(conversation.TotalCost);
+		this._pageElements.OutboundCost.innerText =
+			formatDollarAmount(conversation.OutboundCost);
+		this._pageElements.InboundCost.innerText =
+			formatDollarAmount(conversation.InboundCost);
+
+		// Get the initial message for the conversation and split it into
+		//   paragraphs
+		const initialMessage = conversation.RootMessage;
+		const paragraphs = initialMessage.Contents.split("\n\n");
+
+		// Clear the initial message element and add the paragraphs to it
+		this._pageElements.InitialMessage.innerHTML = "";
+		for (const paragraph of paragraphs)
+		{
+			const paragraphElement = document.createElement("p");
+			paragraphElement.innerText = paragraph;
+			this._pageElements.InitialMessage.appendChild(paragraphElement);
+		}
 	}
 }
 
@@ -226,7 +553,6 @@ class ConversationButton
 		conversation: IConversation)
 	{
 		this._conversation = conversation;
-		console.log(`Creating button for conversation "${conversation.Name}"`);
 
 		// Create the container element for the button and its label
 		this._containerElement = document.createElement("div");
@@ -251,6 +577,7 @@ class ConversationButton
 		this._labelElement.classList.add(
 			"btn",
 			"btn-outline-secondary",
+			"border-0",
 			"rounded-0"
 		);
 		this._labelElement.htmlFor = this._buttonElement.id;

@@ -12,6 +12,7 @@ export class Gpt3_4k extends ILlm
 		// https://openai.com/pricing
 		super(
 			"GPT-3.5 (4K)",
+			"GPT3",
 			4 * 1024,
 			0.0015,
 			0.002

@@ -283,7 +283,6 @@ export class LinearChatThread implements IChatThread
 		//   since this class represents a linear conversation
 		assert(responses.length > 0, "LLM returned no responses");
 		const response = responses[0];
-		message.MessageTokenCountActual = response.PromptTokens;
 		const responseMessage = new LlmMessage(
 			message,
 			response.Contents,

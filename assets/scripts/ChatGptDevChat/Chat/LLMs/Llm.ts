@@ -10,6 +10,13 @@ export abstract class ILlm
 		return this._displayName;
 	}
 
+	/// Gets a short, possibly non-unique display name for the LLM.
+	/// This is used as the name displayed in chat threads for the LLM.
+	get DisplayNameShort(): string
+	{
+		return this._displayNameShort;
+	}
+
 	/// Size of the LLM's context window in number of tokens.
 	get ContextWindowSize(): number
 	{
@@ -31,6 +38,9 @@ export abstract class ILlm
 	/// Field backing the `DisplayName` property.
 	private readonly _displayName: string;
 
+	/// Field backing the `DisplayNameShort` property.
+	private readonly _displayNameShort: string;
+
 	/// Field backing the `ContextWindowSize` property.
 	private readonly _contextWindowSize: number;
 
@@ -42,17 +52,21 @@ export abstract class ILlm
 
 	/// Initializes the LLM.
 	/// @param displayName UI-displayable name of the LLM.
+	/// @param displayNameShort Short, possibly non-unique display name for the
+	///   LLM.
 	/// @param contextWindowSize Size of the LLM's context window in number of
 	///   tokens.
 	/// @param inboundCost Cost in dollars per 1000 characters of input text.
 	/// @param outboundCost Cost in dollars per 1000 characters of output text.
 	protected constructor(
 		displayName: string,
+		displayNameShort: string,
 		contextWindowSize: number,
 		inboundCost: number,
 		outboundCost: number)
 	{
 		this._displayName = displayName;
+		this._displayNameShort = displayNameShort;
 		this._contextWindowSize = contextWindowSize;
 		this._inboundCost = inboundCost;
 		this._outboundCost = outboundCost;

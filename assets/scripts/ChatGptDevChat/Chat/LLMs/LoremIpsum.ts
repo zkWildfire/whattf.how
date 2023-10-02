@@ -19,7 +19,15 @@ export class LoremIpsum extends ILlm
 	/// Initializes the LLM.
 	constructor()
 	{
-		super("Lorem Ipsum", 16 * 1024, 0.0, 0.0);
+		super(
+			"Lorem Ipsum",
+			"Lipsum",
+			16 * 1024,
+			// Use the rates from GPT-4 (32k) since that's the most expensive
+			//   model currently supported
+			0.06,
+			0.12
+		);
 	}
 
 	/// Sends a prompt to the LLM and returns the response.

@@ -5,10 +5,17 @@ import { IMessage } from "../Messages/Message";
 import { EPageUrl } from "./PageUrl";
 import { IChatThread } from "../Threads/ChatThread";
 import { ERole } from "../Role";
+import { IConversationSessionService } from "../Services/Sessions/ConversationSessionService";
+import { ILlm } from "../LLMs/Llm";
+import { IConversation } from "../Conversations/Conversation";
+import assert from "assert";
 
 /// Tab that displays messages from the current thread.
 export class ChatTab extends IPage
 {
+	/// Service used to get the active conversation from.
+	private readonly _conversationSessionService: IConversationSessionService;
+
 	/// Service used to get the active thread from.
 	private readonly _threadSessionService: IThreadSessionService;
 
@@ -19,10 +26,15 @@ export class ChatTab extends IPage
 	private readonly _messages: ChatMessage[] = [];
 
 	/// Initializes the tab.
+	/// @param conversationSessionService Service used to get the active
+	///   conversation from.
 	/// @param threadSessionService Service used to get the active thread from.
-	constructor(threadSessionService: IThreadSessionService)
+	constructor(
+		conversationSessionService: IConversationSessionService,
+		threadSessionService: IThreadSessionService)
 	{
 		super(EPageUrl.Chat);
+		this._conversationSessionService = conversationSessionService;
 		this._threadSessionService = threadSessionService;
 	}
 
@@ -33,7 +45,10 @@ export class ChatTab extends IPage
 		const thread = this._threadSessionService.ActiveThread;
 		if (thread)
 		{
-			this.GenerateMessageElement(thread.LastMessage);
+			const conversation =
+				this._conversationSessionService.ActiveConversation;
+			assert(conversation !== null);
+			this.GenerateMessageElement(conversation, thread.LastMessage);
 		}
 
 		// Display the tab
@@ -63,8 +78,11 @@ export class ChatTab extends IPage
 	}
 
 	/// Recursively invoked method used to generate message elements.
+	/// @param conversation Conversation that the message is from.
 	/// @param message Message to generate an element for.
-	private GenerateMessageElement(message: IMessage | null): void
+	private GenerateMessageElement(
+		conversation: IConversation,
+		message: IMessage | null): void
 	{
 		// Walk up the chain of messages to the root message
 		// This is done so that the chain of messages that leads to the thread's
@@ -74,12 +92,13 @@ export class ChatTab extends IPage
 		{
 			return;
 		}
-		this.GenerateMessageElement(message.Parent);
+		this.GenerateMessageElement(conversation, message.Parent);
 
 		// Generate the message element
 		const messageElement = new ChatMessage(
-			this._pageElements.MessageContainer,
 			message,
+			conversation.Llm,
+			this._pageElements.MessageContainer,
 			this._messages.length
 		);
 		this._messages.push(messageElement);
@@ -134,13 +153,15 @@ class ChatMessage
 	private readonly _container: HTMLDivElement;
 
 	/// Initializes the class.
-	/// @param container Container to generate the message's elements in.
 	/// @param message Message to display.
+	/// @param llm LLM used by the message.
+	/// @param container Container to generate the message's elements in.
 	/// @param index Index of the message in the thread. This will be a
 	///   0-indexed value.
 	constructor(
-		container: HTMLDivElement,
 		message: IMessage,
+		llm: ILlm,
+		container: HTMLDivElement,
 		index: number)
 	{
 		this._message = message;
@@ -177,7 +198,7 @@ class ChatMessage
 			senderElement.innerText = "System";
 			break;
 		case ERole.Assistant:
-			senderElement.innerText = "LLM";
+			senderElement.innerText = llm.DisplayNameShort;
 			break;
 		case ERole.User:
 			senderElement.innerText = "You";
@@ -192,6 +213,27 @@ class ChatMessage
 		);
 		indexElement.innerText = `#${index + 1}`;
 		senderColumn.appendChild(indexElement);
+
+		// Create an element for the number of tokens in the message
+		const tokenCountElement = document.createElement("small");
+		tokenCountElement.classList.add(
+			"text-muted"
+		);
+		const tokens = message.MessageTokenCountActual;
+		tokenCountElement.innerText = `${tokens} tokens`;
+		senderColumn.appendChild(tokenCountElement);
+
+		// Create an element for the cost of the message
+		const costElement = document.createElement("small");
+		costElement.classList.add(
+			"text-muted"
+		);
+		const rate = message.Role === ERole.Assistant
+			? llm.OutboundCost
+			: llm.InboundCost;
+		const cost = rate * tokens / 1000.0;
+		costElement.innerText = `$${cost.toFixed(2)}`;
+		senderColumn.appendChild(costElement);
 
 		// Create the message column
 		const messageColumn = document.createElement("div");

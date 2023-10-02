@@ -12,6 +12,7 @@ export class Gpt4_32k extends ILlm
 		// https://openai.com/pricing
 		super(
 			"GPT-4 (32K)",
+			"GPT4",
 			32 * 1024,
 			0.06,
 			0.12

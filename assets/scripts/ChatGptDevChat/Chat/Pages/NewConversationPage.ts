@@ -150,7 +150,7 @@ export class NewConversationPage extends IPage
 			new LlmMessage(
 				initialMessage,
 				response[0].Contents,
-				response[0].TotalTokens
+				response[0].ResponseTokens
 			)
 		);
 		const conversation = new LinearConversation(

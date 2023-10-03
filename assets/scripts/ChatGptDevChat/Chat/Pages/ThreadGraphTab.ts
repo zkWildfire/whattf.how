@@ -21,6 +21,9 @@ export class ThreadGraphTab extends IPage
 	/// Page elements used by the tab.
 	private readonly _pageElements = new ThreadGraphPageElements();
 
+	/// Component used to manage the status bar.
+	private readonly _statusBar: StatusBar;
+
 	/// Component used to handle the graph.
 	private readonly _threadGraph: ThreadGraph;
 
@@ -35,6 +38,7 @@ export class ThreadGraphTab extends IPage
 		super(EPageUrl.ThreadGraph);
 		this._conversationSessionService = conversationSessionService;
 		this._threadSessionService = threadSessionService;
+		this._statusBar = new StatusBar(new StatusBarPageElements());
 		this._threadGraph = new ThreadGraph(this._pageElements);
 	}
 
@@ -50,6 +54,7 @@ export class ThreadGraphTab extends IPage
 			console.log("Active conversation exists");
 			this._pageElements.ThreadGraphTabTitle.innerText =
 				activeConversation.Name;
+			this._statusBar.SetConversation(activeConversation);
 			this._threadGraph.SetConversation(activeConversation);
 		}
 
@@ -120,6 +125,84 @@ class ThreadGraphPageElements extends IPageElementLocator
 			ThreadGraphPageElements.ID_TAB_TITLE,
 			ThreadGraphPageElements.ID_THREAD_GRAPH_CONTAINER
 		]);
+	}
+}
+
+/// Helper class for locating status bar elements.
+class StatusBarPageElements extends IPageElementLocator
+{
+	/// Gets the title element for the thread graph tab.
+	get ThreadGraphTabTitle(): HTMLHeadingElement
+	{
+		return this.GetElementById<HTMLHeadingElement>(
+			StatusBarPageElements.ID_TAB_TITLE
+		);
+	}
+
+	/// Gets the total number of messages element.
+	get TotalMessages(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			StatusBarPageElements.ID_TOTAL_MESSAGES
+		);
+	}
+
+	/// Gets the total number of threads element.
+	get TotalThreads(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			StatusBarPageElements.ID_TOTAL_THREADS
+		);
+	}
+
+	/// ID of the title element for the thread graph tab.
+	private static readonly ID_TAB_TITLE = "graph-title";
+
+	/// ID of the total number of messages element.
+	private static readonly ID_TOTAL_MESSAGES = "graph-total-messages";
+
+	/// ID of the total number of threads element.
+	private static readonly ID_TOTAL_THREADS = "graph-total-threads";
+
+	/// Initializes the class.
+	constructor()
+	{
+		super([
+			StatusBarPageElements.ID_TAB_TITLE,
+			StatusBarPageElements.ID_TOTAL_MESSAGES,
+			StatusBarPageElements.ID_TOTAL_THREADS
+		]);
+	}
+}
+
+/// Class used to manage the status bar for the thread graph tab.
+class StatusBar
+{
+	/// Page elements used by the class.
+	private readonly _pageElements: StatusBarPageElements;
+
+	/// Initializes the class.
+	/// @param pageElements Page elements used by the class.
+	constructor(pageElements: StatusBarPageElements)
+	{
+		this._pageElements = pageElements;
+	}
+
+	/// Sets the conversation to display in the status bar.
+	/// @param conversation Conversation to display.
+	public SetConversation(conversation: IConversation)
+	{
+		// Set the conversation's name
+		this._pageElements.ThreadGraphTabTitle.innerText =
+			conversation.Name;
+
+		// Set the number of messages
+		this._pageElements.TotalMessages.innerText =
+			conversation.MessageCount.toString();
+
+		// Set the number of threads
+		this._pageElements.TotalThreads.innerText =
+			conversation.Threads.length.toString();
 	}
 }
 

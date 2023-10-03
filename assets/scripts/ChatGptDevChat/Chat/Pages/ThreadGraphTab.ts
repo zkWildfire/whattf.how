@@ -6,13 +6,12 @@ import { IConversationSessionService } from "../Services/Sessions/ConversationSe
 import { IConversation } from "../Conversations/Conversation";
 import { IMessage } from "../Messages/Message";
 import assert from "assert";
+import { ERole } from "../Role";
+import { ILlm } from "../LLMs/Llm";
 
 /// Tab that displays the conversation graph for the current conversation.
 export class ThreadGraphTab extends IPage
 {
-	/// Maximum length of a message to display in the graph.
-	private static readonly MAX_MESSAGE_LENGTH = 100;
-
 	/// Service used to get the active conversation from.
 	private readonly _conversationSessionService: IConversationSessionService;
 
@@ -36,10 +35,7 @@ export class ThreadGraphTab extends IPage
 		super(EPageUrl.ThreadGraph);
 		this._conversationSessionService = conversationSessionService;
 		this._threadSessionService = threadSessionService;
-		this._threadGraph = new ThreadGraph(
-			this._pageElements,
-			ThreadGraphTab.MAX_MESSAGE_LENGTH
-		);
+		this._threadGraph = new ThreadGraph(this._pageElements);
 	}
 
 	/// Displays the tab.
@@ -133,19 +129,11 @@ class ThreadGraph
 	/// Page elements used by the class.
 	private readonly _pageElements: ThreadGraphPageElements;
 
-	/// Maximum length of a message to display in the graph.
-	private readonly _maxMessageLength: number;
-
 	/// Initializes the class.
 	/// @param pageElements Page elements used by the class.
-	/// @param maxMessageLength Maximum length of a message to display in the
-	///   graph.
-	constructor(
-		pageElements: ThreadGraphPageElements,
-		maxMessageLength: number)
+	constructor(pageElements: ThreadGraphPageElements)
 	{
 		this._pageElements = pageElements;
-		this._maxMessageLength = maxMessageLength;
 	}
 
 	/// Clears all nodes from the graph.
@@ -163,6 +151,7 @@ class ThreadGraph
 		rootNode.classList.add("tree");
 		this.AttachMessageToNode(
 			conversation.RootMessage,
+			conversation.Llm,
 			rootNode
 		);
 
@@ -175,46 +164,151 @@ class ThreadGraph
 	/// This method will attach the message and all of its child messages
 	///   recursively.
 	/// @param message Message to attach.
+	/// @param llm LLM that the conversation is using.
 	/// @param node Node to attach the message to.
 	private AttachMessageToNode(
 		message: IMessage,
+		llm: ILlm,
 		node: HTMLUListElement)
 	{
-		// Get the text to display in the node
-		const messageFirstParagraph = message.Contents.split("\n")[0];
-		let messageText = messageFirstParagraph.substring(
-			0,
-			Math.min(this._maxMessageLength, messageFirstParagraph.length)
-		);
-		if (messageFirstParagraph.length > messageText.length)
-		{
-			messageText += "...";
-		}
+		// Get the message's text by paragraphs
+		const messageParagraphs = message.Contents.split("\n\n");
 
 		// Create the message node
-		const messageNode = document.createElement("li");
-		const messageTextNode = document.createElement("span");
-		messageTextNode.innerText = messageText;
-		messageNode.appendChild(messageTextNode);
+		const messageListNode = document.createElement("li");
+		messageListNode.classList.add("tree-node");
+		const messageContainer = document.createElement("div");
+		messageContainer.classList.add("message-container");
+		messageListNode.appendChild(messageContainer);
+
+		// Create the title bar
+		const titleBar = document.createElement("div");
+		titleBar.classList.add(
+			"d-flex",
+			"justify-content-between",
+			"align-items-center",
+			"border-bottom",
+			"border-secondary",
+			"ps-3",
+			"message-title-bar"
+		);
+		messageContainer.appendChild(titleBar);
+		const senderName = document.createElement("span");
+		switch (message.Role)
+		{
+		case ERole.Assistant:
+			senderName.innerText = llm.DisplayNameShort;
+			break;
+		case ERole.User:
+			senderName.innerText = "You";
+			break;
+		case ERole.System:
+			senderName.innerText = "System";
+			break;
+		default:
+			assert.fail("Invalid role");
+		}
+		titleBar.appendChild(senderName);
+
+		// Add the buttons for the message
+		const buttonContainer = document.createElement("div");
+		titleBar.appendChild(buttonContainer);
+
+		// If the message is from the LLM, add a button for branching the thread
+		if (message.Role === ERole.Assistant)
+		{
+			const branchButton = document.createElement("button");
+			branchButton.classList.add(
+				"btn",
+				"btn-outline-primary",
+				"rounded-0",
+				"border-0"
+			);
+			buttonContainer.appendChild(branchButton);
+
+			const branchIcon = document.createElement("i");
+			branchIcon.classList.add(
+				"bi",
+				"bi-arrows-expand-vertical",
+				"me-2"
+			);
+			branchButton.appendChild(branchIcon);
+
+			const buttonText = document.createElement("span");
+			buttonText.innerText = "Branch";
+			branchButton.appendChild(buttonText);
+		}
+		else
+		{
+			// If the message is from any other role, add a button for viewing
+			//   the message's thread
+			const viewButton = document.createElement("button");
+			viewButton.classList.add(
+				"btn",
+				"btn-outline-primary",
+				"rounded-0",
+				"border-0"
+			);
+			buttonContainer.appendChild(viewButton);
+
+			const viewIcon = document.createElement("i");
+			viewIcon.classList.add(
+				"bi",
+				"bi-eye-fill",
+				"me-2"
+			);
+			viewButton.appendChild(viewIcon);
+
+			const buttonText = document.createElement("span");
+			buttonText.innerText = "View";
+			viewButton.appendChild(buttonText);
+		}
+
+		// Display the message's text
+		const messageTextElement = document.createElement("p");
+		messageTextElement.classList.add(
+			"px-3",
+			"my-2",
+			"text-start"
+		);
+		messageTextElement.innerText = messageParagraphs[0];
+		messageContainer.appendChild(messageTextElement);
+
+		// If the message has more paragraphs, add an element that lists the
+		//   number of remaining paragraphs
+		if (messageParagraphs.length > 1)
+		{
+			const remainingParagraphsElement = document.createElement("p");
+			remainingParagraphsElement.classList.add(
+				"px-3",
+				"my-2",
+				"text-start",
+				"text-muted"
+			);
+			remainingParagraphsElement.innerText =
+				`+${messageParagraphs.length - 1} more paragraph(s)`;
+			messageContainer.appendChild(remainingParagraphsElement);
+		}
 
 		// If the node has any child nodes, create a container for the child
 		//   nodes
 		if (message.Children.length > 0)
 		{
 			const childNodeContainer = document.createElement("ul");
-			messageNode.appendChild(childNodeContainer);
+			messageListNode.appendChild(childNodeContainer);
 
 			// Attach the child nodes
 			for (const childMessage of message.Children)
 			{
 				this.AttachMessageToNode(
 					childMessage,
+					llm,
 					childNodeContainer
 				);
 			}
 		}
 
 		// Attach the message node to the parent node
-		node.appendChild(messageNode);
+		node.appendChild(messageListNode);
 	}
 }

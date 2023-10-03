@@ -19,6 +19,12 @@ body[data-theme="light"]
 			color: #5b00c3
 
 	//
+	// Thread Graph
+	//
+	.message-title-bar
+		background-color: #ddd
+
+	//
 	// Chat Tab
 	//
 	#chat-status-bar
@@ -46,6 +52,12 @@ body[data-theme="dark"]
 		background-color: #222
 
 	//
+	// Thread Graph
+	//
+	.message-title-bar
+		background-color: #333
+
+	//
 	// New Conversation Page
 	//
 	input[type="text"],
@@ -66,8 +78,9 @@ body[data-theme="dark"]
 //
 
 // Tree styling was obtained from https://www.cssscript.com/clean-tree-diagram/
-// See the demo for the exact CSS that was used.
-.tree, .tree ul, .tree li
+// See the demo for the exact CSS that was used. Some modifications have been
+//   made to the original CSS.
+.tree, .tree ul, .tree .tree-node
 	list-style: none
 	margin: 0
 	padding: 0
@@ -83,12 +96,12 @@ body[data-theme="dark"]
 .tree ul
 	width: 100%
 
-.tree li
+.tree .tree-node
 	display: table-cell
 	padding: 0.5em 0
 	vertical-align: top
 
-.tree li:before
+.tree .tree-node:before
 	outline: solid 1px #666
 	content: ""
 	left: 0
@@ -96,24 +109,22 @@ body[data-theme="dark"]
 	right: 0
 	top: 0
 
-.tree li:first-child:before
+.tree .tree-node:first-child:before
 	left: 50%
 
-.tree li:last-child:before
+.tree .tree-node:last-child:before
 	right: 50%
 
-.tree code, .tree span
+.tree code, .tree .message-container
 	border: solid 1px #666
-	border-radius: 0.2em
 	display: inline-block
 	margin: 0 0.2em 0.5em
-	padding: 0.2em 0.5em
 	position: relative
 
 .tree code
 	font-family: monaco, Consolas, "Lucida Console", monospace
 
-.tree ul:before, .tree code:before, .tree span:before
+.tree ul:before, .tree code:before, .tree .message-container:before
 	outline: solid 1px #666
 	content: ""
 	height: 0.5em
@@ -123,14 +134,14 @@ body[data-theme="dark"]
 .tree ul:before
 	top: -0.5em
 
-.tree code:before, .tree span:before
+.tree code:before, .tree .message-container:before
 	top: -0.55em
 
-.tree > li
+.tree > .tree-node
 	margin-top: 0
 
-.tree > li:before,
-.tree > li:after,
-.tree > li > code:before,
-.tree > li > span:before
+.tree > .tree-node:before,
+.tree > .tree-node:after,
+.tree > .tree-node > code:before,
+.tree > .tree-node > .message-container:before
 	outline: none

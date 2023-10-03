@@ -289,7 +289,9 @@ export class LinearChatThread implements IChatThread
 			response.ResponseTokens
 		);
 
-		// Update the current leaf message
+		// Update stored messages
+		this._leafMessage.AddChild(message);
+		message.AddChild(responseMessage);
 		this._leafMessage = responseMessage;
 
 		// Update thread stats

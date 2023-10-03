@@ -1,6 +1,6 @@
 import { IApiKeyProvider } from "../../Auth/ApiKeyProvider";
 import { EPageUrl } from "./PageUrl";
-import { LinearConversation } from "../Conversations/LinearConversation";
+import { NaiveConversation } from "../Conversations/NaiveConversation";
 import { Gpt3_16k } from "../LLMs/Gpt3_16k";
 import { Gpt3_4k } from "../LLMs/Gpt3_4k";
 import { Gpt4_32k } from "../LLMs/Gpt4_32k";
@@ -157,7 +157,7 @@ export class NewConversationPage extends IPage
 			this._pageElements.TargetContextWindowSizeInput.Value,
 			responseMessage
 		);
-		const conversation = new LinearConversation(
+		const conversation = new NaiveConversation(
 			this._pageElements.ConversationNameInput.Value,
 			llm,
 			this._pageElements.TargetContextWindowSizeInput.Value,

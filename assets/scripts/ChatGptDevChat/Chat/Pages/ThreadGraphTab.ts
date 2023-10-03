@@ -8,10 +8,16 @@ import { IMessage } from "../Messages/Message";
 import assert from "assert";
 import { ERole } from "../Role";
 import { ILlm } from "../LLMs/Llm";
+import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
+import { IApiKeyProvider } from "../../Auth/ApiKeyProvider";
+import { LinearChatThread } from "../Threads/LinearChatThread";
 
 /// Tab that displays the conversation graph for the current conversation.
 export class ThreadGraphTab extends IPage
 {
+	/// Service used to get the API key from.
+	private readonly _apiKeyProvider: IApiKeyProvider;
+
 	/// Service used to get the active conversation from.
 	private readonly _conversationSessionService: IConversationSessionService;
 
@@ -28,18 +34,27 @@ export class ThreadGraphTab extends IPage
 	private readonly _threadGraph: ThreadGraph;
 
 	/// Initializes the tab.
+	/// @param apiKeyProvider Service used to get the API key from.
 	/// @param conversationSessionService Service used to get the active
 	///   conversation from.
 	/// @param threadSessionService Service used to get the active thread from.
 	constructor(
+		apiKeyProvider: IApiKeyProvider,
 		conversationSessionService: IConversationSessionService,
 		threadSessionService: IThreadSessionService)
 	{
 		super(EPageUrl.ThreadGraph);
+		this._apiKeyProvider = apiKeyProvider;
 		this._conversationSessionService = conversationSessionService;
 		this._threadSessionService = threadSessionService;
 		this._statusBar = new StatusBar(new StatusBarPageElements());
 		this._threadGraph = new ThreadGraph(this._pageElements);
+
+		// Bind to events
+		this._threadGraph.OnBranch.subscribe((message) =>
+		{
+			this.BranchConversation(message);
+		});
 	}
 
 	/// Displays the tab.
@@ -48,10 +63,8 @@ export class ThreadGraphTab extends IPage
 		// If an active conversation exists, display it
 		const activeConversation =
 			this._conversationSessionService.ActiveConversation;
-		console.log("Showing thread graph tab");
 		if (activeConversation !== null)
 		{
-			console.log("Active conversation exists");
 			this._pageElements.ThreadGraphTabTitle.innerText =
 				activeConversation.Name;
 			this._statusBar.SetConversation(activeConversation);
@@ -77,6 +90,31 @@ export class ThreadGraphTab extends IPage
 		// Clear the tab's contents
 		this._pageElements.ThreadGraphTabTitle.innerText = "";
 		this._threadGraph.Clear();
+	}
+
+	/// Creates a new thread starting from the specified message.
+	/// @param message Message to branch from.
+	private BranchConversation(message: IMessage)
+	{
+		console.log("Branching from message");
+
+		// Get the active conversation
+		const activeConversation =
+			this._conversationSessionService.ActiveConversation;
+		assert(activeConversation !== null);
+
+		// Create a new thread from the message
+		const newThread = new LinearChatThread(
+			activeConversation.Llm,
+			this._apiKeyProvider,
+			activeConversation.TargetContextWindowSize,
+			message
+		);
+		activeConversation.AddThread(newThread);
+
+		// Switch to the new thread
+		this._threadSessionService.ActiveThread = newThread;
+		this._onRedirect.dispatch(EPageUrl.Chat);
 	}
 }
 
@@ -209,6 +247,15 @@ class StatusBar
 /// Class used to manage the thread graph itself.
 class ThreadGraph
 {
+	/// Event that is invoked when a branch button is clicked.
+	get OnBranch(): ISimpleEvent<IMessage>
+	{
+		return this._onBranch.asEvent();
+	}
+
+	/// Event dispatcher backing the `OnBranch` event.
+	private readonly _onBranch = new SimpleEventDispatcher<IMessage>();
+
 	/// Page elements used by the class.
 	private readonly _pageElements: ThreadGraphPageElements;
 
@@ -308,6 +355,10 @@ class ThreadGraph
 				"rounded-0",
 				"border-0"
 			);
+			branchButton.addEventListener("click", () =>
+			{
+				this._onBranch.dispatch(message);
+			});
 			buttonContainer.appendChild(branchButton);
 
 			const branchIcon = document.createElement("i");

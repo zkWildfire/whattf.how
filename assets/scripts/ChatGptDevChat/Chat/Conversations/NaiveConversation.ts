@@ -3,11 +3,11 @@ import { ILlm } from "../LLMs/Llm";
 import { IMessage } from "../Messages/Message";
 import { IChatThread } from "../Threads/ChatThread";
 import { IConversation } from "./Conversation";
+import { ERole } from "../Role";
 
-/// Conversation implementation that allows for only a single thread.
-/// This conversation implementation is primarily meant for testing and is not
-///   meant to be used in production.
-export class LinearConversation implements IConversation
+/// Basic conversation implementation that allows threads to be branched.
+/// This class was designed to be implemented quickly rather than efficiently.
+export class NaiveConversation implements IConversation
 {
 	/// Event broadcast to when a new thread is added.
 	/// The event arguments will be the conversation that was updated and the
@@ -38,37 +38,71 @@ export class LinearConversation implements IConversation
 	/// Root message of the conversation.
 	get RootMessage(): IMessage
 	{
-		return this._thread.RootMessage;
+		return this._threads[0].RootMessage;
 	}
 
 	/// All threads in the conversation.
 	get Threads(): IChatThread[]
 	{
-		return [this._thread];
+		return this._threads;
 	}
 
 	/// Total number of messages in the conversation.
 	get MessageCount(): number
 	{
-		return this._thread.MessageCount;
+		return NaiveConversation.Accumulate(
+			(value, message) => value + 1,
+			0,
+			this.RootMessage
+		);
 	}
 
 	/// Total number of tokens sent to the LLM.
 	get OutboundTokenCount(): number
 	{
-		return this._thread.OutboundTokenCount;
+		return NaiveConversation.Accumulate(
+			(value, message) =>
+			{
+				if (message.Role == ERole.Assistant)
+				{
+					// Ignore the message; it's an inbound message
+					return value;
+				}
+				else
+				{
+					return value + message.MessageTokenCountActual;
+				}
+			},
+			0,
+			this.RootMessage
+		);
 	}
 
 	/// Total number of tokens received from the LLM.
 	get InboundTokenCount(): number
 	{
-		return this._thread.InboundTokenCount;
+		return NaiveConversation.Accumulate(
+			(value, message) =>
+			{
+				if (message.Role == ERole.Assistant)
+				{
+					return value + message.MessageTokenCountActual;
+				}
+				else
+				{
+					// Ignore the message; it's an outbound message
+					return value;
+				}
+			},
+			0,
+			this.RootMessage
+		);
 	}
 
 	/// Total number of tokens sent to and received from the LLM.
 	get TotalTokenCount(): number
 	{
-		return this._thread.TotalTokenCount;
+		return this.OutboundTokenCount + this.InboundTokenCount;
 	}
 
 	/// Total cost incurred by sending tokens to the LLM.
@@ -76,7 +110,10 @@ export class LinearConversation implements IConversation
 	///   corresponds to the "inbound" cost of the LLM.
 	get OutboundCost(): number
 	{
-		return this._thread.OutboundCost;
+		// The mismatch here is intentional since the LLM's "inbound" cost
+		//   corresponds to messages sent to the LLM, which is the "outbound"
+		//   cost of the conversation.
+		return this._llm.CalcInboundCost(this.OutboundTokenCount);
 	}
 
 	/// Total cost incurred by receiving tokens from the LLM.
@@ -84,13 +121,16 @@ export class LinearConversation implements IConversation
 	///   corresponds to the "outbound" cost of the LLM.
 	get InboundCost(): number
 	{
-		return this._thread.InboundCost;
+		// The mismatch here is intentional since the LLM's "outbound" cost
+		//   corresponds to messages received from the LLM, which is the
+		//   "inbound" cost of the conversation.
+		return this._llm.CalcOutboundCost(this.InboundTokenCount);
 	}
 
 	/// Total cost of the conversation in dollars.
 	get TotalCost(): number
 	{
-		return this._thread.TotalCost;
+		return this.OutboundCost + this.InboundCost;
 	}
 
 	/// Event dispatcher backing the `OnThreadAdded` property.
@@ -106,8 +146,8 @@ export class LinearConversation implements IConversation
 	/// Target context window size for the conversation, in number of tokens.
 	private readonly _targetContextWindowSize: number;
 
-	/// Chat thread for the conversation.
-	private _thread: IChatThread;
+	/// Chat threads in the conversation.
+	private _threads: IChatThread[] = [];
 
 	/// Initializes the conversation.
 	/// @param name User-assigned name of the conversation.
@@ -124,6 +164,36 @@ export class LinearConversation implements IConversation
 		this._name = name;
 		this._llm = llm;
 		this._targetContextWindowSize = targetContextWindowSize;
-		this._thread = thread;
+		this._threads.push(thread);
+	}
+
+	/// Adds a new thread to the conversation.
+	/// @param thread Thread to add.
+	public AddThread(thread: IChatThread): void
+	{
+		this._threads.push(thread);
+		this._onThreadAdded.dispatch(this, thread);
+	}
+
+	/// Helper method for walking over all messages in the conversation.
+	/// @param accumulator Accumulator function to call for each message.
+	/// @param initialValue Initial value to pass to the accumulator function.
+	/// @returns The accumulated value.
+	private static Accumulate<T>(
+		accumulator: (value: T, message: IMessage) => T,
+		initialValue: T,
+		message: IMessage): T
+	{
+		let value = accumulator(initialValue, message);
+		for (const child of message.Children)
+		{
+			value = NaiveConversation.Accumulate(
+				accumulator,
+				value,
+				child
+			);
+		}
+
+		return value;
 	}
 }

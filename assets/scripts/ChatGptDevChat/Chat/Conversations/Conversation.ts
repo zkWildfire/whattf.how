@@ -53,4 +53,8 @@ export interface IConversation
 
 	/// Total cost of the conversation in dollars.
 	get TotalCost(): number;
+
+	/// Adds a new thread to the conversation.
+	/// @param thread Thread to add.
+	AddThread(thread: IChatThread): void;
 }

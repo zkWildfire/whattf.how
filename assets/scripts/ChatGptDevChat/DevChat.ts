@@ -43,6 +43,7 @@ export const RunDevChat = () =>
 				threadSessionService
 			)],
 			[EPageUrl.ThreadGraph, new ThreadGraphTab(
+				apiKeyProvider,
 				conversationSessionService,
 				threadSessionService
 			)],

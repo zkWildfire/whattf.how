@@ -152,6 +152,7 @@ export class ChatTab extends IPage
 		// TODO: Replace `WhitespaceMessage` with a message implementation that
 		//   uses OpenAI's tokenizer
 		const userMessage = new WhitespaceMessage(
+			crypto.randomUUID(),
 			thread.LastMessage,
 			ERole.User,
 			this._inputElement.Value

@@ -133,6 +133,7 @@ export class NewConversationPage extends IPage
 		// TODO: Replace `WhitespaceMessage` with a message implementation that
 		//   uses OpenAI's tokenizer
 		const initialMessage = new WhitespaceMessage(
+			crypto.randomUUID(),
 			null,
 			ERole.User,
 			this._pageElements.InitialMessageInput.Value,
@@ -146,12 +147,14 @@ export class NewConversationPage extends IPage
 
 		// Create the conversation
 		const responseMessage = new LlmMessage(
+			crypto.randomUUID(),
 			initialMessage,
 			response[0].Contents,
 			response[0].ResponseTokens
 		);
 		initialMessage.AddChild(responseMessage);
 		const thread = new LinearChatThread(
+			crypto.randomUUID(),
 			llm,
 			this._apiKeyProvider,
 			this._pageElements.TargetContextWindowSizeInput.Value,

@@ -85,14 +85,55 @@ export class LocalStorageConversationsService implements IConversationsService
 	/// Index of the currently selected conversation.
 	private _activeIndex = -1;
 
+	/// Initializes the service.
+	/// @param apiKeyProvider API key provider used by the conversations.
+	constructor(apiKeyProvider: IApiKeyProvider)
+	{
+		// Load all conversations from local storage
+		const conversationIds = ConversationHelper.ConversationIds;
+		for (const id of conversationIds)
+		{
+			try
+			{
+				const wrapper = ConversationHelper.LoadConversation(
+					id,
+					apiKeyProvider
+				);
+				this.BindToConversationEvents(wrapper);
+				this._conversations.push(wrapper);
+			}
+			catch (e)
+			{
+				// TODO: Improve error handling
+				console.error(e);
+			}
+		}
+
+		// Sort the conversations so that they appear in the same order as their
+		//   index values
+		this._conversations.sort((a, b) => a.index - b.index);
+	}
+
 	/// Adds a new conversation.
 	/// @param conversation Conversation to add.
 	/// @returns The index that the conversation was added at in the
 	///   `Conversations` property.
 	public AddConversation(conversation: IConversation): number
 	{
-		// TODO
-		throw new Error("Not implemented");
+		// Create the wrapper for the conversation
+		const wrapper: ConversationWrapper =
+		{
+			conversation,
+			index: this._conversations.length
+		};
+
+		// Save the conversation to local storage
+		ConversationHelper.SaveConversation(conversation, wrapper.index);
+		this.BindToConversationEvents(wrapper);
+
+		// Add the conversation to the list of conversations
+		this._conversations.push(wrapper);
+		return wrapper.index;
 	}
 
 	/// Deletes a conversation.
@@ -103,8 +144,38 @@ export class LocalStorageConversationsService implements IConversationsService
 	/// @returns Whether the conversation was deleted.
 	public DeleteConversation(conversation: IConversation | number): boolean
 	{
-		// TODO
-		throw new Error("Not implemented");
+		/// Get the index of the conversation to delete
+		let index: number;
+		if (typeof conversation === "number")
+		{
+			if (conversation < 0 || conversation >= this._conversations.length)
+			{
+				throw new Error(
+					`Expected index ${conversation} to be in the range` +
+					`[0, ${this._conversations.length})`
+				);
+			}
+			index = conversation;
+		}
+		else
+		{
+			index = this._conversations.findIndex(
+				wrapper => wrapper.conversation === conversation
+			);
+		}
+
+		// Make sure the conversation exists
+		if (index === -1)
+		{
+			return false;
+		}
+
+		// Delete the conversation
+		const wrapper = this._conversations[index];
+		ConversationHelper.DeleteConversation(wrapper.conversation);
+		this._conversations.splice(index, 1);
+		this._onConversationDeleted.dispatch(wrapper.conversation);
+		return true;
 	}
 
 	/// Selects the specified conversation as the active conversation.
@@ -114,8 +185,81 @@ export class LocalStorageConversationsService implements IConversationsService
 	///   into the `Conversations` property.
 	public SelectConversation(conversation: IConversation | number): void
 	{
-		// TODO
-		throw new Error("Not implemented");
+		/// Get the index of the conversation to select
+		let index: number;
+		if (typeof conversation === "number")
+		{
+			if (conversation < 0 || conversation >= this._conversations.length)
+			{
+				throw new Error(
+					`Expected index ${conversation} to be in the range` +
+					`[0, ${this._conversations.length})`
+				);
+			}
+			index = conversation;
+		}
+		else
+		{
+			index = this._conversations.findIndex(
+				wrapper => wrapper.conversation === conversation
+			);
+		}
+
+		// Make sure the conversation exists
+		if (index === -1)
+		{
+			throw new Error(
+				`Failed to find the conversation "${conversation}"`
+			);
+		}
+
+		// Set the active conversation
+		this._activeIndex = index;
+		assert(this.ActiveConversation !== null);
+		this._onConversationSelected.dispatch(this.ActiveConversation);
+	}
+
+	/// Binds event handlers to the conversation's events.
+	/// @param conversation Conversation to bind to.
+	private BindToConversationEvents(conversation: ConversationWrapper): void
+	{
+		conversation.conversation.OnThreadAdded.subscribe((c, t) =>
+		{
+			// Add the new thread to local storage
+			ThreadHelper.SaveThread(t);
+
+			// Make sure that any changes to the thread are saved to local
+			//   storage as well
+			this.BindToThreadEvents(t);
+		});
+	}
+
+	/// Binds event handlers to the thread's events.
+	/// @param conversation Conversation that the thread belongs to.
+	/// @param thread Thread to bind to.
+	private BindToThreadEvents(thread: IChatThread): void
+	{
+		// Whenever new messages are added to the thread, save them to local
+		//   storage and update the thread's local storage entry
+		thread.OnThreadUpdated.subscribe((t, count) =>
+		{
+			// Save the thread to local storage
+			ThreadHelper.SaveThread(t);
+
+			// Walk up the thread's messages until all new messages have been
+			//   saved
+			let message: IMessage | null = t.LastMessage;
+			for (let i = 0; i < count; i++)
+			{
+				if (message == null)
+				{
+					break;
+				}
+
+				MessageHelper.SaveMessage(message);
+				message = message.Parent;
+			}
+		});
 	}
 }
 
@@ -139,6 +283,27 @@ class ConversationHelper
 		{
 			return new Set<string>(JSON.parse(item));
 		}
+	}
+
+	/// Removes a conversation from local storage.
+	/// This will also remove all threads and messages in the conversation
+	///   from local storage.
+	/// @param conversation Conversation to remove.
+	public static DeleteConversation(conversation: IConversation): void
+	{
+		// Delete the conversation from local storage
+		localStorage.removeItem(conversation.Id);
+
+		// Update the collection of saved conversations
+		const conversationIds = ConversationHelper.ConversationIds;
+		conversationIds.delete(conversation.Id);
+		localStorage.setItem(
+			this.CONVERSATIONS_KEY,
+			JSON.stringify(Array.from(conversationIds.values()))
+		);
+
+		// Delete all threads in the conversation
+		ThreadHelper.DeleteThreads(conversation.Threads);
 	}
 
 	/// Loads a conversation from local storage.
@@ -257,6 +422,47 @@ class ConversationHelper
 /// Helper class used to encapsulate all thread serialization logic.
 class ThreadHelper
 {
+	/// Removes threads from local storage.
+	/// @param threadIds IDs of the threads to remove.
+	public static DeleteThreads(threads: IChatThread[]): void
+	{
+		for (const thread of threads)
+		{
+			ThreadHelper.DeleteThread(thread);
+		}
+	}
+
+	/// Removes a thread from local storage.
+	/// This will also remove all messages in the thread from local storage.
+	/// @param thread Thread to remove.
+	public static DeleteThread(thread: IChatThread): void
+	{
+		localStorage.removeItem(thread.Id);
+
+		// Walk up the thread and collect each message until a message that is
+		//   part of multiple threads is reached
+		const messages: Set<string> = new Set<string>();
+		const walkThread = (message: IMessage) =>
+		{
+			// If the message has multiple children, then the message is part
+			//   of multiple threads. Ignore it.
+			if (message.Children.length > 1)
+			{
+				return;
+			}
+
+			if (message.Parent !== null)
+			{
+				walkThread(message.Parent);
+			}
+			messages.add(message.Id);
+		}
+		walkThread(thread.LastMessage);
+
+		// Delete the messages
+		MessageHelper.DeleteMessages(messages);
+	}
+
 	/// Loads a set of threads from local storage.
 	/// @param ids IDs of the threads to load.
 	/// @param apiKeyProvider API key provider used by the threads.
@@ -380,6 +586,23 @@ class ThreadHelper
 /// Helper class used to encapsulate all message serialization logic.
 class MessageHelper
 {
+	/// Removes messages from local storage.
+	/// @param messageIds IDs of the messages to remove.
+	public static DeleteMessages(messageIds: Set<string>): void
+	{
+		for (const id of messageIds)
+		{
+			localStorage.removeItem(id);
+		}
+	}
+
+	/// Removes a message from local storage.
+	/// @param message Message to remove.
+	public static DeleteMessage(message: IMessage): void
+	{
+		localStorage.removeItem(message.Id);
+	}
+
 	/// Loads a set of messages from local storage.
 	/// @param ids IDs of the messages to load.
 	/// @throws Error If any of the messages could not be loaded.
@@ -575,7 +798,7 @@ interface ConversationWrapper
 	conversation: IConversation;
 
 	/// Index that the conversation was at in the `Conversations` property.
-	index: string;
+	index: number;
 }
 
 /// Extends the `JsonMessage` interface with extra fields needed to handle

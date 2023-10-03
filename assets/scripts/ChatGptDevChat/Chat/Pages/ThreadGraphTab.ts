@@ -107,6 +107,7 @@ export class ThreadGraphTab extends IPage
 
 		// Create a new thread from the message
 		const newThread = new LinearChatThread(
+			crypto.randomUUID(),
 			activeConversation.Llm,
 			this._apiKeyProvider,
 			activeConversation.TargetContextWindowSize,

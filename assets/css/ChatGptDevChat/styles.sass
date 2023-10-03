@@ -67,57 +67,70 @@ body[data-theme="dark"]
 
 // Tree styling was obtained from https://www.cssscript.com/clean-tree-diagram/
 // See the demo for the exact CSS that was used.
-.tree
+.tree, .tree ul, .tree li
 	list-style: none
-	margin: 0 0 1em
+	margin: 0
 	padding: 0
 	position: relative
+
+.tree
+	margin: 0 0 1em
 	text-align: center
+
+.tree, .tree ul
 	display: table
-	&, ul
-		list-style: none
-		margin: 0
-		padding: 0
-		position: relative
-		display: table
-	ul
-		width: 100%
-	li
-		display: table-cell
-		padding: .5em 0
-		vertical-align: top
-		position: relative
-		&:before
-		content: ""
-		left: 0
-		outline: solid 1px #666
-		position: absolute
-		right: 0
-		top: 0
-		&:first-child:before
-		left: 50%
-		&:last-child:before
-		right: 50%
-	code, span
-		border: solid .1em #666
-		border-radius: .2em
-		display: inline-block
-		margin: 0 .2em .5em
-		padding: .2em .5em
-		position: relative
-	code
-		font-family: monaco, Consolas, 'Lucida Console', monospace
-	ul:before, code:before, span:before
-		content: ""
-		height: .5em
-		left: 50%
-		outline: solid 1px #666
-		position: absolute
-	ul:before
-		top: -.5em
-	code:before, span:before
-		top: -.55em
-	>li
-		margin-top: 0
-		&:before, &:after, &>code:before, &>span:before
-		outline: none
+
+.tree ul
+	width: 100%
+
+.tree li
+	display: table-cell
+	padding: 0.5em 0
+	vertical-align: top
+
+.tree li:before
+	outline: solid 1px #666
+	content: ""
+	left: 0
+	position: absolute
+	right: 0
+	top: 0
+
+.tree li:first-child:before
+	left: 50%
+
+.tree li:last-child:before
+	right: 50%
+
+.tree code, .tree span
+	border: solid 1px #666
+	border-radius: 0.2em
+	display: inline-block
+	margin: 0 0.2em 0.5em
+	padding: 0.2em 0.5em
+	position: relative
+
+.tree code
+	font-family: monaco, Consolas, "Lucida Console", monospace
+
+.tree ul:before, .tree code:before, .tree span:before
+	outline: solid 1px #666
+	content: ""
+	height: 0.5em
+	left: 50%
+	position: absolute
+
+.tree ul:before
+	top: -0.5em
+
+.tree code:before, .tree span:before
+	top: -0.55em
+
+.tree > li
+	margin-top: 0
+
+.tree > li:before,
+.tree > li:after,
+.tree > li > code:before,
+.tree > li > span:before
+	outline: none

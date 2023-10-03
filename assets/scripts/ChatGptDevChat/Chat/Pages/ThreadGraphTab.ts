@@ -10,6 +10,9 @@ import assert from "assert";
 /// Tab that displays the conversation graph for the current conversation.
 export class ThreadGraphTab extends IPage
 {
+	/// Maximum length of a message to display in the graph.
+	private static readonly MAX_MESSAGE_LENGTH = 100;
+
 	/// Service used to get the active conversation from.
 	private readonly _conversationSessionService: IConversationSessionService;
 
@@ -33,7 +36,10 @@ export class ThreadGraphTab extends IPage
 		super(EPageUrl.ThreadGraph);
 		this._conversationSessionService = conversationSessionService;
 		this._threadSessionService = threadSessionService;
-		this._threadGraph = new ThreadGraph(this._pageElements);
+		this._threadGraph = new ThreadGraph(
+			this._pageElements,
+			ThreadGraphTab.MAX_MESSAGE_LENGTH
+		);
 	}
 
 	/// Displays the tab.
@@ -127,11 +133,19 @@ class ThreadGraph
 	/// Page elements used by the class.
 	private readonly _pageElements: ThreadGraphPageElements;
 
+	/// Maximum length of a message to display in the graph.
+	private readonly _maxMessageLength: number;
+
 	/// Initializes the class.
 	/// @param pageElements Page elements used by the class.
-	constructor(pageElements: ThreadGraphPageElements)
+	/// @param maxMessageLength Maximum length of a message to display in the
+	///   graph.
+	constructor(
+		pageElements: ThreadGraphPageElements,
+		maxMessageLength: number)
 	{
 		this._pageElements = pageElements;
+		this._maxMessageLength = maxMessageLength;
 	}
 
 	/// Clears all nodes from the graph.
@@ -147,7 +161,7 @@ class ThreadGraph
 		// Create the root node
 		const rootNode = document.createElement("ul");
 		rootNode.classList.add("tree");
-		ThreadGraph.AttachMessageToNode(
+		this.AttachMessageToNode(
 			conversation.RootMessage,
 			rootNode
 		);
@@ -162,7 +176,7 @@ class ThreadGraph
 	///   recursively.
 	/// @param message Message to attach.
 	/// @param node Node to attach the message to.
-	private static AttachMessageToNode(
+	private AttachMessageToNode(
 		message: IMessage,
 		node: HTMLUListElement)
 	{
@@ -170,7 +184,7 @@ class ThreadGraph
 		const messageFirstParagraph = message.Contents.split("\n")[0];
 		let messageText = messageFirstParagraph.substring(
 			0,
-			Math.min(20, messageFirstParagraph.length)
+			Math.min(this._maxMessageLength, messageFirstParagraph.length)
 		);
 		if (messageFirstParagraph.length > messageText.length)
 		{
@@ -193,7 +207,7 @@ class ThreadGraph
 			// Attach the child nodes
 			for (const childMessage of message.Children)
 			{
-				ThreadGraph.AttachMessageToNode(
+				this.AttachMessageToNode(
 					childMessage,
 					childNodeContainer
 				);

@@ -517,7 +517,7 @@ tail_includes:
 	</div>
 
 	<!-- Thread Graph tab -->
-	<div id="tab-graph" class="d-none flex-column">
+	<div id="tab-graph" class="d-none flex-column align-items-stretch">
 
 		<!-- Title Bar -->
 		<h3 id="graph-title"
@@ -536,8 +536,9 @@ tail_includes:
 		</div>
 
 		<!-- Container that the graph is rendered in -->
-		<div id="thread-graph-container" class="flex-fill">
-		</div>
+		<figure id="thread-graph-container"
+			class="flex-fill d-flex flex-column align-items-stretch overflow-auto">
+		</figure>
 
 	</div>
 

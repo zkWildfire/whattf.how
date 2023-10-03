@@ -1,8 +1,16 @@
+import { IEvent } from "strongly-typed-events";
 import { ERole } from "../Role";
 
 /// Represents a message in a conversation.
 export interface IMessage
 {
+	/// Event broadcast when a child message is added.
+	/// The event arguments will be the parent message and the child message.
+	get OnChildAdded(): IEvent<IMessage, IMessage>;
+
+	/// Unique ID assigned to the message.
+	get Id(): string;
+
 	/// Message that this message is a response to.
 	get Parent(): IMessage | null;
 

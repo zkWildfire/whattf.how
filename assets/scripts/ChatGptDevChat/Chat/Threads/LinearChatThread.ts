@@ -36,6 +36,12 @@ export class LinearChatThread implements IChatThread
 		return this._onThreadUpdated.asEvent();
 	}
 
+	/// Unique ID assigned to the thread.
+	get Id(): string
+	{
+		return this._id;
+	}
+
 	/// Root message of the thread.
 	get RootMessage(): IMessage
 	{
@@ -134,6 +140,9 @@ export class LinearChatThread implements IChatThread
 	/// Number of tokens to aim for in each prompt sent to the LLM.
 	private readonly _targetPromptTokenCount: number;
 
+	/// Unique ID assigned to the thread.
+	private readonly _id: string;
+
 	/// Field backing the `RootMessage` property.
 	private readonly _rootMessage: IMessage;
 
@@ -156,12 +165,14 @@ export class LinearChatThread implements IChatThread
 	private _inboundCost: number;
 
 	/// Creates a new chat thread.
+	/// @param id Unique ID assigned to the thread.
 	/// @param llm LLM used by the thread.
 	/// @param apiKeyProvider API key provider used by the thread.
 	/// @param targetPromptTokenCount Number of tokens to aim for in each prompt
 	///   sent to the LLM.
 	/// @param currentMessage Current leaf message of the thread.
 	constructor(
+		id: string,
 		llm: ILlm,
 		apiKeyProvider: IApiKeyProvider,
 		targetPromptTokenCount: number,
@@ -176,6 +187,7 @@ export class LinearChatThread implements IChatThread
 		} = LinearChatThread.CountTokens(currentMessage);
 
 		// Initialize fields
+		this._id = id;
 		this._llm = llm;
 		this._apiKeyProvider = apiKeyProvider;
 		this._targetPromptTokenCount = targetPromptTokenCount;
@@ -284,6 +296,7 @@ export class LinearChatThread implements IChatThread
 		assert(responses.length > 0, "LLM returned no responses");
 		const response = responses[0];
 		const responseMessage = new LlmMessage(
+			crypto.randomUUID(),
 			message,
 			response.Contents,
 			response.ResponseTokens

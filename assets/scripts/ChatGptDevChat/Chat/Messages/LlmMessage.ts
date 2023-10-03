@@ -1,9 +1,23 @@
+import { EventDispatcher, IEvent } from "strongly-typed-events";
 import { ERole } from "../Role";
 import { IMessage } from "./Message";
 
 /// Represents a message returned by an LLM.
 export class LlmMessage implements IMessage
 {
+	/// Event broadcast when a child message is added.
+	/// The event arguments will be the parent message and the child message.
+	get OnChildAdded(): IEvent<IMessage, IMessage>
+	{
+		return this._onChildAdded.asEvent();
+	}
+
+	/// Unique ID assigned to the message.
+	get Id(): string
+	{
+		return this._id;
+	}
+
 	/// Message that this message is a response to.
 	get Parent(): IMessage
 	{
@@ -94,6 +108,12 @@ export class LlmMessage implements IMessage
 		return tokenCount;
 	}
 
+	/// Event dispatcher backing the `OnChildAdded` event.
+	private readonly _onChildAdded = new EventDispatcher<IMessage, IMessage>();
+
+	/// Field backing the `Id` property.
+	private _id: string;
+
 	/// Field backing the `Parent` property.
 	private _parent: IMessage;
 
@@ -107,11 +127,17 @@ export class LlmMessage implements IMessage
 	private _tokenCount: number;
 
 	/// Creates a new LLM message.
+	/// @param id Unique ID assigned to the message.
 	/// @param parent Message that this message is a response to.
 	/// @param contents Text contents of the message.
 	/// @param tokenCount Number of LLM tokens consumed by the message.
-	constructor(parent: IMessage, contents: string, tokenCount: number)
+	constructor(
+		id: string,
+		parent: IMessage,
+		contents: string,
+		tokenCount: number)
 	{
+		this._id = id;
 		this._parent = parent;
 		this._contents = contents;
 		this._tokenCount = tokenCount;
@@ -122,5 +148,6 @@ export class LlmMessage implements IMessage
 	public AddChild(child: IMessage): void
 	{
 		this._children.push(child);
+		this._onChildAdded.dispatch(this, child);
 	}
 }

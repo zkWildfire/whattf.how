@@ -4,6 +4,7 @@ import { EFinishReason } from "../Responses/FinishReason";
 import { IResponse } from "../Responses/Response";
 import { ERole } from "../Role";
 import { ILlm } from "./Llm";
+import { ELlmType } from "./LlmType";
 
 /// Fake LLM implementation used for testing.
 export class LoremIpsum extends ILlm
@@ -22,6 +23,7 @@ export class LoremIpsum extends ILlm
 		super(
 			"Lorem Ipsum",
 			"Lipsum",
+			ELlmType.LoremIpsum,
 			16 * 1024,
 			// Use the rates from GPT-4 (32k) since that's the most expensive
 			//   model currently supported

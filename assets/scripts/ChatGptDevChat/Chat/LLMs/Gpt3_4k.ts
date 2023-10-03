@@ -1,6 +1,7 @@
 import { IPrompt } from "../Prompts/Prompt";
 import { IResponse } from "../Responses/Response";
 import { ILlm } from "./Llm";
+import { ELlmType } from "./LlmType";
 
 /// LLM implementation that uses OpenAI GPT-3.5 with a 4K context window.
 export class Gpt3_4k extends ILlm
@@ -13,6 +14,7 @@ export class Gpt3_4k extends ILlm
 		super(
 			"GPT-3.5 (4K)",
 			"GPT3",
+			ELlmType.Gpt3_4k,
 			4 * 1024,
 			0.0015,
 			0.002

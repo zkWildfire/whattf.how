@@ -14,6 +14,9 @@ export interface IConversation
 	///   thread that was added.
 	get OnThreadAdded(): IEvent<IConversation, IChatThread>;
 
+	/// Unique ID assigned to the conversation.
+	get Id(): string;
+
 	/// User-assigned name of the conversation.
 	get Name(): string;
 
@@ -57,4 +60,12 @@ export interface IConversation
 	/// Adds a new thread to the conversation.
 	/// @param thread Thread to add.
 	AddThread(thread: IChatThread): void;
+
+	/// Helper method for walking over all messages in the conversation.
+	/// @param accumulator Accumulator function to call for each message.
+	/// @param initialValue Initial value to pass to the accumulator function.
+	/// @returns The accumulated value.
+	AccumulateMessages<T>(
+		accumulator: (value: T, message: IMessage) => T,
+		initialValue: T): T;
 }

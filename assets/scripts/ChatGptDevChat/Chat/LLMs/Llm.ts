@@ -1,5 +1,6 @@
 import { IPrompt } from "../Prompts/Prompt";
 import { IResponse } from "../Responses/Response";
+import { ELlmType } from "./LlmType";
 
 /// Represents an LLM used by a conversation.
 export abstract class ILlm
@@ -15,6 +16,12 @@ export abstract class ILlm
 	get DisplayNameShort(): string
 	{
 		return this._displayNameShort;
+	}
+
+	/// Enum for the LLM class.
+	get LlmType(): ELlmType
+	{
+		return this._llmType;
 	}
 
 	/// Size of the LLM's context window in number of tokens.
@@ -41,6 +48,9 @@ export abstract class ILlm
 	/// Field backing the `DisplayNameShort` property.
 	private readonly _displayNameShort: string;
 
+	/// Field backing the `LlmType` property.
+	private readonly _llmType: ELlmType;
+
 	/// Field backing the `ContextWindowSize` property.
 	private readonly _contextWindowSize: number;
 
@@ -54,6 +64,7 @@ export abstract class ILlm
 	/// @param displayName UI-displayable name of the LLM.
 	/// @param displayNameShort Short, possibly non-unique display name for the
 	///   LLM.
+	/// @param llmType Enum for the LLM class.
 	/// @param contextWindowSize Size of the LLM's context window in number of
 	///   tokens.
 	/// @param inboundCost Cost in dollars per 1000 characters of input text.
@@ -61,12 +72,14 @@ export abstract class ILlm
 	protected constructor(
 		displayName: string,
 		displayNameShort: string,
+		llmType: ELlmType,
 		contextWindowSize: number,
 		inboundCost: number,
 		outboundCost: number)
 	{
 		this._displayName = displayName;
 		this._displayNameShort = displayNameShort;
+		this._llmType = llmType;
 		this._contextWindowSize = contextWindowSize;
 		this._inboundCost = inboundCost;
 		this._outboundCost = outboundCost;

@@ -17,6 +17,12 @@ export class NaiveConversation implements IConversation
 		return this._onThreadAdded.asEvent();
 	}
 
+	/// Unique ID assigned to the conversation.
+	get Id(): string
+	{
+		return this._id;
+	}
+
 	/// User-assigned name of the conversation.
 	get Name(): string
 	{
@@ -137,6 +143,9 @@ export class NaiveConversation implements IConversation
 	private readonly _onThreadAdded =
 		new EventDispatcher<IConversation, IChatThread>();
 
+	/// Field backing the `Id` property.
+	private readonly _id: string;
+
 	/// Field backing the `Name` property.
 	private readonly _name: string;
 
@@ -150,21 +159,32 @@ export class NaiveConversation implements IConversation
 	private _threads: IChatThread[] = [];
 
 	/// Initializes the conversation.
+	/// @param id Unique ID assigned to the conversation.
 	/// @param name User-assigned name of the conversation.
 	/// @param llm LLM to use for the conversation.
 	/// @param targetContextWindowSize Target context window size for the
 	///   conversation, in number of tokens.
-	/// @param thread Thread to initialize the conversation with.
+	/// @param thread Thread or threads to initialize the conversation with.
 	constructor(
+		id: string,
 		name: string,
 		llm: ILlm,
 		targetContextWindowSize: number,
-		thread: IChatThread)
+		thread: IChatThread | IChatThread[])
 	{
+		this._id = id;
 		this._name = name;
 		this._llm = llm;
 		this._targetContextWindowSize = targetContextWindowSize;
-		this._threads.push(thread);
+
+		if (Array.isArray(thread))
+		{
+			this._threads = thread;
+		}
+		else
+		{
+			this._threads.push(thread);
+		}
 	}
 
 	/// Adds a new thread to the conversation.
@@ -173,6 +193,21 @@ export class NaiveConversation implements IConversation
 	{
 		this._threads.push(thread);
 		this._onThreadAdded.dispatch(this, thread);
+	}
+
+	/// Helper method for walking over all messages in the conversation.
+	/// @param accumulator Accumulator function to call for each message.
+	/// @param initialValue Initial value to pass to the accumulator function.
+	/// @returns The accumulated value.
+	public AccumulateMessages<T>(
+		accumulator: (value: T, message: IMessage) => T,
+		initialValue: T): T
+	{
+		return NaiveConversation.Accumulate(
+			accumulator,
+			initialValue,
+			this.RootMessage
+		);
 	}
 
 	/// Helper method for walking over all messages in the conversation.

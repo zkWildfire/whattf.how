@@ -1,6 +1,7 @@
 import { IPrompt } from "../Prompts/Prompt";
 import { IResponse } from "../Responses/Response";
 import { ILlm } from "./Llm";
+import { ELlmType } from "./LlmType";
 
 /// LLM implementation that uses OpenAI GPT-4 with a 8K context window.
 export class Gpt4_8k extends ILlm
@@ -13,6 +14,7 @@ export class Gpt4_8k extends ILlm
 		super(
 			"GPT-4 (8K)",
 			"GPT4",
+			ELlmType.Gpt4_8k,
 			8 * 1024,
 			0.03,
 			0.06

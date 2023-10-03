@@ -19,6 +19,9 @@ export interface IChatThread
 	///   of new messages that were appended.
 	get OnThreadUpdated(): IEvent<IChatThread, number>;
 
+	/// Unique ID assigned to the thread.
+	get Id(): string;
+
 	/// Root message of the thread.
 	get RootMessage(): IMessage;
 

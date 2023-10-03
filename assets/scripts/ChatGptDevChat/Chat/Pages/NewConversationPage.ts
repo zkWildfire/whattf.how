@@ -158,6 +158,7 @@ export class NewConversationPage extends IPage
 			responseMessage
 		);
 		const conversation = new NaiveConversation(
+			crypto.randomUUID(),
 			this._pageElements.ConversationNameInput.Value,
 			llm,
 			this._pageElements.TargetContextWindowSizeInput.Value,

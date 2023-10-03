@@ -1,9 +1,23 @@
+import { EventDispatcher, IEvent } from "strongly-typed-events";
 import { ERole } from "../Role";
 import { IMessage } from "./Message";
 
 /// Message whose token counts are estimated by splitting at whitespace.
 export class WhitespaceMessage implements IMessage
 {
+	/// Event broadcast when a child message is added.
+	/// The event arguments will be the parent message and the child message.
+	get OnChildAdded(): IEvent<IMessage, IMessage>
+	{
+		return this._onChildAdded.asEvent();
+	}
+
+	/// Unique ID assigned to the message.
+	get Id(): string
+	{
+		return this._id;
+	}
+
 	/// Message that this message is a response to.
 	get Parent(): IMessage | null
 	{
@@ -101,6 +115,12 @@ export class WhitespaceMessage implements IMessage
 		return tokenCount;
 	}
 
+	/// Event dispatcher backing the `OnChildAdded` event.
+	private readonly _onChildAdded = new EventDispatcher<IMessage, IMessage>();
+
+	/// Field backing the `Id` property.
+	private readonly _id: string;
+
 	/// Field backing the `Parent` property.
 	private readonly _parent: IMessage | null;
 
@@ -126,14 +146,17 @@ export class WhitespaceMessage implements IMessage
 	private _threadTokenCountActual: number;
 
 	/// Initializes the message.
+	/// @param id Unique ID assigned to the message.
 	/// @param parent Message that this message is a response to.
 	/// @param role Role of the message.
 	/// @param contents Text contents of the message.
 	constructor(
+		id: string,
 		parent: IMessage | null,
 		role: ERole,
 		contents: string)
 	{
+		this._id = id;
 		this._parent = parent;
 		this._role = role;
 		this._contents = contents;
@@ -148,5 +171,6 @@ export class WhitespaceMessage implements IMessage
 	public AddChild(child: IMessage): void
 	{
 		this._children.push(child);
+		this._onChildAdded.dispatch(this, child);
 	}
 }

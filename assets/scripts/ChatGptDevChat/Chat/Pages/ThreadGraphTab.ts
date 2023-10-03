@@ -55,6 +55,10 @@ export class ThreadGraphTab extends IPage
 		{
 			this.BranchConversation(message);
 		});
+		this._threadGraph.OnView.subscribe((message) =>
+		{
+			this.ViewThread(message);
+		});
 	}
 
 	/// Displays the tab.
@@ -96,8 +100,6 @@ export class ThreadGraphTab extends IPage
 	/// @param message Message to branch from.
 	private BranchConversation(message: IMessage)
 	{
-		console.log("Branching from message");
-
 		// Get the active conversation
 		const activeConversation =
 			this._conversationSessionService.ActiveConversation;
@@ -114,6 +116,27 @@ export class ThreadGraphTab extends IPage
 
 		// Switch to the new thread
 		this._threadSessionService.ActiveThread = newThread;
+		this._onRedirect.dispatch(EPageUrl.Chat);
+	}
+
+	/// Switches to the specified thread.
+	/// @param message Leaf message from the thread to switch to.
+	private ViewThread(message: IMessage)
+	{
+		// Get the active conversation
+		const activeConversation =
+			this._conversationSessionService.ActiveConversation;
+		assert(activeConversation !== null);
+
+		// Find which thread the message belongs to
+		const thread = activeConversation.Threads.find((thread) =>
+		{
+			return thread.LastMessage === message;
+		});
+		assert(thread !== undefined);
+
+		// Switch to the thread
+		this._threadSessionService.ActiveThread = thread;
 		this._onRedirect.dispatch(EPageUrl.Chat);
 	}
 }
@@ -253,8 +276,17 @@ class ThreadGraph
 		return this._onBranch.asEvent();
 	}
 
+	/// Event that is invoked when a view button is clicked.
+	get OnView(): ISimpleEvent<IMessage>
+	{
+		return this._onView.asEvent();
+	}
+
 	/// Event dispatcher backing the `OnBranch` event.
 	private readonly _onBranch = new SimpleEventDispatcher<IMessage>();
+
+	/// Event dispatcher backing the `OnView` event.
+	private readonly _onView = new SimpleEventDispatcher<IMessage>();
 
 	/// Page elements used by the class.
 	private readonly _pageElements: ThreadGraphPageElements;
@@ -384,6 +416,10 @@ class ThreadGraph
 				"rounded-0",
 				"border-0"
 			);
+			viewButton.addEventListener("click", () =>
+			{
+				this._onView.dispatch(message);
+			});
 			buttonContainer.appendChild(viewButton);
 
 			const viewIcon = document.createElement("i");

@@ -10,6 +10,12 @@ export class WhitespaceMessage implements IMessage
 		return this._parent;
 	}
 
+	/// Messages that are responses to this message.
+	get Children(): IMessage[]
+	{
+		return this._children;
+	}
+
 	/// Role of the message.
 	get Role(): ERole
 	{
@@ -98,6 +104,9 @@ export class WhitespaceMessage implements IMessage
 	/// Field backing the `Parent` property.
 	private readonly _parent: IMessage | null;
 
+	/// Field backing the `Children` property.
+	private readonly _children: IMessage[] = [];
+
 	/// Field backing the `Role` property.
 	private readonly _role: ERole;
 
@@ -132,5 +141,12 @@ export class WhitespaceMessage implements IMessage
 		this._messageTokenCountActual = -1;
 		this._threadTokenCountEstimated = this._messageTokenCountEstimated;
 		this._threadTokenCountActual = -1;
+	}
+
+	/// Adds a child message to this message.
+	/// @param child Child message to add.
+	public AddChild(child: IMessage): void
+	{
+		this._children.push(child);
 	}
 }

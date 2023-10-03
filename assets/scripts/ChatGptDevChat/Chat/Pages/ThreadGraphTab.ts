@@ -34,6 +34,8 @@ export class ThreadGraphTab extends IPage
 	public Show(): void
 	{
 		this._pageElements.ThreadGraphTab.classList.remove("d-none");
+		this._pageElements.ThreadGraphTab.classList.add("d-flex");
+		this._pageElements.ThreadGraphTab.classList.add("flex-fill");
 		this._onShow.dispatch(this);
 	}
 
@@ -41,6 +43,8 @@ export class ThreadGraphTab extends IPage
 	public Hide(): void
 	{
 		this._pageElements.ThreadGraphTab.classList.add("d-none");
+		this._pageElements.ThreadGraphTab.classList.remove("d-flex");
+		this._pageElements.ThreadGraphTab.classList.remove("flex-fill");
 		this._onHide.dispatch(this);
 	}
 }
@@ -56,14 +60,27 @@ class ThreadGraphPageElements extends IPageElementLocator
 		);
 	}
 
+	/// Gets the container element for the thread graph itself.
+	get ThreadGraphContainer(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			ThreadGraphPageElements.ID_THREAD_GRAPH_CONTAINER
+		);
+	}
+
 	/// ID of the container element for the thread graph tab.
 	private static readonly ID_TAB_CONTAINER = "tab-graph";
+
+	/// ID of the container element for the thread graph itself.
+	private static readonly ID_THREAD_GRAPH_CONTAINER =
+		"thread-graph-container";
 
 	/// Initializes the class.
 	constructor()
 	{
 		super([
-			ThreadGraphPageElements.ID_TAB_CONTAINER
+			ThreadGraphPageElements.ID_TAB_CONTAINER,
+			ThreadGraphPageElements.ID_THREAD_GRAPH_CONTAINER
 		]);
 	}
 }

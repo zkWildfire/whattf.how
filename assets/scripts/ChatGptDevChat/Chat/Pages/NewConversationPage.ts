@@ -143,15 +143,19 @@ export class NewConversationPage extends IPage
 			Message: initialMessage,
 			ApiKey: this._apiKeyProvider.ApiKeyRaw
 		});
+
+		// Create the conversation
+		const responseMessage = new LlmMessage(
+			initialMessage,
+			response[0].Contents,
+			response[0].ResponseTokens
+		);
+		initialMessage.AddChild(responseMessage);
 		const thread = new LinearChatThread(
 			llm,
 			this._apiKeyProvider,
 			this._pageElements.TargetContextWindowSizeInput.Value,
-			new LlmMessage(
-				initialMessage,
-				response[0].Contents,
-				response[0].ResponseTokens
-			)
+			responseMessage
 		);
 		const conversation = new LinearConversation(
 			this._pageElements.ConversationNameInput.Value,

@@ -162,6 +162,10 @@ export class ChatTab extends IPage
 		const llmMessage = await thread.SendMessage(userMessage);
 		this._pageElements.InputElement.disabled = false;
 
+		// Update links between messages
+		thread.LastMessage.AddChild(userMessage);
+		userMessage.AddChild(llmMessage);
+
 		// Add the messages to the UI
 		const conversation =
 			this._conversationSessionService.ActiveConversation;

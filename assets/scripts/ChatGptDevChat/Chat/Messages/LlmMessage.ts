@@ -10,6 +10,12 @@ export class LlmMessage implements IMessage
 		return this._parent;
 	}
 
+	/// Messages that are responses to this message.
+	get Children(): IMessage[]
+	{
+		return this._children;
+	}
+
 	/// Role of the message.
 	get Role(): ERole
 	{
@@ -91,6 +97,9 @@ export class LlmMessage implements IMessage
 	/// Field backing the `Parent` property.
 	private _parent: IMessage;
 
+	/// Field backing the `Children` property.
+	private _children: IMessage[] = [];
+
 	/// Field backing the `Contents` property.
 	private _contents: string;
 
@@ -106,5 +115,12 @@ export class LlmMessage implements IMessage
 		this._parent = parent;
 		this._contents = contents;
 		this._tokenCount = tokenCount;
+	}
+
+	/// Adds a child message to this message.
+	/// @param child Child message to add.
+	public AddChild(child: IMessage): void
+	{
+		this._children.push(child);
 	}
 }

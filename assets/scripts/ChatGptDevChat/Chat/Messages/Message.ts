@@ -6,6 +6,9 @@ export interface IMessage
 	/// Message that this message is a response to.
 	get Parent(): IMessage | null;
 
+	/// Messages that are responses to this message.
+	get Children(): IMessage[];
+
 	/// Role of the message.
 	get Role(): ERole;
 
@@ -37,4 +40,8 @@ export interface IMessage
 	///   previous messages in the thread. If this message has not yet been sent
 	///   to the LLM API, this value will be -1.
 	get ThreadTokenCountActual(): number;
+
+	/// Adds a child message to this message.
+	/// @param child Child message to add.
+	AddChild(child: IMessage): void;
 }

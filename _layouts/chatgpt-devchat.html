@@ -517,22 +517,24 @@ tail_includes:
 	</div>
 
 	<!-- Thread Graph tab -->
-	<div id="tab-graph"
-		class="d-none container-fluid">
-		<!-- Status Bar -->
-		<div class="row justify-content-between border-bottom mb-3">
-			<div class="col d-flex flex-column align-items-start">
-				<span>
-					Messages: <span id="graph-total-messages">0</span>
-				</span>
-			</div>
+	<div id="tab-graph" class="d-none flex-column">
 
-			<div class="col d-flex flex-column align-items-end">
-				<span>
-					Threads: <span id="graph-total-threads">0</span>
-				</span>
-			</div>
+		<!-- Status Bar -->
+		<div class="d-flex justify-content-between border-bottom py-2 mb-3">
+			<span>
+				Messages: <span id="graph-total-messages">0</span>
+			</span>
+
+			<span>
+				Threads: <span id="graph-total-threads">0</span>
+			</span>
 		</div>
+
+		<!-- Container that the graph is rendered in -->
+		<div id="thread-graph-container"
+			class="flex-fill d-flex justify-content-center align-items-stretch">
+		</div>
+
 	</div>
 
 	<!-- Chat tab -->

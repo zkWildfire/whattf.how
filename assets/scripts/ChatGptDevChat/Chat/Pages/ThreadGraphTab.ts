@@ -297,8 +297,9 @@ class ThreadGraph
 		const buttonContainer = document.createElement("div");
 		titleBar.appendChild(buttonContainer);
 
-		// If the message is from the LLM, add a button for branching the thread
-		if (message.Role === ERole.Assistant)
+		// If the message is from the LLM and isn't a leaf node, add a button
+		//   for branching
+		if (message.Role === ERole.Assistant && message.Children.length > 0)
 		{
 			const branchButton = document.createElement("button");
 			branchButton.classList.add(
@@ -321,10 +322,10 @@ class ThreadGraph
 			buttonText.innerText = "Branch";
 			branchButton.appendChild(buttonText);
 		}
-		else
+		// If the message is from the LLM and is a leaf node, add a button for
+		//   viewing the message
+		else if (message.Role === ERole.Assistant)
 		{
-			// If the message is from any other role, add a button for viewing
-			//   the message's thread
 			const viewButton = document.createElement("button");
 			viewButton.classList.add(
 				"btn",
@@ -332,6 +333,32 @@ class ThreadGraph
 				"rounded-0",
 				"border-0"
 			);
+			buttonContainer.appendChild(viewButton);
+
+			const viewIcon = document.createElement("i");
+			viewIcon.classList.add(
+				"bi",
+				"bi-eye-fill",
+				"me-2"
+			);
+			viewButton.appendChild(viewIcon);
+
+			const buttonText = document.createElement("span");
+			buttonText.innerText = "View";
+			viewButton.appendChild(buttonText);
+		}
+		// For all other messages, add a button for spacing purposes only
+		else
+		{
+			const viewButton = document.createElement("button");
+			viewButton.classList.add(
+				"btn",
+				"btn-outline-primary",
+				"rounded-0",
+				"border-0",
+				"invisible"
+			);
+			viewButton.disabled = true;
 			buttonContainer.appendChild(viewButton);
 
 			const viewIcon = document.createElement("i");

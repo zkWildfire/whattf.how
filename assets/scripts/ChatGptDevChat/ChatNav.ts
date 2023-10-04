@@ -41,7 +41,11 @@ export const BindChatNavEventHandlers = (
 	});
 	navService.OnPageChanged.subscribe((page) =>
 	{
-		OnPageChanged(pageElements, page.Url);
+		OnPageChanged(
+			pageElements,
+			conversationsService,
+			page.Url
+		);
 	});
 
 	// Initialize the page to the correct tab
@@ -54,14 +58,19 @@ export const BindChatNavEventHandlers = (
 
 /// Callback invoked when the page URL changes.
 /// @param pageElements The page elements that are part of the chat navigation.
+/// @param conversationsService The service that manages conversations.
 /// @param pageUrl The new page URL.
-const OnPageChanged = (pageElements: ChatNavElements, pageUrl: EPageUrl) =>
+const OnPageChanged = (
+	pageElements: ChatNavElements,
+	conversationsService: IConversationsService,
+	pageUrl: EPageUrl) =>
 {
 	// If the page is not one of the pages that the chat tabs correspond to,
-	//   disable the chat tabs
+	//   disable the chat tabs if and only if no conversations exist
 	if (pageUrl !== EPageUrl.Conversations &&
 		pageUrl !== EPageUrl.ThreadGraph &&
-		pageUrl !== EPageUrl.Chat)
+		pageUrl !== EPageUrl.Chat &&
+		conversationsService.Conversations.length === 0)
 	{
 		pageElements.DisableNavButtons();
 	}

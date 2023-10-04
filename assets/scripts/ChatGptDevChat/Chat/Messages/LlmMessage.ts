@@ -69,45 +69,6 @@ export class LlmMessage implements IMessage
 		throw new Error("Cannot set actual token count on LLM message");
 	}
 
-	/// Estimated number of LLM tokens consumed by the current thread.
-	/// This value considers the estimated tokens from this message as well as
-	///   all previous messages in the thread.
-	get ThreadTokenCountEstimated(): number
-	{
-		// Walk up the parent chain to compute the total token count
-		let tokenCount = this._tokenCount;
-		let currentMessage: IMessage | null = this._parent;
-		while (currentMessage !== null)
-		{
-			tokenCount += currentMessage.MessageTokenCountEstimated;
-			currentMessage = currentMessage.Parent;
-		}
-
-		return tokenCount;
-	}
-
-	/// Total number of LLM tokens consumed by the current thread.
-	/// This value considers the actual tokens from this message as well as all
-	///   previous messages in the thread. If this message has not yet been sent
-	///   to the LLM API, this value will be -1.
-	get ThreadTokenCountActual(): number
-	{
-		// Walk up the parent chain to compute the total token count
-		// Since this message is the starting message for the chain and its
-		//   actual token count is always known, it isn't necessary to check
-		//   if any message's actual token count is -1 since all previous
-		//   messages should also have known actual token counts.
-		let tokenCount = this._tokenCount;
-		let currentMessage: IMessage | null = this._parent;
-		while (currentMessage !== null)
-		{
-			tokenCount += currentMessage.MessageTokenCountActual;
-			currentMessage = currentMessage.Parent;
-		}
-
-		return tokenCount;
-	}
-
 	/// Event dispatcher backing the `OnChildAdded` event.
 	private readonly _onChildAdded = new EventDispatcher<IMessage, IMessage>();
 

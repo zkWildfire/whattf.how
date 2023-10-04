@@ -15,6 +15,7 @@ import { Gpt4_32k } from "../../LLMs/Gpt4_32k";
 import { IApiKeyProvider } from "../../../Auth/ApiKeyProvider";
 import { NaiveConversation } from "../../Conversations/NaiveConversation";
 import { ILlm } from "../../LLMs/Llm";
+import { LoremIpsum } from "../../LLMs/LoremIpsum";
 
 /// Service that stores conversations in local storage.
 export class LocalStorageConversationsService implements IConversationsService
@@ -223,6 +224,13 @@ export class LocalStorageConversationsService implements IConversationsService
 	/// @param conversation Conversation to bind to.
 	private BindToConversationEvents(conversation: ConversationWrapper): void
 	{
+		// Bind to threads currently in the conversation
+		conversation.conversation.Threads.forEach(t =>
+			this.BindToThreadEvents(conversation, t)
+		);
+
+		// Make sure that if any new threads are added, they get saved and
+		//   the event handlers are bound to them
 		conversation.conversation.OnThreadAdded.subscribe((c, t) =>
 		{
 			// Add the new thread to local storage
@@ -230,19 +238,29 @@ export class LocalStorageConversationsService implements IConversationsService
 
 			// Make sure that any changes to the thread are saved to local
 			//   storage as well
-			this.BindToThreadEvents(t);
+			this.BindToThreadEvents(conversation, t);
 		});
 	}
 
 	/// Binds event handlers to the thread's events.
 	/// @param conversation Conversation that the thread belongs to.
 	/// @param thread Thread to bind to.
-	private BindToThreadEvents(thread: IChatThread): void
+	private BindToThreadEvents(
+		conversation: ConversationWrapper,
+		thread: IChatThread): void
 	{
 		// Whenever new messages are added to the thread, save them to local
 		//   storage and update the thread's local storage entry
 		thread.OnThreadUpdated.subscribe((t, count) =>
 		{
+			// The conversation's local storage object will have all message IDs
+			//   for the conversation, so it needs to be updated whenever a new
+			//   message is added to the thread
+			ConversationHelper.SaveConversation(
+				conversation.conversation,
+				conversation.index
+			);
+
 			// Save the thread to local storage
 			ThreadHelper.SaveThread(t);
 
@@ -323,7 +341,7 @@ class ConversationHelper
 				`Failed to find a conversation with the ID "${id}"`
 			);
 		}
-		const jsonConversation = JSON.parse(item);
+		const jsonConversation: JsonConversation = JSON.parse(item);
 
 		// Construct the LLM instance corresponding to the conversation's LLM
 		//   type
@@ -339,6 +357,8 @@ class ConversationHelper
 				return new Gpt4_8k();
 			case ELlmType.Gpt4_32k:
 				return new Gpt4_32k();
+			case ELlmType.LoremIpsum:
+				return new LoremIpsum();
 			default:
 				throw new Error(`Unexpected LLM type "${llmType}"`);
 			}
@@ -346,12 +366,12 @@ class ConversationHelper
 
 		// Load all messages in the conversation
 		const messages = MessageHelper.LoadMessages(
-			jsonConversation.messageIds
+			new Set<string>(jsonConversation.messageIds)
 		);
 
 		// Load all threads in the conversation
 		const threads = ThreadHelper.LoadThreads(
-			jsonConversation.threadIds,
+			new Set<string>(jsonConversation.threadIds),
 			apiKeyProvider,
 			llm,
 			jsonConversation.targetContextWindowSize,
@@ -397,8 +417,8 @@ class ConversationHelper
 			llm: conversation.Llm.LlmType,
 			targetContextWindowSize: conversation.TargetContextWindowSize,
 			rootMessageId: conversation.RootMessage.Id,
-			threadIds: new Set<string>(conversation.Threads.map(t => t.Id)),
-			messageIds: messageIds
+			threadIds: conversation.Threads.map(t => t.Id),
+			messageIds: Array.from(messageIds)
 		};
 
 		// Save the conversation to local storage
@@ -482,10 +502,7 @@ class ThreadHelper
 	{
 		// Load each thread's JSON data from local storage
 		const jsonThreads = new Map<string, JsonThread>();
-		for (const id of ids)
-		{
-			jsonThreads.set(id, ThreadHelper.LoadThread(id));
-		}
+		ids.forEach(id => jsonThreads.set(id, ThreadHelper.LoadThread(id)));
 
 		// Construct the threads
 		const threads = new Map<string, IChatThread>();
@@ -561,7 +578,7 @@ class ThreadHelper
 
 		// Save the thread to local storage
 		localStorage.setItem(
-			`Thread_${thread.Id}`,
+			thread.Id,
 			JSON.stringify(jsonThread)
 		);
 		messages.forEach(m => MessageHelper.SaveMessage(m));
@@ -611,10 +628,7 @@ class MessageHelper
 	{
 		// Load each message's JSON data from local storage
 		const jsonMessages = new Map<string, JsonMessageEx>();
-		for (const id of ids)
-		{
-			jsonMessages.set(id, MessageHelper.LoadMessage(id));
-		}
+		ids.forEach(id => jsonMessages.set(id, MessageHelper.LoadMessage(id)));
 
 		// Iterate over each message and make sure that its parent exists
 		for (const [id, jsonMessage] of jsonMessages)
@@ -654,6 +668,11 @@ class MessageHelper
 				jsonMessage.role,
 				jsonMessage.contents
 			);
+			if (message.Parent != null)
+			{
+				message.Parent.AddChild(message);
+			}
+
 			message.MessageTokenCountActual = jsonMessage.tokenCount;
 			messages.set(jsonMessage.id, message);
 		}
@@ -757,10 +776,10 @@ interface JsonConversation
 	rootMessageId: string;
 
 	/// IDs of all threads in the conversation.
-	threadIds: Set<string>;
+	threadIds: string[];
 
 	/// IDs of all messages in the conversation.
-	messageIds: Set<string>;
+	messageIds: string[];
 }
 
 /// JSON-serializable representation of a thread.

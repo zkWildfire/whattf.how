@@ -1,6 +1,9 @@
 /// Enum identifying each supported LLM.
 export enum ELlmType
 {
+	/// Used to detect invalid values in serialized data.
+	Unknown,
+
 	/// OpenAI's GPT-3.5 with a 4K context window.
 	Gpt3_4k,
 

@@ -71,50 +71,6 @@ export class WhitespaceMessage implements IMessage
 		this._messageTokenCountActual = value;
 	}
 
-	/// Estimated number of LLM tokens consumed by the current thread.
-	/// This value considers the estimated tokens from this message as well as
-	///   all previous messages in the thread.
-	get ThreadTokenCountEstimated(): number
-	{
-		// Walk up the parent chain to get the total estimated token count
-		//   for the thread.
-		let tokenCount = this._threadTokenCountEstimated;
-		let parent = this._parent;
-		while (parent != null)
-		{
-			tokenCount += parent.MessageTokenCountEstimated;
-			parent = parent.Parent;
-		}
-
-		return tokenCount;
-	}
-
-	/// Total number of LLM tokens consumed by the current thread.
-	/// This value considers the actual tokens from this message as well as all
-	///   previous messages in the thread. If this message has not yet been sent
-	///   to the LLM API, this value will be -1.
-	get ThreadTokenCountActual(): number
-	{
-		// If the actual token count for this message has not yet been set,
-		//   return -1.
-		if (this._messageTokenCountActual < 0)
-		{
-			return -1;
-		}
-
-		// Walk up the parent chain to get the total actual token count
-		//   for the thread.
-		let tokenCount = this._threadTokenCountActual;
-		let parent = this._parent;
-		while (parent != null)
-		{
-			tokenCount += parent.MessageTokenCountActual;
-			parent = parent.Parent;
-		}
-
-		return tokenCount;
-	}
-
 	/// Event dispatcher backing the `OnChildAdded` event.
 	private readonly _onChildAdded = new EventDispatcher<IMessage, IMessage>();
 
@@ -139,12 +95,6 @@ export class WhitespaceMessage implements IMessage
 	/// Field backing the `MessageTokenCountActual` property.
 	private _messageTokenCountActual: number;
 
-	/// Field backing the `ThreadTokenCountEstimated` property.
-	private readonly _threadTokenCountEstimated: number;
-
-	/// Field backing the `ThreadTokenCountActual` property.
-	private _threadTokenCountActual: number;
-
 	/// Initializes the message.
 	/// @param id Unique ID assigned to the message.
 	/// @param parent Message that this message is a response to.
@@ -162,8 +112,6 @@ export class WhitespaceMessage implements IMessage
 		this._contents = contents;
 		this._messageTokenCountEstimated = this._contents.split(/\s+/).length;
 		this._messageTokenCountActual = -1;
-		this._threadTokenCountEstimated = this._messageTokenCountEstimated;
-		this._threadTokenCountActual = -1;
 	}
 
 	/// Adds a child message to this message.

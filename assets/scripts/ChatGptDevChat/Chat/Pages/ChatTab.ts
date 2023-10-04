@@ -160,7 +160,13 @@ export class ChatTab extends IPage
 
 		// Disable the text area while waiting for a response
 		this._pageElements.InputElement.disabled = true;
+		this._pageElements.StatusText.classList.remove("d-none");
+		this._pageElements.StatusText.classList.add("d-flex");
+
 		const llmMessage = await thread.SendMessage(userMessage);
+
+		this._pageElements.StatusText.classList.remove("d-flex");
+		this._pageElements.StatusText.classList.add("d-none");
 		this._pageElements.InputElement.disabled = false;
 
 		// Add the messages to the UI
@@ -200,6 +206,14 @@ class ChatPageElements extends IPageElementLocator
 		);
 	}
 
+	/// Gets the status text for the chat tab.
+	get StatusText(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			ChatPageElements.ID_STATUS_TEXT
+		);
+	}
+
 	/// ID of the container element for the chat tab.
 	private static readonly ID_TAB_CONTAINER = "tab-chat";
 
@@ -209,13 +223,17 @@ class ChatPageElements extends IPageElementLocator
 	/// ID of the input element for the chat tab.
 	private static readonly ID_INPUT_ELEMENT = "input-chat-message";
 
+	/// ID of the status text for the chat tab.
+	private static readonly ID_STATUS_TEXT = "status-chat";
+
 	/// Initializes the class.
 	constructor()
 	{
 		super([
 			ChatPageElements.ID_TAB_CONTAINER,
 			ChatPageElements.ID_MESSAGE_CONTAINER,
-			ChatPageElements.ID_INPUT_ELEMENT
+			ChatPageElements.ID_INPUT_ELEMENT,
+			ChatPageElements.ID_STATUS_TEXT
 		]);
 	}
 }

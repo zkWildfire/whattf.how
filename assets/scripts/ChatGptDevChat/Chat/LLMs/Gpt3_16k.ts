@@ -1,3 +1,4 @@
+import { GPTTokens } from "gpt-tokens";
 import { IPrompt } from "../Prompts/Prompt";
 import { IResponse } from "../Responses/Response";
 import { ILlm } from "./Llm";
@@ -30,8 +31,15 @@ export class Gpt3_16k extends ILlm
 	/// @returns Estimate of the number of tokens in the text.
 	public CountTokens(text: string): number
 	{
-		// TODO
-		throw new Error("Not implemented yet");
+		return new GPTTokens({
+			model: "gpt-3.5-turbo-16k-0613",
+			messages: [
+				{
+					"role": "user",
+					"content": text
+				}
+			]
+		}).usedTokens;
 	}
 
 	/// Sends a prompt to the LLM and returns the response.

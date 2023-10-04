@@ -25,6 +25,12 @@ module.exports = {
 					}
 				}
 			},
+			// This NPM module contains typescript code
+			{
+				test: /\.ts$/,
+				use: 'ts-loader',
+				include: /node_modules\/gpt-tokens/,
+			},
 		]
 	},
 	resolve: {

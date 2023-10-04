@@ -98,6 +98,14 @@ export class NewConversationPage extends IPage
 	public Show(): void
 	{
 		this._pageElements.PageContainer.classList.remove("d-none");
+
+		// Reset the page elements to their default states
+		this._pageElements.CreateConversationButton.disabled = false;
+		this._pageElements.CreateConversationButtonText.classList.remove("d-none");
+		this._pageElements.CreateConversationButtonSpinner.classList.add("d-none");
+		this._pageElements.StatusMessage.classList.remove("d-flex");
+		this._pageElements.StatusMessage.classList.add("d-none");
+
 		this._onShow.dispatch(this);
 	}
 
@@ -127,6 +135,13 @@ export class NewConversationPage extends IPage
 		{
 			return;
 		}
+
+		// Disable the `Create` button while waiting for a response
+		this._pageElements.CreateConversationButton.disabled = true;
+		this._pageElements.CreateConversationButtonText.classList.add("d-none");
+		this._pageElements.CreateConversationButtonSpinner.classList.remove("d-none");
+		this._pageElements.StatusMessage.classList.remove("d-none");
+		this._pageElements.StatusMessage.classList.add("d-flex");
 
 		// Create the objects for the conversation
 		const llm = this._pageElements.SelectedLlm;
@@ -274,6 +289,30 @@ class NewConversationPageElements extends IPageElementLocator
 		);
 	}
 
+	/// Gets the text element in the create conversation button.
+	get CreateConversationButtonText(): HTMLSpanElement
+	{
+		return this.GetElementById<HTMLSpanElement>(
+			NewConversationPageElements.ID_CREATE_CONVERSATION_BUTTON_TEXT
+		);
+	}
+
+	/// Gets the spinner element in the create conversation button.
+	get CreateConversationButtonSpinner(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			NewConversationPageElements.ID_CREATE_CONVERSATION_BUTTON_SPINNER
+		);
+	}
+
+	/// Gets the status message label.
+	get StatusMessage(): HTMLDivElement
+	{
+		return this.GetElementById<HTMLDivElement>(
+			NewConversationPageElements.ID_STATUS_MESSAGE
+		);
+	}
+
 	/// ID for the container for all page elements
 	private static readonly ID_PAGE_CONTAINER = "tab-new-conversation";
 
@@ -307,6 +346,18 @@ class NewConversationPageElements extends IPageElementLocator
 	/// ID for the submit button
 	private static readonly ID_CREATE_CONVERSATION_BUTTON = "button-create-conversation";
 
+	/// ID for the text element in the submit button
+	private static readonly ID_CREATE_CONVERSATION_BUTTON_TEXT =
+		"button-create-conversation-text";
+
+	/// ID for the spinner element in the submit button
+	private static readonly ID_CREATE_CONVERSATION_BUTTON_SPINNER =
+		"button-create-conversation-spinner";
+
+	/// ID for the status message label
+	private static readonly ID_STATUS_MESSAGE =
+		"status-waiting-for-initial-response";
+
 	/// Text input for the conversation name
 	private readonly _conversationNameInput: ConversationNameInput;
 
@@ -335,7 +386,10 @@ class NewConversationPageElements extends IPageElementLocator
 			NewConversationPageElements.ID_INITIAL_MESSAGE_INPUT,
 			NewConversationPageElements.ID_CONVERSATION_NAME_ERROR,
 			NewConversationPageElements.ID_INITIAL_MESSAGE_ERROR,
-			NewConversationPageElements.ID_CREATE_CONVERSATION_BUTTON
+			NewConversationPageElements.ID_CREATE_CONVERSATION_BUTTON,
+			NewConversationPageElements.ID_CREATE_CONVERSATION_BUTTON_TEXT,
+			NewConversationPageElements.ID_CREATE_CONVERSATION_BUTTON_SPINNER,
+			NewConversationPageElements.ID_STATUS_MESSAGE
 		]);
 
 		// Initialize the radio buttons array

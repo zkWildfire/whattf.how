@@ -1,7 +1,6 @@
 import { IPage } from "./Page";
 import { IThreadSessionService } from "../Services/Sessions/ThreadSessionService";
 import { IPageElementLocator } from "../../Util/PageElementLocator";
-import { IMessage } from "../Messages/Message";
 import { EPageUrl } from "./PageUrl";
 import { IConversationSessionService } from "../Services/Sessions/ConversationSessionService";
 import { IConversation } from "../Conversations/Conversation";
@@ -53,10 +52,6 @@ export class ConversationsTab extends IPage
 		{
 			this._onRedirect.dispatch(EPageUrl.NewConversation);
 		});
-		this._pageElements.LoadConversationButton.addEventListener("click", () =>
-		{
-			this.OnLoadConversationClicked();
-		});
 		this._pageElements.DeleteConversationButton.addEventListener("click", () =>
 		{
 			this.OnDeleteConversationClicked();
@@ -80,9 +75,42 @@ export class ConversationsTab extends IPage
 			this._conversationButtons.push(button);
 		}
 
-		// Disable the load and delete buttons until a conversation is selected
-		this._pageElements.LoadConversationButton.disabled = true;
-		this._pageElements.DeleteConversationButton.disabled = true;
+		// If no conversation is selected but conversations exist, select the
+		//   first conversation
+		if (this._conversationSessionService.ActiveConversation === null &&
+			this._conversationButtons.length > 0)
+		{
+			const button = this._conversationButtons[0];
+			this._conversationSessionService.ActiveConversation =
+				button.Conversation;
+			this._threadSessionService.ActiveThread =
+				button.Conversation.Threads[0];
+			button.MarkAsSelected();
+
+			this._conversationPane.ShowConversation(button.Conversation);
+			this._pageElements.DeleteConversationButton.disabled = false;
+		}
+		else if (this._conversationSessionService.ActiveConversation !== null)
+		{
+			// If a conversation is selected, select the corresponding button
+			//   and display the conversation
+			for (const button of this._conversationButtons)
+			{
+				if (button.Conversation ===
+					this._conversationSessionService.ActiveConversation)
+				{
+					button.MarkAsSelected();
+					this._conversationPane.ShowConversation(button.Conversation);
+					break;
+				}
+			}
+		}
+		else
+		{
+			// Make sure that if this page is displayed with no conversations,
+			//   the delete button is disabled
+			this._pageElements.DeleteConversationButton.disabled = true;
+		}
 
 		// Display the tab
 		this._pageElements.ConversationsTab.classList.remove("d-none");
@@ -116,12 +144,22 @@ export class ConversationsTab extends IPage
 	/// Callback invoked when one of the conversation list buttons is clicked.
 	private OnConversationSelected(conversation: IConversation): void
 	{
-		this._pageElements.LoadConversationButton.disabled = false;
 		this._pageElements.DeleteConversationButton.disabled = false;
 		this._conversationPane.ShowConversation(conversation);
+
+		// Also select the conversation as the active conversation but don't
+		//   switch to the chat tab
+		if (conversation.Id !==
+			this._conversationSessionService.ActiveConversation?.Id)
+		{
+			this._conversationSessionService.ActiveConversation = conversation;
+			this._threadSessionService.ActiveThread = conversation.Threads[0];
+		}
 	}
 
 	/// Callback invoked when the load conversation button is clicked.
+	/// @warning This method isn't currently used since conversations are set
+	///   as active once they're selected.
 	private OnLoadConversationClicked(): void
 	{
 		const conversation = this._conversationPane.DisplayedConversation;
@@ -170,7 +208,6 @@ export class ConversationsTab extends IPage
 
 		// Also disable the load and delete buttons since no conversation will
 		//   be selected after deleting the current one
-		this._pageElements.LoadConversationButton.disabled = true;
 		this._pageElements.DeleteConversationButton.disabled = true;
 
 		// If this was the last conversation, go back to the new conversation
@@ -209,14 +246,6 @@ class ConversationsPageElements extends IPageElementLocator
 		);
 	}
 
-	/// Gets the load selected conversation button.
-	get LoadConversationButton(): HTMLButtonElement
-	{
-		return this.GetElementById<HTMLButtonElement>(
-			ConversationsPageElements.ID_LOAD_CONVERSATION_BUTTON
-		);
-	}
-
 	/// Gets the delete selected conversation button.
 	get DeleteConversationButton(): HTMLButtonElement
 	{
@@ -234,10 +263,6 @@ class ConversationsPageElements extends IPageElementLocator
 	/// ID of the create new conversation button.
 	private static readonly ID_NEW_CONVERSATION_BUTTON = "button-new-conversation";
 
-	/// ID of the load selected conversation button.
-	private static readonly ID_LOAD_CONVERSATION_BUTTON =
-		"button-conversation-load-selected";
-
 	/// ID of the delete selected conversation button.
 	private static readonly ID_DELETE_CONVERSATION_BUTTON =
 		"button-conversation-delete-selected";
@@ -249,7 +274,6 @@ class ConversationsPageElements extends IPageElementLocator
 			ConversationsPageElements.ID_TAB_CONTAINER,
 			ConversationsPageElements.ID_CONVERSATION_LIST,
 			ConversationsPageElements.ID_NEW_CONVERSATION_BUTTON,
-			ConversationsPageElements.ID_LOAD_CONVERSATION_BUTTON,
 			ConversationsPageElements.ID_DELETE_CONVERSATION_BUTTON
 		]);
 	}
@@ -663,6 +687,12 @@ class ConversationButton
 		{
 			this._onClick.dispatch(this._conversation);
 		});
+	}
+
+	/// Marks the button as selected.
+	public MarkAsSelected(): void
+	{
+		this._buttonElement.checked = true;
 	}
 
 	/// Removes the button from the DOM.

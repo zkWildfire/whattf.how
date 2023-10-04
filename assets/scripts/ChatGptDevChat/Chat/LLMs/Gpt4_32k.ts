@@ -1,11 +1,14 @@
 import { GPTTokens } from "gpt-tokens";
 import { IPrompt } from "../Prompts/Prompt";
 import { IResponse } from "../Responses/Response";
-import { ILlm } from "./Llm";
 import { ELlmType } from "./LlmType";
+import { IGptLlm } from "./GptLlm";
+import OpenAI from "openai";
+import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat";
+import assert from "assert";
 
 /// LLM implementation that uses OpenAI GPT-4 with a 32K context window.
-export class Gpt4_32k extends ILlm
+export class Gpt4_32k extends IGptLlm
 {
 	/// Initializes the LLM.
 	constructor()
@@ -47,9 +50,27 @@ export class Gpt4_32k extends ILlm
 	/// @returns Response(s) from the LLM. If the LLM offers multiple choices
 	///   for a response, multiple responses may be returned. At least one
 	///   response will always be returned.
-	public SendPrompt(prompt: IPrompt): Promise<IResponse[]>
+	public async SendPrompt(prompt: IPrompt): Promise<IResponse[]>
 	{
-		// TODO
-		throw new Error("Not implemented yet");
+		const openai = new OpenAI({
+			apiKey: prompt.ApiKey,
+			dangerouslyAllowBrowser: true
+		});
+
+		// Construct the OpenAI prompt object
+		const openAiPrompt: ChatCompletionCreateParamsNonStreaming = {
+			model: "gpt-3.5-turbo",
+			messages: [
+				...prompt.History.map(IGptLlm.MessageToOpenAiMessage),
+				IGptLlm.MessageToOpenAiMessage(prompt.Message)
+			]
+		};
+		const response = await openai.chat.completions.create(openAiPrompt);
+		assert(response.usage != null);
+		prompt.Message.MessageTokenCountActual = response.usage.prompt_tokens;
+
+		// Convert the OpenAI response to responses that can be returned to the
+		//   caller
+		return this.OpenAiResponseToResponses(response);
 	}
 }

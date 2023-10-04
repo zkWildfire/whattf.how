@@ -69,10 +69,18 @@ const OnPageChanged = (
 	//   disable the chat tabs if and only if no conversations exist
 	if (pageUrl !== EPageUrl.Conversations &&
 		pageUrl !== EPageUrl.ThreadGraph &&
-		pageUrl !== EPageUrl.Chat &&
-		conversationsService.Conversations.length === 0)
+		pageUrl !== EPageUrl.Chat)
 	{
-		pageElements.DisableNavButtons();
+		if (conversationsService.Count === 0)
+		{
+			pageElements.DisableNavButtons();
+		}
+		else
+		{
+			// Since the page is not one of the pages that the chat tabs are
+			//   for, mark all of the chat tabs as not selected
+			pageElements.DeselectAllTabs();
+		}
 	}
 	// If the page is one of the pages that the chat tabs correspond to, enable
 	//   the correct chat tab
@@ -232,6 +240,15 @@ class ChatNavElements extends IPageElementLocator
 		]);
 	}
 
+	/// Deselects all of the tabs on the page.
+	public DeselectAllTabs(): void
+	{
+		for (const button of this.NavButtons)
+		{
+			button.checked = false;
+		}
+	}
+
 	/// Disables the buttons that are part of the chat navigation.
 	public DisableNavButtons(): void
 	{
@@ -241,10 +258,7 @@ class ChatNavElements extends IPageElementLocator
 		}
 
 		// Also make sure none of the buttons appear selected
-		for (const button of this.NavButtons)
-		{
-			button.checked = false;
-		}
+		this.DeselectAllTabs();
 	}
 
 	/// Sets the given nav button as the active nav button.

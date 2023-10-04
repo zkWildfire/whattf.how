@@ -1,4 +1,5 @@
 import { IMessage } from "../Messages/Message";
+import { PromptMessage } from "../Messages/WhitespaceMessage";
 
 /// Interface that provides the data necessary to create a prompt for an LLM.
 export interface IPrompt
@@ -7,7 +8,7 @@ export interface IPrompt
 	get History(): IMessage[];
 
 	/// Message that a response must be generated for.
-	get Message(): IMessage;
+	get Message(): PromptMessage;
 
 	/// API key to use when sending the prompt.
 	get ApiKey(): string;

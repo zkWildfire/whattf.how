@@ -8,7 +8,7 @@ import { Gpt4_8k } from "../LLMs/Gpt4_8k";
 import { ILlm } from "../LLMs/Llm";
 import { LoremIpsum } from "../LLMs/LoremIpsum";
 import { LlmMessage } from "../Messages/LlmMessage";
-import { WhitespaceMessage } from "../Messages/WhitespaceMessage";
+import { PromptMessage } from "../Messages/WhitespaceMessage";
 import { ERole } from "../Role";
 import { IConversationsService } from "../Services/Conversations/ConversationsService";
 import { IConversationSessionService } from "../Services/Sessions/ConversationSessionService";
@@ -147,7 +147,7 @@ export class NewConversationPage extends IPage
 		const llm = this._pageElements.SelectedLlm;
 		// TODO: Replace `WhitespaceMessage` with a message implementation that
 		//   uses OpenAI's tokenizer
-		const initialMessage = new WhitespaceMessage(
+		const initialMessage = new PromptMessage(
 			crypto.randomUUID(),
 			null,
 			ERole.User,

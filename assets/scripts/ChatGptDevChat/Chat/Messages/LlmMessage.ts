@@ -42,22 +42,25 @@ export class LlmMessage implements IMessage
 		return this._contents;
 	}
 
-	/// Total number of LLM tokens consumed by this message.
-	/// This value will be -1 until the message has been sent to the LLM API
-	///   and the response has been received.
-	get MessageTokenCountActual(): number
+	/// Total number of LLM tokens consumed by context sent with this message.
+	get ContextTokenCount(): number
+	{
+		// LLM responses don't include context
+		return 0;
+	}
+
+	/// Total number of LLM tokens consumed by this message, ignoring context.
+	get MessageTokenCount(): number
 	{
 		return this._tokenCount;
 	}
 
-	/// Sets the actual number of LLM tokens consumed by this message.
-	/// @throws Error If the message has already had its actual token count set.
-	set MessageTokenCountActual(value: number)
+	/// Total number of LLM tokens consumed by this message, including context.
+	get TotalTokenCount(): number
 	{
-		// Instances of this class are constructed from LLM responses, so the
-		//   actual token count will always be known as soon as the message is
-		//   created.
-		throw new Error("Cannot set actual token count on LLM message");
+		// Only the message token count needs to be returned since the context
+		//   token count is always 0 for LLM messages
+		return this._tokenCount;
 	}
 
 	/// Event dispatcher backing the `OnChildAdded` event.

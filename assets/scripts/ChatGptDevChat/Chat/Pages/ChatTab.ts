@@ -11,7 +11,7 @@ import { IConversation } from "../Conversations/Conversation";
 import assert from "assert";
 import { ITextAreaElement } from "../../Util/TextAreaElement";
 import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
-import { WhitespaceMessage } from "../Messages/WhitespaceMessage";
+import { PromptMessage } from "../Messages/WhitespaceMessage";
 import { IApiKeyProvider } from "../../Auth/ApiKeyProvider";
 import { LinearChatThread } from "../Threads/LinearChatThread";
 
@@ -151,7 +151,7 @@ export class ChatTab extends IPage
 
 		// TODO: Replace `WhitespaceMessage` with a message implementation that
 		//   uses OpenAI's tokenizer
-		const userMessage = new WhitespaceMessage(
+		const userMessage = new PromptMessage(
 			crypto.randomUUID(),
 			thread.LastMessage,
 			ERole.User,
@@ -554,7 +554,7 @@ class ChatMessage
 		// Create the sender column
 		const senderColumn = document.createElement("div");
 		senderColumn.classList.add(
-			"col-2",
+			"col-3",
 			"d-flex",
 			"flex-column",
 			"align-items-center"
@@ -592,10 +592,27 @@ class ChatMessage
 		// Create an element for the number of tokens in the message
 		const tokenCountElement = document.createElement("small");
 		tokenCountElement.classList.add(
-			"text-muted"
+			"text-muted",
+			"text-center"
 		);
-		const tokens = message.MessageTokenCountActual;
-		tokenCountElement.innerText = `${tokens} tokens`;
+		let tokens = 0;
+		switch (message.Role)
+		{
+		case ERole.Assistant:
+			tokens = message.MessageTokenCount;
+			tokenCountElement.innerText = `${message.MessageTokenCount} tokens`;
+			break;
+		case ERole.System:
+		case ERole.User:
+			tokens - message.TotalTokenCount;
+			tokenCountElement.innerText =
+				`${message.MessageTokenCount} msg tokens\n` +
+				`${message.ContextTokenCount} context tokens\n`
+				+ `${message.TotalTokenCount} total tokens`;
+			break;
+		default:
+			throw new Error(`Unknown role: ${message.Role}`);
+		}
 		senderColumn.appendChild(tokenCountElement);
 
 		// Create an element for the cost of the message

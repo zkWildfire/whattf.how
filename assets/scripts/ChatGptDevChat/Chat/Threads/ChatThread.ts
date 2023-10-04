@@ -1,5 +1,6 @@
 import { IEvent } from "strongly-typed-events";
 import { IMessage } from "../Messages/Message";
+import { PromptMessage } from "../Messages/WhitespaceMessage";
 
 /// Represents a linear series of messages in a conversation.
 export interface IChatThread
@@ -86,5 +87,5 @@ export interface IChatThread
 	/// This will also add new messages to the conversation.
 	/// @param message Message to send.
 	/// @returns The message that was received from the LLM.
-	SendMessage(message: IMessage): Promise<IMessage>;
+	SendMessage(message: PromptMessage): Promise<IMessage>;
 }

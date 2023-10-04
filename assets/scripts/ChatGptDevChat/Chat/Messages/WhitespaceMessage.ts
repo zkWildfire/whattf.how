@@ -2,8 +2,12 @@ import { EventDispatcher, IEvent } from "strongly-typed-events";
 import { ERole } from "../Role";
 import { IMessage } from "./Message";
 
-/// Message whose token counts are estimated by splitting at whitespace.
-export class WhitespaceMessage implements IMessage
+/// Message used for messages sent by the user.
+/// Prompt messages differ from LLM messages in that their properties are not
+///   fully known when they are created. For example, a prompt message will
+///   return an invalid message token count value until it has been sent to the
+///   LLM API and the response has been received.
+export class PromptMessage implements IMessage
 {
 	/// Event broadcast when a child message is added.
 	/// The event arguments will be the parent message and the child message.
@@ -42,24 +46,48 @@ export class WhitespaceMessage implements IMessage
 		return this._contents;
 	}
 
-	/// Total number of LLM tokens consumed by this message.
-	/// This value will be -1 until the message has been sent to the LLM API
-	///   and the response has been received.
-	get MessageTokenCountActual(): number
+	/// Total number of LLM tokens consumed by context sent with this message.
+	get ContextTokenCount(): number
 	{
-		return this._messageTokenCountActual;
+		return this._contextTokenCount;
 	}
 
-	/// Sets the actual number of LLM tokens consumed by this message.
-	/// @throws Error If the message has already had its actual token count set.
-	set MessageTokenCountActual(value: number)
+	/// Sets the actual number of LLM tokens consumed by this message's context.
+	/// @throws Error If the message has already had its context token count set.
+	set ContextTokenCount(value: number)
 	{
-		if (this._messageTokenCountActual >= 0)
+		if (this._contextTokenCount >= 0)
 		{
-			throw new Error("Actual token count already set.");
+			throw new Error("Context token count already set.");
 		}
 
-		this._messageTokenCountActual = value;
+		this._contextTokenCount = value;
+	}
+
+	/// Total number of LLM tokens consumed by this message, ignoring context.
+	/// This value will be -1 until the message has been sent to the LLM API
+	///   and the response has been received.
+	get MessageTokenCount(): number
+	{
+		return this._messageTokenCount;
+	}
+
+	/// Sets the number of LLM tokens consumed by this message.
+	/// @throws Error If the message has already had its actual token count set.
+	set MessageTokenCount(value: number)
+	{
+		if (this._messageTokenCount >= 0)
+		{
+			throw new Error("Message token count already set.");
+		}
+
+		this._messageTokenCount = value;
+	}
+
+	/// Total number of LLM tokens consumed by this message, including context.
+	get TotalTokenCount(): number
+	{
+		return this._contextTokenCount + this._messageTokenCount;
 	}
 
 	/// Event dispatcher backing the `OnChildAdded` event.
@@ -80,8 +108,11 @@ export class WhitespaceMessage implements IMessage
 	/// Field backing the `Contents` property.
 	private readonly _contents: string;
 
-	/// Field backing the `MessageTokenCountActual` property.
-	private _messageTokenCountActual: number;
+	/// Field backing the `ContextTokenCount` property.
+	private _contextTokenCount: number = -1;
+
+	/// Field backing the `MessageTokenCount` property.
+	private _messageTokenCount: number = -1;
 
 	/// Initializes the message.
 	/// @param id Unique ID assigned to the message.
@@ -98,7 +129,6 @@ export class WhitespaceMessage implements IMessage
 		this._parent = parent;
 		this._role = role;
 		this._contents = contents;
-		this._messageTokenCountActual = -1;
 	}
 
 	/// Adds a child message to this message.

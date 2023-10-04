@@ -5,7 +5,7 @@ import { ERole } from "../../Role";
 import { IChatThread } from "../../Threads/ChatThread";
 import { IMessage } from "../../Messages/Message";
 import { ELlmType } from "../../LLMs/LlmType";
-import { WhitespaceMessage } from "../../Messages/WhitespaceMessage";
+import { PromptMessage } from "../../Messages/WhitespaceMessage";
 import assert from "assert";
 import { LinearChatThread } from "../../Threads/LinearChatThread";
 import { Gpt3_4k } from "../../LLMs/Gpt3_4k";
@@ -663,7 +663,7 @@ class MessageHelper
 			assert(parent !== undefined);
 
 			// Create the message
-			const message = new WhitespaceMessage(
+			const message = new PromptMessage(
 				jsonMessage.id,
 				parent,
 				jsonMessage.role,
@@ -674,7 +674,8 @@ class MessageHelper
 				message.Parent.AddChild(message);
 			}
 
-			message.MessageTokenCountActual = jsonMessage.tokenCount;
+			message.ContextTokenCount = jsonMessage.contextTokenCount;
+			message.MessageTokenCount = jsonMessage.messageTokenCount;
 			messages.set(jsonMessage.id, message);
 		}
 
@@ -693,7 +694,8 @@ class MessageHelper
 			parentId: message.Parent?.Id ?? null,
 			role: message.Role,
 			contents: message.Contents,
-			tokenCount: message.MessageTokenCountActual
+			contextTokenCount: message.ContextTokenCount,
+			messageTokenCount: message.MessageTokenCount
 		};
 
 		// Save the message to local storage
@@ -806,8 +808,11 @@ interface JsonMessage
 	/// Text contents of the message.
 	contents: string;
 
-	/// Actual token count of the message.
-	tokenCount: number;
+	/// Token count consumed by the message's context.
+	contextTokenCount: number;
+
+	/// Token count consumed by the message.
+	messageTokenCount: number;
 }
 
 /// Wraps the conversation object with extra fields needed to handle

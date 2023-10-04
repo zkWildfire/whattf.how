@@ -52,11 +52,19 @@ export class LoremIpsum extends ILlm
 	///   response will always be returned.
 	public SendPrompt(prompt: IPrompt): Promise<IResponse[]>
 	{
+		// Count the number of tokens consumed by context messages
+		let contextTokenCount = 0;
+		for (const contextMessage of prompt.History)
+		{
+			contextTokenCount += contextMessage.Contents.split(/\s+/).length;
+		}
+		prompt.Message.ContextTokenCount = contextTokenCount;
+
 		// Calculate the number of tokens in the newest prompt message
 		const promptMessageTokenCount = prompt.Message.Contents.split(
 			/\s+/
 		).length;
-		prompt.Message.MessageTokenCountActual = promptMessageTokenCount;
+		prompt.Message.MessageTokenCount = promptMessageTokenCount;
 
 		// Pick a response at random and return it
 		const index = Math.floor(Math.random() * LoremIpsum._responses.length);

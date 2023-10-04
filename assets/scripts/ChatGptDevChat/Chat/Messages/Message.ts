@@ -23,14 +23,14 @@ export interface IMessage
 	/// Text contents of the message.
 	get Contents(): string;
 
-	/// Total number of LLM tokens consumed by this message.
-	/// This value will be -1 until the message has been sent to the LLM API
-	///   and the response has been received.
-	get MessageTokenCountActual(): number;
+	/// Total number of LLM tokens consumed by context sent with this message.
+	get ContextTokenCount(): number;
 
-	/// Sets the actual number of LLM tokens consumed by this message.
-	/// @throws Error If the message has already had its actual token count set.
-	set MessageTokenCountActual(value: number);
+	/// Total number of LLM tokens consumed by this message, ignoring context.
+	get MessageTokenCount(): number;
+
+	/// Total number of LLM tokens consumed by this message, including context.
+	get TotalTokenCount(): number;
 
 	/// Adds a child message to this message.
 	/// @param child Child message to add.

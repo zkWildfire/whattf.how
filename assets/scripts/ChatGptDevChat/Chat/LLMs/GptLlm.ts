@@ -6,6 +6,8 @@ import { IMessage } from "../Messages/Message";
 import assert from "assert";
 import { IResponse } from "../Responses/Response";
 import { EFinishReason } from "../Responses/FinishReason";
+import { CompletionUsage } from "openai/resources";
+import { IPrompt } from "../Prompts/Prompt";
 
 /// Base class for all OpenAI GPT LLM implementations.
 export abstract class IGptLlm extends ILlm
@@ -93,6 +95,28 @@ export abstract class IGptLlm extends ILlm
 		}
 		assert(responses.length > 0);
 		return responses;
+	}
+
+	/// Updates the token count fields of the prompt message.
+	/// @param prompt Prompt whose prompt message should be updated.
+	/// @param usage Usage object from the response.
+	protected UpdatePromptMessage(
+		prompt: IPrompt,
+		usage: CompletionUsage)
+	{
+		// This is likely to be slightly inaccurate since it doesn't fully
+		//   factor in the token count that may be consumed by providing the
+		//   data in prompt form
+		const contextTokenCount = prompt.History.reduce(
+			(total, message) => total + message.MessageTokenCount,
+			0
+		);
+		const messageTokenCount = usage.prompt_tokens - contextTokenCount;
+		assert(contextTokenCount >= 0);
+		assert(messageTokenCount >= 0);
+
+		prompt.Message.ContextTokenCount = contextTokenCount;
+		prompt.Message.MessageTokenCount = messageTokenCount;
 	}
 
 	/// Converts the role enum to the equivalent OpenAI role string.

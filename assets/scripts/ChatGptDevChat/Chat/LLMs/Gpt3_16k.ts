@@ -67,7 +67,7 @@ export class Gpt3_16k extends IGptLlm
 		};
 		const response = await openai.chat.completions.create(openAiPrompt);
 		assert(response.usage != null);
-		prompt.Message.MessageTokenCountActual = response.usage.prompt_tokens;
+		this.UpdatePromptMessage(prompt, response.usage);
 
 		// Convert the OpenAI response to responses that can be returned to the
 		//   caller

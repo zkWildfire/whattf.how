@@ -175,6 +175,10 @@ export class LocalStorageConversationsService implements IConversationsService
 		// Delete the conversation
 		const wrapper = this._conversations[index];
 		ConversationHelper.DeleteConversation(wrapper.conversation);
+		if (this._activeIndex === index)
+		{
+			this._activeIndex = -1;
+		}
 		this._conversations.splice(index, 1);
 		this._onConversationDeleted.dispatch(wrapper.conversation);
 		return true;

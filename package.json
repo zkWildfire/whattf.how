@@ -6,6 +6,7 @@
     "babel-loader": "^9.1.2",
     "gpt-tokens": "^1.1.2",
     "node-polyfill-webpack-plugin": "^2.0.1",
+    "openai": "^4.11.1",
     "strongly-typed-events": "^3.0.9",
     "ts-node": "^10.9.1"
   },

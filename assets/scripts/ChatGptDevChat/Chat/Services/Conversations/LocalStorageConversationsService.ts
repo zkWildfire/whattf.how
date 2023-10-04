@@ -134,6 +134,7 @@ export class LocalStorageConversationsService implements IConversationsService
 
 		// Add the conversation to the list of conversations
 		this._conversations.push(wrapper);
+		this._onConversationCreated.dispatch(conversation);
 		return wrapper.index;
 	}
 

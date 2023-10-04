@@ -104,6 +104,7 @@ export class ConversationsTab extends IPage
 					break;
 				}
 			}
+			this._pageElements.DeleteConversationButton.disabled = false;
 		}
 		else
 		{
@@ -146,6 +147,7 @@ export class ConversationsTab extends IPage
 	{
 		this._pageElements.DeleteConversationButton.disabled = false;
 		this._conversationPane.ShowConversation(conversation);
+		this._conversationsService.SelectConversation(conversation);
 
 		// Also select the conversation as the active conversation but don't
 		//   switch to the chat tab
@@ -157,37 +159,17 @@ export class ConversationsTab extends IPage
 		}
 	}
 
-	/// Callback invoked when the load conversation button is clicked.
-	/// @warning This method isn't currently used since conversations are set
-	///   as active once they're selected.
-	private OnLoadConversationClicked(): void
-	{
-		const conversation = this._conversationPane.DisplayedConversation;
-		assert(conversation !== null);
-		this._conversationSessionService.ActiveConversation = conversation;
-
-		// If multiple threads are available, show the thread graph so that the
-		//   user can select one. If only one is available, go directly to the
-		//   chat tab.
-		if (conversation.Threads.length > 1)
-		{
-			this._onRedirect.dispatch(EPageUrl.ThreadGraph);
-		}
-		else
-		{
-			this._onRedirect.dispatch(EPageUrl.Chat);
-		}
-	}
-
 	/// Callback invoked when the delete conversation button is clicked.
 	private OnDeleteConversationClicked(): void
 	{
 		const conversation = this._conversationPane.DisplayedConversation;
 		assert(conversation !== null);
 
-		// If this is the active conversation, also clear the active thread
+		// If this is the active conversation, clear the active conversation
+		//   and active threads
 		if (conversation === this._conversationSessionService.ActiveConversation)
 		{
+			this._conversationSessionService.ActiveConversation = null;
 			this._threadSessionService.ActiveThread = null;
 		}
 

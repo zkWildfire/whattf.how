@@ -29,6 +29,22 @@ export const BindChatNavEventHandlers = (
 	{
 		navService.NavigateToPage(EPageUrl.Chat);
 	});
+	conversationsService.OnConversationSelected.subscribe(() =>
+	{
+		// Enable the thread graph and chat tabs
+		pageElements.ThreadGraphButton.disabled = false;
+		pageElements.ChatButton.disabled = false;
+	});
+	conversationsService.OnConversationDeleted.subscribe(() =>
+	{
+		// If no conversation is active now, disable the thread graph and
+		//   chat tabs
+		if (conversationsService.ActiveConversation === null)
+		{
+			pageElements.ThreadGraphButton.disabled = true;
+			pageElements.ChatButton.disabled = true;
+		}
+	});
 
 	// Bind to service events
 	apiKeyProvider.OnApiKeyChanged.subscribe(() =>

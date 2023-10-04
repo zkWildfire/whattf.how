@@ -327,6 +327,32 @@ class ConversationHelper
 
 		// Delete all threads in the conversation
 		ThreadHelper.DeleteThreads(conversation.Threads);
+
+		// Clean up remaining messages
+		// Messages are not deleted if they have multiple children so that
+		//   individual threads can be removed by themselves. However, since
+		//   message objects are not mutated when they are deleted, messages
+		//   end up referencing child messages that may not be in local storage
+		//   anymore. This results in messages not being deleted from local
+		//   storage when they should.
+		// In practice, this isn't an issue since the only time messages are
+		//   deleted is when a conversation is deleted. However, it does mean
+		//   that extra cleanup needs to be done here.
+		const remainingMessages = conversation.AccumulateMessages(
+			(ms, message) =>
+			{
+				if (localStorage.getItem(message.Id) !== null)
+				{
+					ms.add(message.Id)
+				}
+				return ms;
+			},
+			new Set<string>()
+		);
+		if (remainingMessages.size > 0)
+		{
+			MessageHelper.DeleteMessages(remainingMessages);
+		}
 	}
 
 	/// Loads a conversation from local storage.

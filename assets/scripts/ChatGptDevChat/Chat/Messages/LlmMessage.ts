@@ -42,15 +42,6 @@ export class LlmMessage implements IMessage
 		return this._contents;
 	}
 
-	/// Estimated number of LLM tokens consumed by this message.
-	/// This counts only the tokens consumed by the message contents. The total
-	///   tokens consumed by sending this message to the LLM may be greater than
-	///   this value due to internal formatting handled by the LLM API.
-	get MessageTokenCountEstimated(): number
-	{
-		return this._tokenCount;
-	}
-
 	/// Total number of LLM tokens consumed by this message.
 	/// This value will be -1 until the message has been sent to the LLM API
 	///   and the response has been received.

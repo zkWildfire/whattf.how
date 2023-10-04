@@ -256,19 +256,19 @@ export class LinearChatThread implements IChatThread
 
 		// Walk backwards through the current thread until the target number of
 		//   tokens is met for the prompt
-		let promptTokens = message.MessageTokenCountEstimated;
+		let promptTokens = message.MessageTokenCountActual;
 		let promptMessages: IMessage[] = [];
 		let currentMessage = message.Parent;
 		while (currentMessage !== null &&
 			promptTokens < this._targetPromptTokenCount)
 		{
 			// All previous messages should have a known token count
-			assert(currentMessage.MessageTokenCountEstimated !== -1);
+			assert(currentMessage.MessageTokenCountActual !== -1);
 
 			// If adding the current message would exceed the target token count,
 			//   stop adding messages
 			const newTokenCount = promptTokens +
-				currentMessage.MessageTokenCountEstimated;
+				currentMessage.MessageTokenCountActual;
 			if (newTokenCount > this._targetPromptTokenCount)
 			{
 				break;

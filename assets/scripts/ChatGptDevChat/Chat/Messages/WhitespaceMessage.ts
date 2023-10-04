@@ -42,15 +42,6 @@ export class WhitespaceMessage implements IMessage
 		return this._contents;
 	}
 
-	/// Estimated number of LLM tokens consumed by this message.
-	/// This counts only the tokens consumed by the message contents. The total
-	///   tokens consumed by sending this message to the LLM may be greater than
-	///   this value due to internal formatting handled by the LLM API.
-	get MessageTokenCountEstimated(): number
-	{
-		return this._messageTokenCountEstimated;
-	}
-
 	/// Total number of LLM tokens consumed by this message.
 	/// This value will be -1 until the message has been sent to the LLM API
 	///   and the response has been received.
@@ -89,9 +80,6 @@ export class WhitespaceMessage implements IMessage
 	/// Field backing the `Contents` property.
 	private readonly _contents: string;
 
-	/// Field backing the `MessageTokenCountEstimated` property.
-	private readonly _messageTokenCountEstimated: number;
-
 	/// Field backing the `MessageTokenCountActual` property.
 	private _messageTokenCountActual: number;
 
@@ -110,7 +98,6 @@ export class WhitespaceMessage implements IMessage
 		this._parent = parent;
 		this._role = role;
 		this._contents = contents;
-		this._messageTokenCountEstimated = this._contents.split(/\s+/).length;
 		this._messageTokenCountActual = -1;
 	}
 

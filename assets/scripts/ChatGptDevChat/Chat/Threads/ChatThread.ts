@@ -1,6 +1,6 @@
 import { IEvent } from "strongly-typed-events";
 import { IMessage } from "../Messages/Message";
-import { PromptMessage } from "../Messages/WhitespaceMessage";
+import { PromptMessage } from "../Messages/PromptMessage";
 
 /// Represents a linear series of messages in a conversation.
 export interface IChatThread

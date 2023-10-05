@@ -11,7 +11,7 @@ import { IConversation } from "../Conversations/Conversation";
 import assert from "assert";
 import { ITextAreaElement } from "../../Util/TextAreaElement";
 import { ISimpleEvent, SimpleEventDispatcher } from "strongly-typed-events";
-import { PromptMessage } from "../Messages/WhitespaceMessage";
+import { PromptMessage } from "../Messages/PromptMessage";
 import { IApiKeyProvider } from "../../Auth/ApiKeyProvider";
 import { LinearChatThread } from "../Threads/LinearChatThread";
 
@@ -604,7 +604,7 @@ class ChatMessage
 			break;
 		case ERole.System:
 		case ERole.User:
-			tokens - message.TotalTokenCount;
+			tokens = message.TotalTokenCount;
 			tokenCountElement.innerText =
 				`${message.MessageTokenCount} msg tokens\n` +
 				`${message.ContextTokenCount} context tokens\n`

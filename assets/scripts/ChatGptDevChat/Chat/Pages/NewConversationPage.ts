@@ -8,7 +8,7 @@ import { Gpt4_8k } from "../LLMs/Gpt4_8k";
 import { ILlm } from "../LLMs/Llm";
 import { LoremIpsum } from "../LLMs/LoremIpsum";
 import { LlmMessage } from "../Messages/LlmMessage";
-import { PromptMessage } from "../Messages/WhitespaceMessage";
+import { PromptMessage } from "../Messages/PromptMessage";
 import { ERole } from "../Role";
 import { IConversationsService } from "../Services/Conversations/ConversationsService";
 import { IConversationSessionService } from "../Services/Sessions/ConversationSessionService";

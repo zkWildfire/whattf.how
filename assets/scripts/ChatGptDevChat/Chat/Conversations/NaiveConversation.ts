@@ -76,7 +76,7 @@ export class NaiveConversation implements IConversation
 				}
 				else
 				{
-					return value + message.MessageTokenCount;
+					return value + message.TotalTokenCount;
 				}
 			},
 			0,
@@ -92,7 +92,7 @@ export class NaiveConversation implements IConversation
 			{
 				if (message.Role == ERole.Assistant)
 				{
-					return value + message.MessageTokenCount;
+					return value + message.TotalTokenCount;
 				}
 				else
 				{

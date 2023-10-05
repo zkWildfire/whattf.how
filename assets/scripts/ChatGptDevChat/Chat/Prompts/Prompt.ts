@@ -1,5 +1,5 @@
 import { IMessage } from "../Messages/Message";
-import { PromptMessage } from "../Messages/WhitespaceMessage";
+import { PromptMessage } from "../Messages/PromptMessage";
 
 /// Interface that provides the data necessary to create a prompt for an LLM.
 export interface IPrompt

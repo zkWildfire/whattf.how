@@ -5,7 +5,7 @@ import { ERole } from "../../Role";
 import { IChatThread } from "../../Threads/ChatThread";
 import { IMessage } from "../../Messages/Message";
 import { ELlmType } from "../../LLMs/LlmType";
-import { PromptMessage } from "../../Messages/WhitespaceMessage";
+import { PromptMessage } from "../../Messages/PromptMessage";
 import assert from "assert";
 import { LinearChatThread } from "../../Threads/LinearChatThread";
 import { Gpt3_4k } from "../../LLMs/Gpt3_4k";

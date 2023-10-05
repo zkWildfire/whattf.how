@@ -8,7 +8,7 @@ import { ILlm } from "../LLMs/Llm";
 import { IPrompt } from "../Prompts/Prompt";
 import { IApiKeyProvider } from "../../Auth/ApiKeyProvider";
 import { LlmMessage } from "../Messages/LlmMessage";
-import { PromptMessage } from "../Messages/WhitespaceMessage";
+import { PromptMessage } from "../Messages/PromptMessage";
 
 /// Default implementation of the chat thread interface.
 export class LinearChatThread implements IChatThread
@@ -312,10 +312,10 @@ export class LinearChatThread implements IChatThread
 		this._messageCount += 2;
 		this._outboundTokenCount += message.MessageTokenCount;
 		this._outboundCost += this._llm.CalcInboundCost(
-			message.MessageTokenCount);
+			message.TotalTokenCount);
 		this._inboundTokenCount += responseMessage.MessageTokenCount;
 		this._inboundCost += this._llm.CalcOutboundCost(
-			responseMessage.MessageTokenCount);
+			responseMessage.TotalTokenCount);
 
 		// Notify observers that the thread was updated
 		this._onResponseReceived.dispatch(this, responseMessage);
@@ -345,15 +345,13 @@ export class LinearChatThread implements IChatThread
 		// Helper method used to update token counts
 		const updateTokenCount = (message: IMessage): void =>
 		{
-			assert(message.MessageTokenCount !== -1);
-
 			if (message.Role == ERole.Assistant)
 			{
-				inboundTokenCount += message.MessageTokenCount;
+				inboundTokenCount += message.TotalTokenCount;
 			}
 			else
 			{
-				outboundTokenCount += message.MessageTokenCount;
+				outboundTokenCount += message.TotalTokenCount;
 			}
 		};
 		updateTokenCount(message);
